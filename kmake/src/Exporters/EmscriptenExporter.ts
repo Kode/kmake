@@ -2,7 +2,7 @@ import { Exporter } from './Exporter';
 import { Project } from '../Project';
 import { Options } from '../Options';
 import { GraphicsApi } from '../GraphicsApi';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as path from 'path';
 
 export class EmscriptenExporter extends Exporter {

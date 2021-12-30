@@ -1,14 +1,14 @@
 {
-  "name": "koremake",
+  "name": "kmake",
   "version": "1.0.0",
-  "description": "Kore build tool",
+  "description": "Kinc build tool",
   "main": "koremake.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kode/koremake.git"
+    "url": "git+https://github.com/Kode/kmake.git"
   },
   "keywords": [
     "kore"
@@ -16,9 +16,9 @@
   "author": "Robert Konrad",
   "license": "Zlib",
   "bugs": {
-    "url": "https://github.com/Kode/koremake/issues"
+    "url": "https://github.com/Kode/kmake/issues"
   },
-  "homepage": "https://github.com/Kode/koremake#readme",
+  "homepage": "https://github.com/Kode/kmake#readme",
   "dependencies": {
     "@types/chokidar": "^1.7.5",
     "@types/fs-extra": "^5.0.2",
@@ -26,7 +26,6 @@
     "@types/uuid": "^3.4.3",
     "@types/webidl2": "^23.13.5",
     "chokidar": "^2.0.3",
-    "fs-extra": "^6.0.0",
     "node-static": "^0.7.11",
     "physical-cpu-count": "^2.0.0",
     "uuid": "^3.2.1",

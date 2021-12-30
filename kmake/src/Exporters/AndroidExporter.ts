@@ -4,7 +4,7 @@ import { Architecture } from '../Architecture';
 import { Options } from '../Options';
 import * as Icon from '../Icon';
 import { execSync } from 'child_process';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as os from 'os';
 import * as path from 'path';
 

@@ -1,5 +1,5 @@
 import { Project } from '../Project';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as path from 'path';
 import { resolve } from 'dns';
 

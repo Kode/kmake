@@ -1,5 +1,5 @@
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from './fsextra';
 import * as log from './log';
 import { GraphicsApi } from './GraphicsApi';
 import { Architecture } from './Architecture';

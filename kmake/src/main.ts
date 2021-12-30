@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'kmake/fsextra';
 import * as log from './log';
 import { GraphicsApi } from './GraphicsApi';
 import { AudioApi } from './AudioApi';

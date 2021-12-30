@@ -5,7 +5,7 @@ import { Platform } from '../Platform';
 import { Options } from '../Options';
 import { Project } from '../Project';
 import * as Proj from '../Project';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as path from 'path';
 const uuidv4 = require('uuid/v4');
 const uuidv5 = require('uuid/v5');

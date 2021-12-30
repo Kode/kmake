@@ -3,7 +3,7 @@ import { GraphicsApi } from '../GraphicsApi';
 import { Options } from '../Options';
 import { Platform } from '../Platform';
 import { Project } from '../Project';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as path from 'path';
 import * as process from 'process';
 import { Compiler } from '../Compiler';

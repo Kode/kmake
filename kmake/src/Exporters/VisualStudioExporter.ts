@@ -8,7 +8,7 @@ import { VisualStudioVersion } from '../VisualStudioVersion';
 import { Configuration } from '../Configuration';
 import { VrApi } from '../VrApi';
 import * as log from '../log';
-import * as fs from 'fs-extra';
+import * as fs from '../fsextra';
 import * as path from 'path';
 const uuid = require('uuid');
 
