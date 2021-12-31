@@ -1,16 +1,15 @@
-import { Exporter } from './Exporter';
-import { GraphicsApi } from '../GraphicsApi';
-import * as Icon from '../Icon';
-import { Platform } from '../Platform';
-import { File, Project } from '../Project';
-import { Options } from '../Options';
-import { VisualStudioVersion } from '../VisualStudioVersion';
-import { Configuration } from '../Configuration';
-import { VrApi } from '../VrApi';
-import * as log from '../log';
-import * as fs from '../fsextra';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import * as Icon from 'kmake/Icon';
+import { Platform } from 'kmake/Platform';
+import { File, Project } from 'kmake/Project';
+import { Options } from 'kmake/Options';
+import { VisualStudioVersion } from 'kmake/VisualStudioVersion';
+import { Configuration } from 'kmake/Configuration';
+import { VrApi } from 'kmake/VrApi';
+import * as log from 'kmake/log';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-const uuid = require('uuid');
 
 function isGitPath(aPath: string): boolean {
 	return aPath.indexOf('/.git/') >= 0 || aPath.indexOf('\\.git\\') >= 0 || aPath.endsWith('/.git') || aPath.endsWith('\\.git');
@@ -223,7 +222,7 @@ export class VisualStudioExporter extends Exporter {
 			this.p('Microsoft Visual Studio Solution File, Format Version 11.00');
 			this.p('# Visual Studio 2010');
 		}
-		const solutionUuid = uuid.v4();
+		const solutionUuid = crypto.randomUUID();
 		this.writeProjectDeclarations(project, solutionUuid);
 		this.p('Global');
 		this.p('GlobalSection(SolutionConfigurationPlatforms) = preSolution', 1);
@@ -358,12 +357,12 @@ export class VisualStudioExporter extends Exporter {
 		this.p('<ItemGroup>', 1);
 		for (let dir of dirs) {
 			this.p('<Filter Include="' + dir.replace(/\//g, '\\') + '">', 2);
-			this.p('<UniqueIdentifier>{' + uuid.v4().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
+			this.p('<UniqueIdentifier>{' + crypto.randomUUID().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
 			this.p('</Filter>', 2);
 		}
 		if (platform === Platform.WindowsApp) {
 			this.p('<Filter Include="Package">', 2);
-			this.p('<UniqueIdentifier>{' + uuid.v4().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
+			this.p('<UniqueIdentifier>{' + crypto.randomUUID().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
 			this.p('</Filter>', 2);
 		}
 		this.p('</ItemGroup>', 1);

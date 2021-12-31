@@ -1,32 +1,32 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as fs from 'kmake/fsextra';
-import * as log from './log';
-import { GraphicsApi } from './GraphicsApi';
-import { AudioApi } from './AudioApi';
-import { Options } from './Options';
-import { Project } from './Project';
-import { Platform } from './Platform';
-import * as exec from './exec';
-import { VisualStudioVersion } from './VisualStudioVersion';
-import { Exporter } from './Exporters/Exporter';
-import { AndroidExporter } from './Exporters/AndroidExporter';
-import { LinuxExporter } from './Exporters/LinuxExporter';
-import { EmscriptenExporter } from './Exporters/EmscriptenExporter';
-import { TizenExporter } from './Exporters/TizenExporter';
-import { VisualStudioExporter } from './Exporters/VisualStudioExporter';
-import { XCodeExporter } from './Exporters/XCodeExporter';
-import { VSCodeExporter } from './Exporters/VSCodeExporter';
-import { Language } from './Languages/Language';
-import { Languages } from './Languages';
-import * as idl from 'webidl2';
-import { BeefLang } from './Languages/BeefLang';
-import { FreeBSDExporter } from './Exporters/FreeBSDExporter';
+import * as log from 'kmake/log';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import { AudioApi } from 'kmake/AudioApi';
+import { Options } from 'kmake/Options';
+import { Project } from 'kmake/Project';
+import { Platform } from 'kmake/Platform';
+import * as exec from 'kmake/exec';
+import { VisualStudioVersion } from 'kmake/VisualStudioVersion';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { AndroidExporter } from 'kmake/Exporters/AndroidExporter';
+import { LinuxExporter } from 'kmake/Exporters/LinuxExporter';
+import { EmscriptenExporter } from 'kmake/Exporters/EmscriptenExporter';
+import { TizenExporter } from 'kmake/Exporters/TizenExporter';
+import { VisualStudioExporter } from 'kmake/Exporters/VisualStudioExporter';
+import { XCodeExporter } from 'kmake/Exporters/XCodeExporter';
+import { VSCodeExporter } from 'kmake/Exporters/VSCodeExporter';
+import { Language } from 'kmake/Languages/Language';
+import { Languages } from 'kmake/Languages';
+// import * as idl from 'webidl2'; // TODO
+import { BeefLang } from 'kmake/Languages/BeefLang';
+import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 
-const cpuCores: number = require('physical-cpu-count');
+const cpuCores: number = 1; // require('physical-cpu-count'); // TODO
 
-let _global: any = global;
-_global.__base = __dirname + '/';
+// let _global: any = global;
+// _global.__base = __dirname + '/';
 
 let debug = false;
 
@@ -364,7 +364,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	}
 	else exporter = new VisualStudioExporter();
 
-	let langExporter: Language = null;
+	/*let langExporter: Language = null;
 	let trees: idl.IDLRootType[][] = [];
 	if (options.toLanguage === Languages.Beef) {
 		langExporter = new BeefLang();
@@ -375,17 +375,15 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	}
 	if (exporter === null && langExporter === null) {
 		throw 'No exporter found for platform ' + platform + '.';
-	}
+	}*/
 
 	if (exporter !== null)
 		await exporter.exportSolution(project, from, to, platform, options.vrApi, options);
-	if (langExporter !== null) {
+	/*if (langExporter !== null) {
 		trees.forEach((tree, index) => {
 			langExporter.exportWrapper(tree, from, to, options, project.IDLfiles[index]);
 		});
-	}
-
-
+	}*/
 
 	return project;
 }

@@ -1,8 +1,8 @@
-import { Exporter } from './Exporter';
-import { Project } from '../Project';
-import { Options } from '../Options';
-import { GraphicsApi } from '../GraphicsApi';
-import * as fs from '../fsextra';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { Project } from 'kmake/Project';
+import { Options } from 'kmake/Options';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 
 export class EmscriptenExporter extends Exporter {

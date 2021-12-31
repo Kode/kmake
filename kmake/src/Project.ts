@@ -1,13 +1,12 @@
 import * as path from 'path';
-import * as fs from './fsextra';
-import * as log from './log';
-import { GraphicsApi } from './GraphicsApi';
-import { Architecture } from './Architecture';
-import { AudioApi } from './AudioApi';
-import { VrApi } from './VrApi';
-import { Options } from './Options';
-import { Platform } from './Platform';
-const uuid = require('uuid');
+import * as fs from 'kmake/fsextra';
+import * as log from 'kmake/log';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import { Architecture } from 'kmake/Architecture';
+import { AudioApi } from 'kmake/AudioApi';
+import { VrApi } from 'kmake/VrApi';
+import { Options } from 'kmake/Options';
+import { Platform } from 'kmake/Platform';
 
 function getDefines(platform: string, rotated: boolean) {
 	let defines: string[] = [];
@@ -212,7 +211,7 @@ export class Project {
 		this.version = '1.0';
 		this.debugDir = '';
 		this.basedir = scriptdir;
-		this.uuid = uuid.v4();
+		this.uuid = crypto.randomUUID();
 
 		this.files = [];
 		this.IDLfiles = [];

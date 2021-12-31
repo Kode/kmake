@@ -1,14 +1,20 @@
-import { Exporter } from './Exporter';
-import { GraphicsApi } from '../GraphicsApi';
-import * as Icon from '../Icon';
-import { Platform } from '../Platform';
-import { Options } from '../Options';
-import { Project } from '../Project';
-import * as Proj from '../Project';
-import * as fs from '../fsextra';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import * as Icon from 'kmake/Icon';
+import { Platform } from 'kmake/Platform';
+import { Options } from 'kmake/Options';
+import { Project } from 'kmake/Project';
+import * as Proj from 'kmake/Project';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-const uuidv4 = require('uuid/v4');
-const uuidv5 = require('uuid/v5');
+
+function uuidv4(): string {
+	return crypto.randomUUID();
+}
+
+function uuidv5(path: string, namespace: string): string {
+	return crypto.randomUUID(); // TODO
+}
 
 function contains(a: any[], b: any): boolean {
 	return a.indexOf(b) !== -1;
@@ -19,6 +25,7 @@ function newId(): string {
 }
 
 const MY_NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
+
 function newPathId(path: string): string {
 	return uuidv5(path, MY_NAMESPACE).toUpperCase();
 }

@@ -1,9 +1,9 @@
-import { GraphicsApi } from './GraphicsApi';
-import { Architecture } from './Architecture';
-import { AudioApi } from './AudioApi';
-import { VrApi } from './VrApi';
-import { VisualStudioVersion } from './VisualStudioVersion';
-import { Compiler } from './Compiler';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import { Architecture } from 'kmake/Architecture';
+import { AudioApi } from 'kmake/AudioApi';
+import { VrApi } from 'kmake/VrApi';
+import { VisualStudioVersion } from 'kmake/VisualStudioVersion';
+import { Compiler } from 'kmake/Compiler';
 
 export let Options = {
 	precompiledHeaders: false,

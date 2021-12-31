@@ -1,7 +1,7 @@
-import { Exporter } from './Exporter';
-import { Project } from '../Project';
-import { Platform } from '../Platform';
-import * as fs from '../fsextra';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { Project } from 'kmake/Project';
+import { Platform } from 'kmake/Platform';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 
 export class VSCodeExporter extends Exporter {

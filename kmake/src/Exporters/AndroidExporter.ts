@@ -1,10 +1,10 @@
-import { Exporter } from './Exporter';
-import { Project } from '../Project';
-import { Architecture } from '../Architecture';
-import { Options } from '../Options';
-import * as Icon from '../Icon';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { Project } from 'kmake/Project';
+import { Architecture } from 'kmake/Architecture';
+import { Options } from 'kmake/Options';
+import * as Icon from 'kmake/Icon';
+import * as fs from 'kmake/fsextra';
 import { execSync } from 'child_process';
-import * as fs from '../fsextra';
 import * as os from 'os';
 import * as path from 'path';
 

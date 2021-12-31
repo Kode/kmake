@@ -1,11 +1,11 @@
-import { Exporter } from './Exporter';
-import { GraphicsApi } from '../GraphicsApi';
-import { Options } from '../Options';
-import { Platform } from '../Platform';
-import { Project } from '../Project';
-import * as fs from '../fsextra';
+import { Exporter } from 'kmake/Exporters/Exporter';
+import { GraphicsApi } from 'kmake/GraphicsApi';
+import { Options } from 'kmake/Options';
+import { Platform } from 'kmake/Platform';
+import { Project } from 'kmake/Project';
+import { Compiler } from 'kmake/Compiler';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { Compiler } from '../Compiler';
 
 export class FreeBSDExporter extends Exporter {
 	constructor() {

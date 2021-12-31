@@ -1,5 +1,5 @@
-import { Project } from '../Project';
-import * as fs from '../fsextra';
+import { Project } from 'kmake/Project';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 import { resolve } from 'dns';
 

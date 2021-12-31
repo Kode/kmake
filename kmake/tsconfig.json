@@ -8,7 +8,11 @@
 		"forceConsistentCasingInFileNames": true,
 		"newLine": "LF",
 		"noFallthroughCasesInSwitch": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"baseUrl": "src",
+		"paths": {
+			"kmake/*": ["./*"]
+		}
 	},
 	"include": [
 		"src/**/*.ts",
