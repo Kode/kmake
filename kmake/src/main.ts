@@ -25,6 +25,7 @@ import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 
 const cpuCores: number = 1; // require('physical-cpu-count'); // TODO
 
+const __dirname = ''; // TODO
 // let _global: any = global;
 // _global.__base = __dirname + '/';
 
@@ -396,14 +397,11 @@ async function exportProject(from: string, to: string, platform: string, korefil
 	if (isKoremakeProject(from, korefile)) {
 		return exportKoremakeProject(from, to, platform, korefile, options);
 	}
-	else if (isKoremakeProject(from, 'kincfile.js')) {
-		return exportKoremakeProject(from, to, platform, 'kincfile.js', options);
-	}
-	else if (isKoremakeProject(from, 'korefile.js')) {
-		return exportKoremakeProject(from, to, platform, 'korefile.js', options);
+	else if (isKoremakeProject(from, 'kfile.js')) {
+		return exportKoremakeProject(from, to, platform, 'kfile.js', options);
 	}
 	else {
-		throw 'kincfile not found.';
+		throw 'kfile not found.';
 	}
 }
 
@@ -562,7 +560,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	let project: Project = null;
 	try {
-		project = await exportProject(options.from, options.to, options.target, options.kincfile, options);
+		project = await exportProject(options.from, options.to, options.target, options.kfile, options);
 	}
 	catch (error) {
 		log.error(error);
