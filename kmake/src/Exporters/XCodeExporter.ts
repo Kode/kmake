@@ -7,6 +7,7 @@ import { Project } from 'kmake/Project';
 import * as Proj from 'kmake/Project';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 function uuidv4(): string {
 	return crypto.randomUUID();

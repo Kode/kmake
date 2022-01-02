@@ -10,6 +10,7 @@ import { VrApi } from 'kmake/VrApi';
 import * as log from 'kmake/log';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 function isGitPath(aPath: string): boolean {
 	return aPath.indexOf('/.git/') >= 0 || aPath.indexOf('\\.git\\') >= 0 || aPath.endsWith('/.git') || aPath.endsWith('\\.git');

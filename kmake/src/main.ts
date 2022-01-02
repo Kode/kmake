@@ -540,7 +540,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 	}
 
 	if (!options.kinc) {
-		let p = path.join(__dirname, '..', '..', '..');
+		let p = path.join(__dirname, '..', '..');
 		if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
 			options.kinc = p;
 		}
@@ -548,6 +548,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 	else {
 		options.kinc = path.resolve(options.kinc);
 	}
+
+	Project.koreDir = options.kinc;
+
 	log.info('Using Kinc (' + findKincVersion(options.kinc) + ') from ' + options.kinc);
 
 	debug = options.debug;

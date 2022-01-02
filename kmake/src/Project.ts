@@ -7,6 +7,7 @@ import { AudioApi } from 'kmake/AudioApi';
 import { VrApi } from 'kmake/VrApi';
 import { Options } from 'kmake/Options';
 import { Platform } from 'kmake/Platform';
+import * as crypto from 'crypto';
 
 function getDefines(platform: string, rotated: boolean) {
 	let defines: string[] = [];
@@ -675,7 +676,6 @@ export class Project {
 	}
 
 	static async create(directory: string, platform: string, korefile: string) {
-		Project.koreDir = path.join(__dirname, '../../..');
 		Project.platform = platform;
 		let project = await loadProject(path.resolve(directory), null, korefile);
 		if (project.kore && !project.kincProcessed) {
