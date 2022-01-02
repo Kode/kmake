@@ -662,7 +662,7 @@ export class VisualStudioExporter extends Exporter {
 		const errorMessage = 'Could not find a Windows SDK, make sure Visual Studio is installed with C/C++ support.';
 		return new Promise<string>((resolve, reject) => {
 			try {
-				const Registry = require('winreg');
+				const Registry = require('winreg'); // TODO
 				const regKey = new Registry({ hive: Registry.HKLM, key: '\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots' });
 
 				regKey.keys((err: any, items: any[]) => {

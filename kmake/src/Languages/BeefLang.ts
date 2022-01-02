@@ -1,4 +1,4 @@
-import * as idl from 'webidl2';
+// import * as idl from 'webidl2'; // TODO
 import { Language } from './Language';
 import * as path from 'path';
 
@@ -6,7 +6,8 @@ export class BeefLang extends Language {
 	constructor() {
 		super();
 	}
-	async exportWrapper(tree: idl.IDLRootType[], from: string, to: string, options: any, filename: string): Promise<void> {
+	
+	/*async exportWrapper(tree: idl.IDLRootType[], from: string, to: string, options: any, filename: string): Promise<void> {
 		let p = filename.split('/');
 		filename = p[p.length - 1].replace('.idl', '.bf');
 		console.log(filename);
@@ -88,7 +89,8 @@ export class BeefLang extends Language {
 			}
 		}
 		this.p('}');
-	}
+	}*/
+
 	toLangType(idlType: string): string {
 		switch (idlType) {
 			case 'boolean':

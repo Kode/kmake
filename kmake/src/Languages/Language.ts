@@ -1,6 +1,6 @@
 import * as fs from '../fsextra';
 import * as path from 'path';
-import * as idl from 'webidl2';
+// import * as idl from 'webidl2'; // TODO
 
 export abstract class Language {
 	out: number;
@@ -24,11 +24,11 @@ export abstract class Language {
 		fs.writeSync(this.out, data, 0, data.length, null);
 	}
 	
-	async exportWrapper(tree: idl.IDLRootType[], from: string, to: string, options: any, filename: string): Promise<void> {
+	/*async exportWrapper(tree: idl.IDLRootType[], from: string, to: string, options: any, filename: string): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			reject('Called an abstract function');
 		});
-	}
+	}*/
 	
 	abstract toLangType(idlType: string): string;
 }
