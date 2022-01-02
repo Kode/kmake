@@ -25,9 +25,8 @@ import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 
 const cpuCores: number = 1; // require('physical-cpu-count'); // TODO
 
-const __dirname = ''; // TODO
-// let _global: any = global;
-// _global.__base = __dirname + '/';
+let _global: any = global;
+_global.__base = __dirname + '/';
 
 let debug = false;
 
