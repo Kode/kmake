@@ -40,6 +40,8 @@ export abstract class Exporter {
 	}
 
 	exportCLion(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
+		return; // TODO
+		
 		let name = project.getSafeName();
 
 		const indir = path.join(__dirname, '..', '..', 'Data', 'linux');
