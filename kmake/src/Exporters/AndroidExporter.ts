@@ -77,17 +77,17 @@ export class AndroidExporter extends Exporter {
 			}
 		}
 
-		fs.copySync(path.join(indir, 'gitignore'), path.join(outdir, '.gitignore'));
-		fs.copySync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle'));
-		fs.copySync(path.join(indir, 'gradle.properties'), path.join(outdir, 'gradle.properties'));
-		fs.copySync(path.join(indir, 'gradlew'), path.join(outdir, 'gradlew'));
-		fs.copySync(path.join(indir, 'gradlew.bat'), path.join(outdir, 'gradlew.bat'));
+		fs.copyFileSync(path.join(indir, 'gitignore'), path.join(outdir, '.gitignore'));
+		fs.copyFileSync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle'));
+		fs.copyFileSync(path.join(indir, 'gradle.properties'), path.join(outdir, 'gradle.properties'));
+		fs.copyFileSync(path.join(indir, 'gradlew'), path.join(outdir, 'gradlew'));
+		fs.copyFileSync(path.join(indir, 'gradlew.bat'), path.join(outdir, 'gradlew.bat'));
 		let settings = fs.readFileSync(path.join(indir, 'settings.gradle'), 'utf8');
 		settings = settings.replace(/{name}/g, project.getName());
 		fs.writeFileSync(path.join(outdir, 'settings.gradle'), settings);
 
-		fs.copySync(path.join(indir, 'app', 'gitignore'), path.join(outdir, 'app', '.gitignore'));
-		fs.copySync(targetOptions.proguardRulesPath, path.join(outdir, 'app', 'proguard-rules.pro'));
+		fs.copyFileSync(path.join(indir, 'app', 'gitignore'), path.join(outdir, 'app', '.gitignore'));
+		fs.copyFileSync(targetOptions.proguardRulesPath, path.join(outdir, 'app', 'proguard-rules.pro'));
 
 		this.writeAppGradle(project, outdir, from, targetOptions);
 
@@ -107,26 +107,26 @@ export class AndroidExporter extends Exporter {
 
 		this.exportIcons(project.icon, outdir, from, to);
 
-		fs.copySync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'));
-		fs.copySync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.properties'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.properties'));
+		fs.copyFileSync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'));
+		fs.copyFileSync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.properties'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.properties'));
 
-		fs.copySync(path.join(indir, 'idea', 'gitignore'), path.join(outdir, 'idea', '.gitignore'));
-		fs.copySync(path.join(indir, 'idea', 'gradle.xml'), path.join(outdir, '.idea', 'gradle.xml'));
-		fs.copySync(path.join(indir, 'idea', 'misc.xml'), path.join(outdir, '.idea', 'misc.xml'));
+		fs.copyFileSync(path.join(indir, 'idea', 'gitignore'), path.join(outdir, 'idea', '.gitignore'));
+		fs.copyFileSync(path.join(indir, 'idea', 'gradle.xml'), path.join(outdir, '.idea', 'gradle.xml'));
+		fs.copyFileSync(path.join(indir, 'idea', 'misc.xml'), path.join(outdir, '.idea', 'misc.xml'));
 		let modules = fs.readFileSync(path.join(indir, 'idea', 'modules.xml'), 'utf8');
 		modules = modules.replace(/{name}/g, project.getName());
-		fs.copySync(path.join(indir, 'idea', 'modules.xml'), path.join(outdir, '.idea', 'modules.xml'));
+		fs.copyFileSync(path.join(indir, 'idea', 'modules.xml'), path.join(outdir, '.idea', 'modules.xml'));
 		fs.writeFileSync(path.join(outdir, '.idea', 'modules.xml'), modules);
 		fs.ensureDirSync(path.join(outdir, '.idea', 'modules'));
-		fs.copySync(path.join(indir, 'idea', 'modules', 'My Application.iml'), path.join(outdir, '.idea', 'modules', project.getName() + '.xml'));
+		fs.copyFileSync(path.join(indir, 'idea', 'modules', 'My Application.iml'), path.join(outdir, '.idea', 'modules', project.getName() + '.xml'));
 
 		if (targetOptions.customFilesPath != null) {
 			const dir = targetOptions.customFilesPath;
 			if (!fs.existsSync(dir)) throw dir + ' folder does not exist';
-			fs.copySync(dir, outdir);
+			fs.copyFileSync(dir, outdir);
 		}
 
-		if (project.getDebugDir().length > 0) fs.copySync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
+		if (project.getDebugDir().length > 0) fs.copyFileSync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
 	}
 
 	writeAppGradle(project: Project, outdir: string, from: string, targetOptions: TargetOptions) {

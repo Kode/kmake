@@ -423,13 +423,13 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 			if (code === 0) {
 				if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
 					if (options.lib) {
-						fs.copySync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName + '.a'), path.resolve(options.from.toString(), project.getDebugDir(), solutionName + '.a'), { overwrite: true });
+						fs.copyFileSync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName + '.a'), path.resolve(options.from.toString(), project.getDebugDir(), solutionName + '.a'));
 					}
 					else if (options.dynlib) {
-						fs.copySync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName + '.so'), path.resolve(options.from.toString(), project.getDebugDir(), solutionName + '.so'), { overwrite: true });
+						fs.copyFileSync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName + '.so'), path.resolve(options.from.toString(), project.getDebugDir(), solutionName + '.so'));
 					}
 					else {
-						fs.copySync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName), path.resolve(options.from.toString(), project.getDebugDir(), solutionName), { overwrite: true });
+						fs.copyFileSync(path.resolve(path.join(options.to.toString(), options.buildPath), solutionName), path.resolve(options.from.toString(), project.getDebugDir(), solutionName));
 					}
 				}
 				else if ((options.customTarget && options.customTarget.baseTarget === Platform.Windows) || options.target === Platform.Windows) {
@@ -441,7 +441,7 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 					const dir = path.isAbsolute(project.getDebugDir())
 						? project.getDebugDir()
 						: path.join(options.from.toString(), project.getDebugDir());
-					fs.copySync(from, path.join(dir, solutionName + extension), { overwrite: true });
+					fs.copyFileSync(from, path.join(dir, solutionName + extension));
 				}
 				if (options.run) {
 					if ((options.customTarget && options.customTarget.baseTarget === Platform.OSX) || options.target === Platform.OSX) {
