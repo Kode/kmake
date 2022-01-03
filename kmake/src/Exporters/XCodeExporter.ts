@@ -13,8 +13,13 @@ function uuidv4(): string {
 	return crypto.randomUUID();
 }
 
+// not quite uuid v5 but close enough
 function uuidv5(path: string, namespace: string): string {
-	return crypto.randomUUID(); // TODO
+	const hash = crypto.createHash('sha1');
+	hash.update(namespace);
+	hash.update(path);
+	const value = hash.digest('hex');
+	return value.substring(0, 8) + '-' + value.substring(8, 12) + '-' + value.substring(12, 16) + '-' + value.substring(16, 20) + '-' + value.substring(20, 32);
 }
 
 function contains(a: any[], b: any): boolean {
@@ -25,10 +30,8 @@ function newId(): string {
 	return uuidv4().toUpperCase();
 }
 
-const MY_NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
-
 function newPathId(path: string): string {
-	return uuidv5(path, MY_NAMESPACE).toUpperCase();
+	return uuidv5(path, '7448ebd8-cfc8-4f45-8b3d-5df577ceea6d').toUpperCase();
 }
 
 function getDir(file: Proj.File) {

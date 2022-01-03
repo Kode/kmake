@@ -290,7 +290,6 @@ async function runKincmake() {
 	};
 
 	await require('./main.js').run(parsedOptions, { info: logInfo, error: logError });
-	// console.log('Done.'); // TODO: Clean up async things so we actually end here.
 }
 
 if (parsedOptions.init) {
