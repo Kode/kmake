@@ -723,11 +723,6 @@ export class VisualStudioExporter extends Exporter {
 	async globals(platform: string, indent: number) {
 		let windowsTargetVersion = Options.visualStudioVersion === VisualStudioVersion.VS2017 ? '10.0.16299.0' : '10.0.14393.0';
 
-		let foundVersion = await this.findWindowsSdk();
-		if (foundVersion) {
-			windowsTargetVersion = foundVersion;
-		}
-
 		if (Options.visualStudioVersion === VisualStudioVersion.VS2022 || Options.visualStudioVersion === VisualStudioVersion.VS2019) {
 			this.p('<VCProjectVersion>16.0</VCProjectVersion>', indent);
 		}
@@ -736,6 +731,11 @@ export class VisualStudioExporter extends Exporter {
 		}
 
 		if (platform === Platform.WindowsApp) {
+			let foundVersion = await this.findWindowsSdk();
+			if (foundVersion) {
+				windowsTargetVersion = foundVersion;
+			}
+
 			this.p('<DefaultLanguage>en-US</DefaultLanguage>', indent);
 			this.p('<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>', indent);
 			this.p('<AppContainerApplication>true</AppContainerApplication>', indent);
@@ -747,6 +747,11 @@ export class VisualStudioExporter extends Exporter {
 			this.p('<EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>', indent);
 		}
 		else if (Options.visualStudioVersion === VisualStudioVersion.VS2017) {
+			let foundVersion = await this.findWindowsSdk();
+			if (foundVersion) {
+				windowsTargetVersion = foundVersion;
+			}
+
 			this.p('<WindowsTargetPlatformVersion>' + windowsTargetVersion + '</WindowsTargetPlatformVersion>', indent);
 		}
 		else if (Options.visualStudioVersion === VisualStudioVersion.VS2022 || Options.visualStudioVersion === VisualStudioVersion.VS2019) {
