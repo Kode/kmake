@@ -51,10 +51,7 @@
 # define NODE_EXE_VERSION "22.1.0"
 #endif
 
-# define NODE_VERSION_STRING  NODE_STRINGIFY(NODE_MAJOR_VERSION) "." \
-                              NODE_STRINGIFY(NODE_MINOR_VERSION) "." \
-                              NODE_STRINGIFY(NODE_PATCH_VERSION)     \
-                              NODE_TAG
+# define NODE_VERSION_STRING "22.1.0"
 #ifndef NODE_EXE_VERSION
 # define NODE_EXE_VERSION NODE_VERSION_STRING
 #endif
