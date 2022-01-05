@@ -48,10 +48,7 @@
 # endif
 #else
 // NODE_TAG is passed without quotes when rc.exe is run from msbuild
-# define NODE_EXE_VERSION NODE_STRINGIFY(NODE_MAJOR_VERSION) "." \
-                          NODE_STRINGIFY(NODE_MINOR_VERSION) "." \
-                          NODE_STRINGIFY(NODE_PATCH_VERSION)     \
-                          NODE_STRINGIFY(NODE_TAG)
+# define NODE_EXE_VERSION "22.1.0"
 #endif
 
 # define NODE_VERSION_STRING  NODE_STRINGIFY(NODE_MAJOR_VERSION) "." \

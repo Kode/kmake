@@ -50,14 +50,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Node.js"
-            VALUE "ProductName", "Node.js"
-            VALUE "FileDescription", "Node.js JavaScript Runtime"
+            VALUE "CompanyName", "kmake Team"
+            VALUE "ProductName", "kmake"
+            VALUE "FileDescription", "kmake build tool"
             VALUE "FileVersion", NODE_EXE_VERSION
             VALUE "ProductVersion", NODE_EXE_VERSION
-            VALUE "OriginalFilename", "node.exe"
-            VALUE "InternalName", "node"
-            VALUE "LegalCopyright", "Copyright Node.js contributors. MIT license."
+            VALUE "OriginalFilename", "kmake.exe"
+            VALUE "InternalName", "kmake"
+            VALUE "LegalCopyright", "Copyright kmake and Node.js contributors."
         END
     END
     BLOCK "VarFileInfo"
