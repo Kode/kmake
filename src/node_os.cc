@@ -136,6 +136,36 @@ static void GetCPUInfo(const FunctionCallbackInfo<Value>& args) {
 }
 
 
+static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args);
+  Isolate* isolate = env->isolate();
+
+  SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
+  DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
+  BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
+
+  int proper_cpu_count = 0;
+
+  if (success) {
+    DWORD byteOffset = 0;
+    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = &info[0];
+    while (byteOffset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) <= returnLength) {
+      if (ptr->Relationship == RelationProcessorCore) {
+        ++proper_cpu_count;
+      }
+
+      byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+      ++ptr;
+    }
+  }
+  else {
+    proper_cpu_count = 1;
+  }
+
+  args.GetReturnValue().Set(proper_cpu_count);
+}
+
+
 static void GetFreeMemory(const FunctionCallbackInfo<Value>& args) {
   double amount = static_cast<double>(uv_get_free_memory());
   args.GetReturnValue().Set(amount);
@@ -388,6 +418,7 @@ void Initialize(Local<Object> target,
   env->SetMethod(target, "getTotalMem", GetTotalMemory);
   env->SetMethod(target, "getFreeMem", GetFreeMemory);
   env->SetMethod(target, "getCPUs", GetCPUInfo);
+  env->SetMethod(target, "getProperCPUCount", GetProperCPUCount);
   env->SetMethod(target, "getInterfaceAddresses", GetInterfaceAddresses);
   env->SetMethod(target, "getHomeDirectory", GetHomeDirectory);
   env->SetMethod(target, "getUserInfo", GetUserInfo);
@@ -406,6 +437,7 @@ void RegisterExternalReferences(ExternalReferenceRegistry* registry) {
   registry->Register(GetTotalMemory);
   registry->Register(GetFreeMemory);
   registry->Register(GetCPUInfo);
+  registry->Register(GetProperCPUCount);
   registry->Register(GetInterfaceAddresses);
   registry->Register(GetHomeDirectory);
   registry->Register(GetUserInfo);

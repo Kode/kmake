@@ -23,7 +23,7 @@ import { Languages } from 'kmake/Languages';
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 
-const cpuCores: number = 1; // require('physical-cpu-count'); // TODO
+const cpuCores: number = require('os').properCpuCount();
 
 let _global: any = global;
 _global.__base = __dirname + '/';
