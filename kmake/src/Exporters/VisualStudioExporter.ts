@@ -662,55 +662,43 @@ export class VisualStudioExporter extends Exporter {
 		const errorMessage = 'Could not find a Windows SDK, make sure Visual Studio is installed with C/C++ support.';
 		return new Promise<string>((resolve, reject) => {
 			try {
-				const Registry = require('winreg'); // TODO
-				const regKey = new Registry({ hive: Registry.HKLM, key: '\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots' });
-
-				regKey.keys((err: any, items: any[]) => {
-					if (err) {
-						log.error('Error while reading the registry: ' + err);
-						log.error(errorMessage);
-						resolve(null);
-					}
-					else {
-						let best = [0, 0, 0, 0];
-						for (let item of items) {
-							let key: string = item.key;
-							let elements = key.split('\\');
-							let last = elements[elements.length - 1];
-							if (last.indexOf('.') >= 0) {
-								let numstrings = last.split('.');
-								let nums = [];
-								for (let str of numstrings) {
-									nums.push(parseInt(str));
-								}
-								if (nums[0] > best[0]) {
+				const sdks: string[] = require('os').windowsSDKs();
+				let best = [0, 0, 0, 0];
+				for (let key of sdks) {
+					let elements = key.split('\\');
+					let last = elements[elements.length - 1];
+					if (last.indexOf('.') >= 0) {
+						let numstrings = last.split('.');
+						let nums = [];
+						for (let str of numstrings) {
+							nums.push(parseInt(str));
+						}
+						if (nums[0] > best[0]) {
+							best = nums;
+						}
+						else if (nums[0] === best[0]) {
+							if (nums[1] > best[1]) {
+								best = nums;
+							}
+							else if (nums[1] === best[1]) {
+								if (nums[2] > best[2]) {
 									best = nums;
 								}
-								else if (nums[0] === best[0]) {
-									if (nums[1] > best[1]) {
+								else if (nums[2] === best[2]) {
+									if (nums[3] > best[3]) {
 										best = nums;
-									}
-									else if (nums[1] === best[1]) {
-										if (nums[2] > best[2]) {
-											best = nums;
-										}
-										else if (nums[2] === best[2]) {
-											if (nums[3] > best[3]) {
-												best = nums;
-											}
-										}
 									}
 								}
 							}
 						}
-						if (best[0] > 0) {
-							resolve(best[0] + '.' + best[1] + '.' + best[2] + '.' + best[3]);
-						}
-						else {
-							resolve(null);
-						}
 					}
-				});
+				}
+				if (best[0] > 0) {
+					resolve(best[0] + '.' + best[1] + '.' + best[2] + '.' + best[3]);
+				}
+				else {
+					resolve(null);
+				}
 			}
 			catch (err) {
 				log.error('Error while trying to figure out the Windows SDK version: ' + err);

@@ -137,9 +137,6 @@ static void GetCPUInfo(const FunctionCallbackInfo<Value>& args) {
 
 
 static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
-  Environment* env = Environment::GetCurrent(args);
-  Isolate* isolate = env->isolate();
-
   SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
   DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
   BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
@@ -163,6 +160,34 @@ static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
   }
 
   args.GetReturnValue().Set(proper_cpu_count);
+}
+
+
+static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args);
+  Isolate* isolate = env->isolate();
+
+  std::vector<Local<Value>> result;
+
+  HKEY key;
+  LSTATUS status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", 0, KEY_READ | KEY_QUERY_VALUE, &key);
+
+  char name[256];
+  DWORD nameLength;
+  for (DWORD i = 0;; ++i) {
+	nameLength = sizeof(name);
+	status = RegEnumKeyExA(key, i, &name[0], &nameLength, NULL, NULL, NULL, NULL);
+
+	if (status != ERROR_SUCCESS) {
+	  break;
+	}
+        
+    result.emplace_back(String::NewFromUtf8(isolate, name).ToLocalChecked());
+  }
+
+  RegCloseKey(key);
+
+  args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
 }
 
 
@@ -419,6 +444,7 @@ void Initialize(Local<Object> target,
   env->SetMethod(target, "getFreeMem", GetFreeMemory);
   env->SetMethod(target, "getCPUs", GetCPUInfo);
   env->SetMethod(target, "getProperCPUCount", GetProperCPUCount);
+  env->SetMethod(target, "getWindowsSDKs", GetWindowsSDKs);
   env->SetMethod(target, "getInterfaceAddresses", GetInterfaceAddresses);
   env->SetMethod(target, "getHomeDirectory", GetHomeDirectory);
   env->SetMethod(target, "getUserInfo", GetUserInfo);
