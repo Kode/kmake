@@ -959,6 +959,186 @@
           ],
         },
         {
+          'action_name': 'android_build_gradle',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/build.gradle'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_build_gradle.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_build_gradle',
+            'kmake/Data/android/build.gradle',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_gitignore',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/gitignore'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gitignore.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_gitignore',
+            'kmake/Data/android/gitignore',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_gradle_properties',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/gradle.properties'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gradle_properties.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_gradle_properties',
+            'kmake/Data/android/gradle.properties',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_gradlew',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/gradlew'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gradlew.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_gradlew',
+            'kmake/Data/android/gradlew',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_gradlew_bat',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/gradlew.bat'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gradlew_bat.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_gradlew_bat',
+            'kmake/Data/android/gradlew.bat',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_settings_gradle',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/settings.gradle'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_settings_gradle.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_settings_gradle',
+            'kmake/Data/android/settings.gradle',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_app_build_gradle',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/app/build.gradle'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_app_build_gradle.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_app_build_gradle',
+            'kmake/Data/android/app/build.gradle',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_app_cmakelists_txt',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/app/CMakeLists.txt'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_app_cmakelists_txt.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_app_cmakelists_txt',
+            'kmake/Data/android/app/CMakeLists.txt',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_app_gitignore',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/app/gitignore'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_app_gitignore.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_app_gitignore',
+            'kmake/Data/android/app/gitignore',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_app_proguard_rules_pro',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/app/proguard-rules.pro'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_app_proguard_rules_pro.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_app_proguard_rules_pro',
+            'kmake/Data/android/app/proguard-rules.pro',
+            '<@(_outputs)',
+          ],
+        },
+        {
           'action_name': 'android_gradle_wrapper_gradle_wrapper_jar',
           'process_outputs_as_sources': 1,
           'inputs': [
@@ -973,6 +1153,150 @@
             'tools/bin_to_header.py',
             'android_gradle_wrapper_gradle_wrapper_jar',
             'kmake/Data/android/gradle/wrapper/gradle-wrapper.jar',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_gradle_wrapper_gradle_wrapper_properties',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/gradle/wrapper/gradle-wrapper.properties'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gradle_wrapper_gradle_wrapper_properties.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_gradle_wrapper_gradle_wrapper_properties',
+            'kmake/Data/android/gradle/wrapper/gradle-wrapper.properties',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_gitignore',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/gitignore'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_gitignore.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_gitignore',
+            'kmake/Data/android/idea/gitignore',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_gradle_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/gradle.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_gradle_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_gradle_xml',
+            'kmake/Data/android/idea/gradle.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_misc_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/misc.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_misc_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_misc_xml',
+            'kmake/Data/android/idea/misc.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_modules_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/modules.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_modules_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_modules_xml',
+            'kmake/Data/android/idea/modules.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_modules_my_application_iml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/modules/My Application.iml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_modules_my_application_iml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_modules_my_application_iml',
+            'kmake/Data/android/idea/modules/My Application.iml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_main_androidmanifest_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/main/AndroidManifest.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_main_androidmanifest_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_main_androidmanifest_xml',
+            'kmake/Data/android/main/AndroidManifest.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_main_res_values_strings_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/main/res/values/strings.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_main_res_values_strings_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_main_res_values_strings_xml',
+            'kmake/Data/android/main/res/values/strings.xml',
             '<@(_outputs)',
           ],
         },

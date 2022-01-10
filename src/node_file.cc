@@ -37,7 +37,25 @@
 #include "linux_idea_misc_xml.h"
 #include "linux_idea_workspace_xml.h"
 
+#include "android_build_gradle.h"
+#include "android_gitignore.h"
+#include "android_gradle_properties.h"
+#include "android_gradlew.h"
+#include "android_gradlew_bat.h"
+#include "android_settings_gradle.h"
+#include "android_app_build_gradle.h"
+#include "android_app_cmakelists_txt.h"
+#include "android_app_gitignore.h"
+#include "android_app_proguard_rules_pro.h"
 #include "android_gradle_wrapper_gradle_wrapper_jar.h"
+#include "android_gradle_wrapper_gradle_wrapper_properties.h"
+#include "android_idea_gitignore.h"
+#include "android_idea_gradle_xml.h"
+#include "android_idea_misc_xml.h"
+#include "android_idea_modules_xml.h"
+#include "android_idea_modules_my_application_iml.h"
+#include "android_main_androidmanifest_xml.h"
+#include "android_main_res_values_strings_xml.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -2411,8 +2429,39 @@ static void GetEmbeddedData(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = env->isolate();
 
   Local<Object> data = Object::New(isolate);
+
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "linux_idea_misc_xml"), FIXED_ONE_BYTE_STRING(isolate, linux_idea_misc_xml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "linux_idea_workspace_xml"), FIXED_ONE_BYTE_STRING(isolate, linux_idea_workspace_xml));
+
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_build_gradle"), FIXED_ONE_BYTE_STRING(isolate, android_build_gradle));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gitignore"), FIXED_ONE_BYTE_STRING(isolate, android_gitignore));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gradle_properties"), FIXED_ONE_BYTE_STRING(isolate, android_gradle_properties));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gradlew"), FIXED_ONE_BYTE_STRING(isolate, android_gradlew));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gradlew_bat"), FIXED_ONE_BYTE_STRING(isolate, android_gradlew_bat));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_settings_gradle"), FIXED_ONE_BYTE_STRING(isolate, android_settings_gradle));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_app_build_gradle"), FIXED_ONE_BYTE_STRING(isolate, android_app_build_gradle));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_app_cmakelists_txt"), FIXED_ONE_BYTE_STRING(isolate, android_app_cmakelists_txt));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_app_gitignore"), FIXED_ONE_BYTE_STRING(isolate, android_app_gitignore));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_app_proguard_rules_pro"), FIXED_ONE_BYTE_STRING(isolate, android_app_proguard_rules_pro));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gradle_wrapper_gradle_wrapper_properties"), FIXED_ONE_BYTE_STRING(isolate, android_gradle_wrapper_gradle_wrapper_properties));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_gitignore"), FIXED_ONE_BYTE_STRING(isolate, android_idea_gitignore));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_gradle_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_gradle_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_misc_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_misc_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_modules_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_modules_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_modules_my_application_iml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_modules_my_application_iml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_main_androidmanifest_xml"), FIXED_ONE_BYTE_STRING(isolate, android_main_androidmanifest_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_main_res_values_strings_xml"), FIXED_ONE_BYTE_STRING(isolate, android_main_res_values_strings_xml));
+
+  args.GetReturnValue().Set(data);
+}
+
+static void GetEmbeddedBinaryData(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args);
+  Isolate* isolate = env->isolate();
+
+  Local<Object> data = Object::New(isolate);
+  
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_gradle_wrapper_gradle_wrapper_jar"), Buffer::New(isolate, (char*)android_gradle_wrapper_gradle_wrapper_jar, sizeof(android_gradle_wrapper_gradle_wrapper_jar)).ToLocalChecked());
 
   args.GetReturnValue().Set(data);
 }
@@ -2520,6 +2569,7 @@ void Initialize(Local<Object> target,
   env->SetMethod(target, "mkdtemp", Mkdtemp);
 
   env->SetMethod(target, "getEmbeddedData", GetEmbeddedData);
+  env->SetMethod(target, "getEmbeddedBinaryData", GetEmbeddedBinaryData);
 
   target
       ->Set(context,
@@ -2639,6 +2689,7 @@ void RegisterExternalReferences(ExternalReferenceRegistry* registry) {
   registry->Register(NewFSReqCallback);
 
   registry->Register(GetEmbeddedData);
+  registry->Register(GetEmbeddedBinaryData);
 
   registry->Register(FileHandle::New);
   registry->Register(FileHandle::Close);

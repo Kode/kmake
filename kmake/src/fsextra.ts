@@ -11,6 +11,10 @@ function ensureDirSync(dir: string): void {
 	}
 }
 
+function copyDirSync(from: string, to: string): void {
+	// TODO
+}
+
 export {
 	fsExistsSync as existsSync,
 	fsReaddirSync as readdirSync,
@@ -21,5 +25,6 @@ export {
 	fsWriteSync as writeSync,
 	fsCloseSync as closeSync,
 	fsCopyFileSync as copyFileSync,
-	ensureDirSync
+	ensureDirSync,
+	copyDirSync
 };

@@ -52,9 +52,9 @@ export class AndroidExporter extends Exporter {
 			disableStickyImmersiveMode: false,
 			metadata: new Array<string>(),
 			customFilesPath: null,
-			buildGradlePath: path.join(indir, 'app', 'build.gradle'),
-			globalBuildGradlePath: path.join(indir, 'build.gradle'),
-			proguardRulesPath: path.join(indir, 'app', 'proguard-rules.pro'),
+			buildGradlePath: null,
+			globalBuildGradlePath: null,
+			proguardRulesPath: null,
 			abiFilters: new Array<string>()
 		};
 
@@ -77,59 +77,73 @@ export class AndroidExporter extends Exporter {
 			}
 		}
 
-		fs.copyFileSync(path.join(indir, 'gitignore'), path.join(outdir, '.gitignore'));
-		fs.copyFileSync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle'));
-		fs.copyFileSync(path.join(indir, 'gradle.properties'), path.join(outdir, 'gradle.properties'));
-		fs.copyFileSync(path.join(indir, 'gradlew'), path.join(outdir, 'gradlew'));
-		fs.copyFileSync(path.join(indir, 'gradlew.bat'), path.join(outdir, 'gradlew.bat'));
-		let settings = fs.readFileSync(path.join(indir, 'settings.gradle'), 'utf8');
+		const binaryData = require('fs').getEmbeddedBinaryData();
+		const textData = require('fs').getEmbeddedData();
+
+		fs.writeFileSync(path.join(outdir, '.gitignore'), textData['android_gitignore']);
+		if (targetOptions.globalBuildGradlePath) {
+			fs.copyFileSync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle'));
+		}
+		else {
+			fs.writeFileSync(path.join(outdir, 'build.gradle'), textData['android_build_gradle']);
+		}
+		fs.writeFileSync(path.join(outdir, 'gradle.properties'), textData['android_gradle_properties']);
+		fs.writeFileSync(path.join(outdir, 'gradlew'), textData['android_gradlew']);
+		fs.writeFileSync(path.join(outdir, 'gradlew.bat'), textData['android_gradlew_bat']);
+		let settings = textData['android_settings_gradle'];
 		settings = settings.replace(/{name}/g, project.getName());
 		fs.writeFileSync(path.join(outdir, 'settings.gradle'), settings);
 
-		fs.copyFileSync(path.join(indir, 'app', 'gitignore'), path.join(outdir, 'app', '.gitignore'));
-		fs.copyFileSync(targetOptions.proguardRulesPath, path.join(outdir, 'app', 'proguard-rules.pro'));
+		fs.ensureDirSync(path.join(outdir, 'app'));
+		fs.writeFileSync(path.join(outdir, 'app', '.gitignore'), textData['android_app_gitignore']);
+		if (targetOptions.proguardRulesPath) {
+			fs.copyFileSync(targetOptions.proguardRulesPath, path.join(outdir, 'app', 'proguard-rules.pro'));
+		}
+		else {
+			fs.writeFileSync(path.join(outdir, 'app', 'proguard-rules.pro'), textData['android_app_proguard_rules_pro']);
+		}
 
-		this.writeAppGradle(project, outdir, from, targetOptions);
+		this.writeAppGradle(project, outdir, from, targetOptions, textData);
 
-		this.writeCMakeLists(project, indir, outdir, from, targetOptions);
+		this.writeCMakeLists(project, outdir, from, targetOptions, textData);
 
 		fs.ensureDirSync(path.join(outdir, 'app', 'src'));
 		// fs.emptyDirSync(path.join(outdir, 'app', 'src'));
 
 		fs.ensureDirSync(path.join(outdir, 'app', 'src', 'main'));
 
-		this.writeManifest(indir, outdir, targetOptions);
+		this.writeManifest(outdir, targetOptions, textData);
 
-		let strings = fs.readFileSync(path.join(indir, 'main', 'res', 'values', 'strings.xml'), 'utf8');
+		let strings = textData['android_main_res_values_strings_xml'];
 		strings = strings.replace(/{name}/g, project.getName());
 		fs.ensureDirSync(path.join(outdir, 'app', 'src', 'main', 'res', 'values'));
 		fs.writeFileSync(path.join(outdir, 'app', 'src', 'main', 'res', 'values', 'strings.xml'), strings);
 
 		this.exportIcons(project.icon, outdir, from, to);
 
-		fs.copyFileSync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'));
-		fs.copyFileSync(path.join(indir, 'gradle', 'wrapper', 'gradle-wrapper.properties'), path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.properties'));
+		fs.ensureDirSync(path.join(outdir, 'gradle', 'wrapper'));
+		fs.writeFileSync(path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), binaryData['android_gradle_wrapper_gradle_wrapper_jar']);
+		fs.writeFileSync(path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.properties'), textData['android_gradle_wrapper_gradle_wrapper_properties']);
 
-		fs.copyFileSync(path.join(indir, 'idea', 'gitignore'), path.join(outdir, 'idea', '.gitignore'));
-		fs.copyFileSync(path.join(indir, 'idea', 'gradle.xml'), path.join(outdir, '.idea', 'gradle.xml'));
-		fs.copyFileSync(path.join(indir, 'idea', 'misc.xml'), path.join(outdir, '.idea', 'misc.xml'));
-		let modules = fs.readFileSync(path.join(indir, 'idea', 'modules.xml'), 'utf8');
+		fs.writeFileSync(path.join(outdir, '.idea', '.gitignore'), textData['android_idea_gitignore']);
+		fs.writeFileSync(path.join(outdir, '.idea', 'gradle.xml'), textData['android_idea_gradle_xml']);
+		fs.writeFileSync(path.join(outdir, '.idea', 'misc.xml'), textData['android_idea_misc_xml']);
+		let modules = textData['android_idea_modules_xml'];
 		modules = modules.replace(/{name}/g, project.getName());
-		fs.copyFileSync(path.join(indir, 'idea', 'modules.xml'), path.join(outdir, '.idea', 'modules.xml'));
 		fs.writeFileSync(path.join(outdir, '.idea', 'modules.xml'), modules);
 		fs.ensureDirSync(path.join(outdir, '.idea', 'modules'));
-		fs.copyFileSync(path.join(indir, 'idea', 'modules', 'My Application.iml'), path.join(outdir, '.idea', 'modules', project.getName() + '.xml'));
+		fs.writeFileSync(path.join(outdir, '.idea', 'modules', project.getName() + '.xml'), textData['android_idea_modules_my_application_iml']);
 
 		if (targetOptions.customFilesPath != null) {
 			const dir = targetOptions.customFilesPath;
 			if (!fs.existsSync(dir)) throw dir + ' folder does not exist';
-			fs.copyFileSync(dir, outdir);
+			fs.copyDirSync(dir, outdir);
 		}
 
-		if (project.getDebugDir().length > 0) fs.copyFileSync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
+		if (project.getDebugDir().length > 0) fs.copyDirSync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
 	}
 
-	writeAppGradle(project: Project, outdir: string, from: string, targetOptions: TargetOptions) {
+	writeAppGradle(project: Project, outdir: string, from: string, targetOptions: TargetOptions, textData: any) {
 		let cflags = '';
 		for (let flag of project.cFlags)
 			cflags += flag + ' ';
@@ -137,7 +151,13 @@ export class AndroidExporter extends Exporter {
 		for (let flag of project.cppFlags)
 			cppflags += flag + ' ';
 
-		let gradle = fs.readFileSync(targetOptions.buildGradlePath, 'utf8');
+		let gradle = null;
+		if (targetOptions.buildGradlePath) {
+			gradle = fs.readFileSync(targetOptions.buildGradlePath, 'utf8');
+		}
+		else {
+			gradle = textData['android_app_build_gradle'];
+		}
 		gradle = gradle.replace(/{package}/g, targetOptions.package);
 		gradle = gradle.replace(/{versionCode}/g, targetOptions.versionCode.toString());
 		gradle = gradle.replace(/{versionName}/g, targetOptions.versionName);
@@ -188,8 +208,8 @@ export class AndroidExporter extends Exporter {
 		fs.writeFileSync(path.join(outdir, 'app', 'build.gradle'), gradle);
 	}
 
-	writeCMakeLists(project: Project, indir: string, outdir: string, from: string, targetOptions: TargetOptions) {
-		let cmake = fs.readFileSync(path.join(indir, 'app', 'CMakeLists.txt'), 'utf8');
+	writeCMakeLists(project: Project, outdir: string, from: string, targetOptions: TargetOptions, textData: any) {
+		let cmake = textData['android_app_cmakelists_txt'];
 
 		let debugDefines = '';
 		for (const def of project.getDefines()) {
@@ -247,8 +267,8 @@ export class AndroidExporter extends Exporter {
 		return fs.readFileSync(cmakePath, 'utf8') === cmake;
 	}
 
-	writeManifest(indir: string, outdir: string, targetOptions: TargetOptions) {
-		let manifest = fs.readFileSync(path.join(indir, 'main', 'AndroidManifest.xml'), 'utf8');
+	writeManifest(outdir: string, targetOptions: TargetOptions, textData: any) {
+		let manifest = textData['android_main_androidmanifest_xml'];
 		manifest = manifest.replace(/{package}/g, targetOptions.package);
 		manifest = manifest.replace(/{installLocation}/g, targetOptions.installLocation);
 		manifest = manifest.replace(/{versionCode}/g, targetOptions.versionCode.toString());
