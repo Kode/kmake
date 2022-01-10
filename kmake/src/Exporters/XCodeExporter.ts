@@ -263,7 +263,7 @@ export class XCodeExporter extends Exporter {
 		// const black = 0xff;
 		for (let i = 0; i < icons.length; ++i) {
 			const icon = icons[i];
-			Icon.exportPng(project.icon, path.resolve(to, 'Images.xcassets', 'AppIcon.appiconset', icon.idiom + icon.scale + 'x' + icon.size + '.png'), icon.size * icon.scale, icon.size * icon.scale, icon.background, from);
+			await Icon.exportPng(project.icon, path.resolve(to, 'Images.xcassets', 'AppIcon.appiconset', icon.idiom + icon.scale + 'x' + icon.size + '.png'), icon.size * icon.scale, icon.size * icon.scale, icon.background, from);
 		}
 
 		let plistname = '';

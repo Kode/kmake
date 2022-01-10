@@ -119,7 +119,7 @@ export class AndroidExporter extends Exporter {
 		fs.ensureDirSync(path.join(outdir, 'app', 'src', 'main', 'res', 'values'));
 		fs.writeFileSync(path.join(outdir, 'app', 'src', 'main', 'res', 'values', 'strings.xml'), strings);
 
-		this.exportIcons(project.icon, outdir, from, to);
+		await this.exportIcons(project.icon, outdir, from, to);
 
 		fs.ensureDirSync(path.join(outdir, 'gradle', 'wrapper'));
 		fs.writeFileSync(path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), binaryData['android_gradle_wrapper_gradle_wrapper_jar']);
@@ -284,15 +284,15 @@ export class AndroidExporter extends Exporter {
 		fs.writeFileSync(path.join(outdir, 'app', 'src', 'main', 'AndroidManifest.xml'), manifest);
 	}
 
-	exportIcons(icon: string, outdir: string, from: string, to: string) {
+	async exportIcons(icon: string, outdir: string, from: string, to: string) {
 		const folders = ['mipmap-mdpi', 'mipmap-hdpi', 'mipmap-xhdpi', 'mipmap-xxhdpi', 'mipmap-xxxhdpi'];
 		const dpis = [48, 72, 96, 144, 192];
 		for (let i = 0; i < dpis.length; ++i) {
 			const folder = folders[i];
 			const dpi = dpis[i];
 			fs.ensureDirSync(path.join(outdir, 'app', 'src', 'main', 'res', folder));
-			Icon.exportPng(icon, path.resolve(to, this.safeName, 'app', 'src', 'main', 'res', folder, 'ic_launcher.png'), dpi, dpi, undefined, from);
-			Icon.exportPng(icon, path.resolve(to, this.safeName, 'app', 'src', 'main', 'res', folder, 'ic_launcher_round.png'), dpi, dpi, undefined, from);
+			await Icon.exportPng(icon, path.resolve(to, this.safeName, 'app', 'src', 'main', 'res', folder, 'ic_launcher.png'), dpi, dpi, undefined, from);
+			await Icon.exportPng(icon, path.resolve(to, this.safeName, 'app', 'src', 'main', 'res', folder, 'ic_launcher_round.png'), dpi, dpi, undefined, from);
 		}
 	}
 }
