@@ -922,6 +922,42 @@
             '<@(deps_files)',
           ],
         },
+        {
+          'action_name': 'linux_idea_misc_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/linux/idea/misc.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/linux_idea_misc_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'linux_idea_misc_xml',
+            'kmake/Data/linux/idea/misc.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'linux_idea_workspace_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/linux/idea/workspace.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/linux_idea_workspace_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'linux_idea_workspace_xml',
+            'kmake/Data/linux/idea/workspace.xml',
+            '<@(_outputs)',
+          ],
+        },
       ],
     }, # node_lib_target_name
     {

@@ -34,6 +34,9 @@
 #include "stream_base-inl.h"
 #include "string_bytes.h"
 
+#include "linux_idea_misc_xml.h"
+#include "linux_idea_workspace_xml.h"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
