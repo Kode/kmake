@@ -7,7 +7,7 @@ def main():
 
 	output_file = open(sys.argv[3], "w")
 	output_file.write("#include <stdint.h>\n\n")
-	output_file.write("const uint8_t " + sys.argv[1] + "[] = {")
+	output_file.write("static const uint8_t " + sys.argv[1] + "[] = {")
 	
 	while (byte := input_file.read(1)):
 		output_file.write("0x")

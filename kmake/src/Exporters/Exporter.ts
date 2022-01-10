@@ -40,18 +40,16 @@ export abstract class Exporter {
 	}
 
 	exportCLion(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		return; // TODO
-		
 		let name = project.getSafeName();
 
 		const indir = path.join(__dirname, '..', '..', 'Data', 'linux');
 		fs.ensureDirSync(path.resolve(to, name, '.idea'));
 
-		let misc = fs.readFileSync(path.join(indir, 'idea', 'misc.xml'), 'utf8');
+		let misc = require('fs').getEmbeddedData()['linux_idea_misc_xml'];
 		misc = misc.replace(/{root}/g, path.resolve(from));
 		fs.writeFileSync(path.join(to, name, '.idea', 'misc.xml'), misc, 'utf8');
 
-		let workspace = fs.readFileSync(path.join(indir, 'idea', 'workspace.xml'), 'utf8');
+		let workspace = require('fs').getEmbeddedData()['linux_idea_workspace_xml'];
 		workspace = workspace.replace(/{workingdir}/g, path.resolve(project.getDebugDir()));
 		workspace = workspace.replace(/{project}/g, name);
 		workspace = workspace.replace(/{target}/g, name);

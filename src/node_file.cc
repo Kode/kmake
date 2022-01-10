@@ -2406,6 +2406,17 @@ static void Mkdtemp(const FunctionCallbackInfo<Value>& args) {
   }
 }
 
+static void GetEmbeddedData(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args);
+  Isolate* isolate = env->isolate();
+
+  Local<Object> data = Object::New(isolate);
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "linux_idea_misc_xml"), FIXED_ONE_BYTE_STRING(isolate, linux_idea_misc_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "linux_idea_workspace_xml"), FIXED_ONE_BYTE_STRING(isolate, linux_idea_workspace_xml));
+
+  args.GetReturnValue().Set(data);
+}
+
 void BindingData::MemoryInfo(MemoryTracker* tracker) const {
   tracker->TrackField("stats_field_array", stats_field_array);
   tracker->TrackField("stats_field_bigint_array", stats_field_bigint_array);
@@ -2507,6 +2518,8 @@ void Initialize(Local<Object> target,
   env->SetMethod(target, "lutimes", LUTimes);
 
   env->SetMethod(target, "mkdtemp", Mkdtemp);
+
+  env->SetMethod(target, "getEmbeddedData", GetEmbeddedData);
 
   target
       ->Set(context,
@@ -2624,6 +2637,8 @@ void RegisterExternalReferences(ExternalReferenceRegistry* registry) {
 
   registry->Register(Mkdtemp);
   registry->Register(NewFSReqCallback);
+
+  registry->Register(GetEmbeddedData);
 
   registry->Register(FileHandle::New);
   registry->Register(FileHandle::Close);
