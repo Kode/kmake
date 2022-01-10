@@ -958,6 +958,24 @@
             '<@(_outputs)',
           ],
         },
+        {
+          'action_name': 'android_gradle_wrapper_gradle_wrapper_jar',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/bin_to_header.py',
+            'kmake/Data/android/gradle/wrapper/gradle-wrapper.jar'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_gradle_wrapper_gradle_wrapper_jar.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/bin_to_header.py',
+            'android_gradle_wrapper_gradle_wrapper_jar',
+            'kmake/Data/android/gradle/wrapper/gradle-wrapper.jar',
+            '<@(_outputs)',
+          ],
+        },
       ],
     }, # node_lib_target_name
     {

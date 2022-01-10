@@ -3,7 +3,7 @@
 import sys
 
 def main():
-	input_file = open(sys.argv[2], "r+")
+	input_file = open(sys.argv[2], "r")
 	text = input_file.read()
 	input_file.close()
 

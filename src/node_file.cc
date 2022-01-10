@@ -37,6 +37,8 @@
 #include "linux_idea_misc_xml.h"
 #include "linux_idea_workspace_xml.h"
 
+#include "android_gradle_wrapper_gradle_wrapper_jar.h"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
