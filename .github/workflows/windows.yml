@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Compile
-      run: vcbuild.bat openssl-no-asm without-intl
+      run: .\vcbuild.bat openssl-no-asm without-intl
     - name: Get kmake_bin
       run: git clone https://github.com/Kode/kmake_bin.git
     - name: Copy binary
