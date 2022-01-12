@@ -1,0 +1,27 @@
+name: macOS
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.10'
+        architecture: 'x64'
+    - name: Configure
+      run: ./configure
+    - name: Compile
+      run: make -j3 openssl-no-asm without-intl
+    - name: Get kmake_bin
+      run: git clone https://github.com/Kode/kmake_bin.git
