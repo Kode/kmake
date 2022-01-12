@@ -12,15 +12,15 @@ jobs:
   build:
 
     runs-on: ubuntu-18.04
-    compiler: gcc
-    gcc: 10
-    
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8.10'
         architecture: 'x64'
+    - name: Setup GCC
+      run: sudo update-alternatives --set gcc /usr/bin/gcc-10
     - name: Apt Update
       run: sudo apt-get update
     - name: Configure
