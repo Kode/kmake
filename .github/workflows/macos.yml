@@ -34,8 +34,8 @@ jobs:
     - name: Add binary
       run: git -C kmake_bin add .
     - name: Commit binary
-      run: git -C kmake_bin commit -a -m "Update macOS binary to ${env:GITHUB_SHA}."
+      run: git -C kmake_bin commit -a -m "Update macOS binary to $GITHUB_SHA."
     - name: Push binary
-      run: git -C kmake_bin push https://Kode-Robbot:${env:ROBBOT_PASS}@github.com/Kode/kmake_bin.git main --tags
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
