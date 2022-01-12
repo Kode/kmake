@@ -20,8 +20,8 @@ jobs:
         python-version: '3.8.10'
         architecture: 'x64'
     - name: Configure
-      run: ./configure
+      run: ./configure --openssl-no-asm --without-intl
     - name: Compile
-      run: make -j3 openssl-no-asm without-intl
+      run: make -j3
     - name: Get kmake_bin
       run: git clone https://github.com/Kode/kmake_bin.git
