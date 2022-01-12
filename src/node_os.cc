@@ -194,6 +194,8 @@ static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
 
   args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
 #else
+  Environment* env = Environment::GetCurrent(args);
+  Isolate* isolate = env->isolate();
   std::vector<Local<Value>> result;
   args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
 #endif
