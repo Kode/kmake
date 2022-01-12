@@ -1251,7 +1251,7 @@
           'process_outputs_as_sources': 1,
           'inputs': [
             'tools/text_to_header.py',
-            'kmake/Data/android/idea/modules/My Application.iml'
+            'kmake/Data/android/idea/modules/MyApplication.iml'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/android_idea_modules_my_application_iml.h',
@@ -1260,7 +1260,7 @@
             '<(python)',
             'tools/text_to_header.py',
             'android_idea_modules_my_application_iml',
-            'kmake/Data/android/idea/modules/My Application.iml',
+            'kmake/Data/android/idea/modules/MyApplication.iml',
             '<@(_outputs)',
           ],
         },
