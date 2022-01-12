@@ -137,6 +137,7 @@ static void GetCPUInfo(const FunctionCallbackInfo<Value>& args) {
 
 
 static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
+#ifdef _WIN32
   SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
   DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
   BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
@@ -160,10 +161,14 @@ static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
   }
 
   args.GetReturnValue().Set(proper_cpu_count);
+#else
+  args.GetReturnValue().Set(1);
+#endif
 }
 
 
 static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
+#ifdef _WIN32
   Environment* env = Environment::GetCurrent(args);
   Isolate* isolate = env->isolate();
 
@@ -188,6 +193,10 @@ static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
   RegCloseKey(key);
 
   args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
+#else
+  std::vector<Local<Value>> result;
+  args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
+#endif
 }
 
 
