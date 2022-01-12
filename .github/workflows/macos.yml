@@ -25,3 +25,17 @@ jobs:
       run: make -j3
     - name: Get kmake_bin
       run: git clone https://github.com/Kode/kmake_bin.git
+    - name: Copy binary
+      run: cp out/Release/node kmake_bin/kmake-osx
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+    - name: Add binary
+      run: git -C kmake_bin add .
+    - name: Commit binary
+      run: git -C kmake_bin commit -a -m "Update macOS binary to ${env:GITHUB_SHA}."
+    - name: Push binary
+      run: git -C kmake_bin push https://Kode-Robbot:${env:ROBBOT_PASS}@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
