@@ -202,7 +202,7 @@ export class Project {
 	vsdeploy: boolean = false;
 	linkTimeOptimization: boolean = true;
 	macOSnoArm: boolean = false;
-	noFlatten: boolean = false;
+	noFlatten: boolean = true;
 	isStaticLib: boolean = false;
 	isDynamicLib: boolean = false;
 
@@ -282,9 +282,21 @@ export class Project {
 		}
 	}
 
+	flattenSubProjects() {
+		for (let sub of this.subProjects) {
+			sub.noFlatten = false;
+			sub.flattenSubProjects();
+		}
+	}
+
 	flatten() {
+		this.noFlatten = false;
+		this.flattenSubProjects();
+	}
+
+	internalFlatten() {
 		let out = [];
-		for (let sub of this.subProjects) sub.flatten();
+		for (let sub of this.subProjects) sub.internalFlatten();
 		for (let sub of this.subProjects) {
 			if (sub.noFlatten) {
 				out.push(sub);
@@ -660,27 +672,14 @@ export class Project {
 
 	async addProject(directory: string, options: any = {}, projectFile: string = 'kfile.js') {
 		this.subProjects.push(await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile));
-		let proj = this.subProjects[this.subProjects.length - 1];
-		if (options.noFlatten !== undefined) {
-			proj.noFlatten = options.noFlatten;
-			if (options.lib) {
-				proj.addDefine('KINC_NO_MAIN');
-				proj.isStaticLib = true;
-			}
-			else if (options.dynlib) {
-				proj.addDefine('KINC_NO_MAIN');
-				proj.addDefine('KINC_DYNAMIC_COMPILE');
-				proj.isDynamicLib = true;
-			}
-		}
 	}
 
 	static async create(directory: string, platform: string, korefile: string) {
 		Project.platform = platform;
 		let project = await loadProject(path.resolve(directory), null, korefile);
-		if (project.kore && !project.kincProcessed) {
-			await project.addProject(Project.koreDir);
-		}
+		// if (project.kore && !project.kincProcessed) {
+		// await project.addProject(Project.koreDir);
+		// }
 		let defines = getDefines(platform, project.isRotated());
 		for (let define of defines) {
 			project.addDefine(define);

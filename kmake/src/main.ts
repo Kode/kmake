@@ -278,7 +278,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 		}
 		project.resolveBackends();
 		project.searchFiles(undefined);
-		project.flatten();
+		project.internalFlatten();
 		if (options.lib) {
 			project.addDefine('KINC_NO_MAIN');
 			project.isStaticLib = true;
@@ -327,7 +327,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 
 	// Run again to find new shader files for Metal
 	project.searchFiles(undefined);
-	project.flatten();
+	project.internalFlatten();
 
 	let exporter: Exporter = null;
 	if (options.vscode) {
