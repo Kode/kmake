@@ -258,7 +258,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 }
 
 async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, options: any) {
-	log.info('kincfile found.');
+	log.info('kfile found.');
 	if (options.onlyshaders) {
 		log.info('Only compiling shaders.');
 	}

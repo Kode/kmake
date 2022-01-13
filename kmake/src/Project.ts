@@ -65,7 +65,7 @@ let projectInProgress = 0;
 process.on('exit', (code: number) => {
 	if (projectInProgress > 0) {
 		process.exitCode = 1;
-		console.error('Error: kincfile or korefile did not call resolve, no project created.');
+		console.error('Error: kfile did not call resolve, no project created.');
 	}
 });
 
@@ -73,7 +73,7 @@ let scriptdir = '.';
 // let lastScriptDir = '.';
 let cppEnabled = false;
 
-async function loadProject(directory: string, options: any =  {}, korefile: string = 'kincfile.js'): Promise<Project> {
+async function loadProject(directory: string, options: any =  {}, korefile: string = 'kfile.js'): Promise<Project> {
 	if (korefile.toLowerCase().includes('korefile.js')) {
 		cppEnabled = true;
 	}
@@ -658,7 +658,7 @@ export class Project {
 		this.debugDir = path.resolve(this.basedir, debugDir);
 	}
 
-	async addProject(directory: string, options: any = {}, projectFile: string = 'kincfile.js') {
+	async addProject(directory: string, options: any = {}, projectFile: string = 'kfile.js') {
 		this.subProjects.push(await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile));
 		let proj = this.subProjects[this.subProjects.length - 1];
 		if (options.noFlatten !== undefined) {

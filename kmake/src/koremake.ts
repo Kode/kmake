@@ -143,10 +143,10 @@ let options = [
 		default: 'Project'
 	},
 	{
-		full: 'kincfile',
+		full: 'kfile',
 		value: true,
-		description: 'Name of your kincfile, defaults to "kincfile.js"',
-		default: 'kincfile.js'
+		description: 'Name of your kfile, defaults to "kfile.js"',
+		default: 'kfile.js'
 	},
 	{
 		full: 'compiler',
@@ -182,7 +182,7 @@ let options = [
 	{
 		full: 'toLanguage',
 		value: true,
-		description: 'Export IDL specified in kincfile to wrapper for specified language'
+		description: 'Export IDL specified in kfile to wrapper for specified language'
 	}
 ];
 
