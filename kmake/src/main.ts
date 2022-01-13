@@ -566,7 +566,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 	}
 	catch (error) {
 		log.error(error);
-		return '';
+		throw error;
 	}
 	let solutionName = project.getSafeName();
 	if (options.onlyshaders) {
