@@ -12,7 +12,17 @@ function ensureDirSync(dir: string): void {
 }
 
 function copyDirSync(from: string, to: string): void {
-	// TODO
+	ensureDirSync(to);
+	const files = fsReaddirSync(from);
+	for (const file of files) {
+		const stat = fsStatSync(path.join(from, file));
+		if (stat.isDirectory()) {
+			copyDirSync(path.join(from, file), path.join(to, file));
+		}
+		else {
+			fsCopyFileSync(path.join(from, file), path.join(to, file));
+		}
+	}
 }
 
 export {
