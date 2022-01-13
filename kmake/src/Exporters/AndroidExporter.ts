@@ -38,6 +38,7 @@ export class AndroidExporter extends Exporter {
 		this.safeName = project.getSafeName();
 		const indir = path.join(__dirname, '..', '..', 'Data', 'android');
 		const outdir = path.join(to.toString(), this.safeName);
+		fs.ensureDirSync(outdir);
 
 		const targetOptions: TargetOptions = {
 			package: 'tech.kode.kore',
@@ -125,6 +126,7 @@ export class AndroidExporter extends Exporter {
 		fs.writeFileSync(path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.jar'), binaryData['android_gradle_wrapper_gradle_wrapper_jar']);
 		fs.writeFileSync(path.join(outdir, 'gradle', 'wrapper', 'gradle-wrapper.properties'), textData['android_gradle_wrapper_gradle_wrapper_properties']);
 
+		fs.ensureDirSync(path.join(outdir, '.idea'));
 		fs.writeFileSync(path.join(outdir, '.idea', '.gitignore'), textData['android_idea_gitignore']);
 		fs.writeFileSync(path.join(outdir, '.idea', 'gradle.xml'), textData['android_idea_gradle_xml']);
 		fs.writeFileSync(path.join(outdir, '.idea', 'misc.xml'), textData['android_idea_misc_xml']);
