@@ -24,7 +24,7 @@ export class EmscriptenExporter extends Exporter {
 		if (debugDirName.endsWith('/')) debugDirName = debugDirName.substr(0, debugDirName.length - 1);
 		if (debugDirName.lastIndexOf('/') >= 0) debugDirName = debugDirName.substr(debugDirName.lastIndexOf('/') + 1);
 		
-		fs.copyFileSync(path.resolve(from, debugDirName), path.resolve(outputPath, debugDirName));
+		fs.copyDirSync(path.resolve(from, debugDirName), path.resolve(outputPath, debugDirName));
 
 		for (let fileobject of project.getFiles()) {
 			let file = fileobject.file;
