@@ -1096,8 +1096,12 @@ export class VisualStudioExporter extends Exporter {
 				if (Project.koreDir && Project.koreDir.toString() !== '' && !noshaders && file.file.endsWith('.glsl')) {
 					this.p('<CustomBuild Include="' + this.nicePath(from, to, file.file) + '">', 2);
 					this.p('<FileType>Document</FileType>', 2);
-					this.p('<Command>"' + path.relative(to, path.join(from, Project.koreDir, 'Tools', 'krafix', 'krafix.exe')) + '" ' + getShaderLang() + ' "%(FullPath)" ' + path.relative(to, path.join(from, project.getDebugDir(), '%(Filename)')).replace(/\//g, '\\') + ' .\\ ' + platform + ' --quiet</Command>', 2);
-					this.p('<Outputs>' + path.relative(to, path.join(from, project.getDebugDir(), '%(Filename)')).replace(/\//g, '\\') + ';%(Outputs)</Outputs>', 2);
+					
+					const shaderDir = path.isAbsolute(project.getDebugDir()) ? project.getDebugDir() : path.join(from, project.getDebugDir());
+					const krafix = path.isAbsolute(Project.koreDir) ? path.join(Project.koreDir, 'Tools', 'krafix', 'krafix.exe') : path.join(from, Project.koreDir, 'Tools', 'krafix', 'krafix.exe');
+
+					this.p('<Command>"' + path.relative(to, krafix) + '" ' + getShaderLang() + ' "%(FullPath)" ' + path.relative(to, path.join(shaderDir, '%(Filename)')).replace(/\//g, '\\') + ' .\\ ' + platform + ' --quiet</Command>', 2);
+					this.p('<Outputs>' + path.relative(to, path.join(shaderDir, '%(Filename)')).replace(/\//g, '\\') + ';%(Outputs)</Outputs>', 2);
 					this.p('<Message>%(Filename)%(Extension)</Message>', 2);
 					this.p('</CustomBuild>', 2);
 				}
