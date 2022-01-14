@@ -315,8 +315,10 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 				let parsedFile = path.parse(file.file);
 				log.info('Compiling shader ' + (shaderIndex + 1) + ' of ' + shaderCount + ' (' + parsedFile.name + ').');
 
+				const shader = path.isAbsolute(file.file) ? file.file : path.join(file.projectDir, file.file);
+
 				++shaderIndex;
-				await compileShader(from, shaderLang(platform), file.file, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
+				await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
 		}
 	}
