@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - master
+    - testing
   pull_request:
     branches:
     - master
@@ -42,6 +43,111 @@ jobs:
       id: commit
       continue-on-error: true
       run: git -C kmake_bin commit -a -m "Update Linux binary to $GITHUB_SHA."
+    - name: Tag binary
+      if: steps.commit.outcome == 'success'
+      run: git -C kmake_bin tag linux_$GITHUB_SHA
+    - name: Push binary
+      id: push1
+      if: steps.commit.outcome == 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Pull
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      run: git -C kmake_bin pull
+    - name: Push binary again
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+
+  build-armhf:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.10'
+        architecture: 'x64'
+    - name: Add arch i386
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt update -q -y
+        sudo apt upgrade -q -y
+    - name: Setup GCC
+      run: |
+        sudo apt install build-essential gcc-8 g++-8 binutils-multiarch libc6-dev:i386 gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-8-multilib gcc-8-multilib-arm-linux-gnueabihf g++-8-multilib g++-8-multilib-arm-linux-gnueabihf
+    - name: Add temporary install dir
+      run: mkdir install
+    - name: Configure
+      run: CC=/usr/bin/arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 CC_host="gcc-8 -m32" CXX_host="g++-8 -m32" ./configure --prefix=install --dest-cpu=arm --cross-compiling --dest-os=linux --openssl-no-asm --without-intl
+    - name: Compile
+      run: make -j$(nproc)
+    - name: Get kmake_bin
+      run: git clone https://github.com/Kode/kmake_bin.git
+    - name: Copy binary
+      run: cp out/Release/node kmake_bin/kmake-linuxarm
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+    - name: Commit binary
+      id: commit
+      continue-on-error: true
+      run: git -C kmake_bin commit -a -m "Update Linux ARM binary to $GITHUB_SHA."
+    - name: Tag binary
+      if: steps.commit.outcome == 'success'
+      run: git -C kmake_bin tag linux_$GITHUB_SHA
+    - name: Push binary
+      id: push1
+      if: steps.commit.outcome == 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Pull
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      run: git -C kmake_bin pull
+    - name: Push binary again
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+
+  build-aarch64:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.10'
+        architecture: 'x64'
+    - name: Setup GCC
+      run: |
+        sudo apt update -q -y
+        sudo apt upgrade -q -y
+        sudo apt install build-essential gcc-8 g++-8 binutils-aarch64-linux-gnu gcc-8-aarch64-linux-gnu g++-8-aarch64-linux-gnu
+    - name: Add temporary install dir
+      run: mkdir install
+    - name: Configure
+      run: CC=/usr/bin/aarch64-linux-gnu-gcc-8 CXX=aarch64-linux-gnu-g++-8 CC_host="gcc-8" CXX_host="g++-8" ./configure --prefix=install --dest-cpu=arm64 --cross-compiling --dest-os=linux --openssl-no-asm --without-intl
+    - name: Compile
+      run: make -j$(nproc)
+    - name: Get kmake_bin
+      run: git clone https://github.com/Kode/kmake_bin.git
+    - name: Copy binary
+      run: cp out/Release/node kmake_bin/kmake-linuxaarch64
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+    - name: Commit binary
+      id: commit
+      continue-on-error: true
+      run: git -C kmake_bin commit -a -m "Update Linux ARM64 binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
       run: git -C kmake_bin tag linux_$GITHUB_SHA
