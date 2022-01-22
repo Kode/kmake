@@ -190,14 +190,14 @@ export class AndroidExporter extends Exporter {
 			}
 			if (Options.architecture !== Architecture.Default) {
 				arch = `ndk {abiFilters '${arch}'}`;
-			}			
+			}
 		}
 		gradle = gradle.replace(/{architecture}/g, arch);
 		gradle = gradle.replace(/{cflags}/g, cflags);
 
 		cppflags = '-frtti -fexceptions ' + cppflags;
-		if (project.cpp11) {
-			cppflags = '-std=c++11 ' + cppflags;
+		if (project.cppStd !== "") {
+			cppflags = '-std=' + project.cppStd + ' ' + cppflags;
 		}
 		gradle = gradle.replace(/{cppflags}/g, cppflags);
 

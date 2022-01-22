@@ -108,6 +108,9 @@ export class LinuxExporter extends Exporter {
 		this.p();
 
 		let cline = '-std=c99 ';
+		if (project.cStd !== "") {
+			cline = '-std=' + project.cStd + ' ';
+		}
 		if (options.dynlib) {
 			cline += '-fPIC ';
 		}
@@ -140,9 +143,12 @@ export class LinuxExporter extends Exporter {
 		}
 
 		let cpp = '';
-		if (project.cpp11 && options.compiler !== Compiler.Clang) {
-			cpp = '-std=c++11';
+		if (project.cppStd !== "") {
+			cpp = '-std=' + project.cppStd + ' ';
 		}
+		//if (project.cppStd === "c++11" && options.compiler !== Compiler.Clang) {
+		//	cpp = '-std=c++11';
+		//}
 
 		let output = '-o "' + project.getSafeName() + '"';
 		if (options.lib) {
@@ -214,8 +220,8 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="1" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 5);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-g" />', 5);
 		this.p('</Compiler>', 4);
@@ -227,8 +233,8 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="0" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 5);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-O2" />', 5);
 		this.p('</Compiler>', 4);
@@ -238,8 +244,8 @@ export class LinuxExporter extends Exporter {
 		this.p('</Target>', 3);
 		this.p('</Build>', 2);
 		this.p('<Compiler>', 2);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 3);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-Wall" />', 3);
 		for (const def of project.getDefines()) {

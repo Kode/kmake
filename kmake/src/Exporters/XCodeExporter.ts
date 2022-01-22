@@ -641,7 +641,7 @@ export class XCodeExporter extends Exporter {
 		this.p('CLANG_WARN_SUSPICIOUS_MOVE = YES;', 4);
 		this.p('CLANG_WARN_UNREACHABLE_CODE = YES;', 4);
 		this.p('CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;', 4);
-		
+
 		if (platform === Platform.iOS) {
 			this.p('"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";', 4);
 		}
@@ -651,8 +651,8 @@ export class XCodeExporter extends Exporter {
 		this.p('COPY_PHASE_STRIP = NO;', 4);
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
 		this.p('ENABLE_TESTABILITY = YES;', 4);
-		if (project.c11) {
-			this.p('GCC_C_LANGUAGE_STANDARD = c11;', 4);
+		if (project.cStd !== "" && project.cStd !== "c99") {
+			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
 		}
 		else {
 			this.p('GCC_C_LANGUAGE_STANDARD = gnu99;', 4);
@@ -742,8 +742,8 @@ export class XCodeExporter extends Exporter {
 		}
 		this.p('ENABLE_NS_ASSERTIONS = NO;', 4);
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
-		if (project.c11) {
-			this.p('GCC_C_LANGUAGE_STANDARD = c11;', 4);
+		if (project.cStd !== "" && project.cStd !== "c99") {
+			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
 		}
 		else {
 			this.p('GCC_C_LANGUAGE_STANDARD = gnu99;', 4);
