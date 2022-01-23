@@ -100,7 +100,7 @@ jobs:
         git -C kmake_bin commit -a -m "Update Linux ARM binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C kmake_bin tag linux_$GITHUB_SHA
+      run: git -C kmake_bin tag linuxarm_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
@@ -153,7 +153,7 @@ jobs:
         git -C kmake_bin commit -a -m "Update Linux ARM64 binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C kmake_bin tag linux_$GITHUB_SHA
+      run: git -C kmake_bin tag linuxaarch64_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
