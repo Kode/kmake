@@ -95,7 +95,9 @@ jobs:
     - name: Commit binary
       id: commit
       continue-on-error: true
-      run: git -C kmake_bin commit -a -m "Update Linux ARM binary to $GITHUB_SHA."
+      run: |
+        git -C kmake_bin add kmake-linuxarm
+        git -C kmake_bin commit -a -m "Update Linux ARM binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
       run: git -C kmake_bin tag linux_$GITHUB_SHA
@@ -146,7 +148,9 @@ jobs:
     - name: Commit binary
       id: commit
       continue-on-error: true
-      run: git -C kmake_bin commit -a -m "Update Linux ARM64 binary to $GITHUB_SHA."
+      run: |
+        git -C kmake_bin add kmake-linuxaarch64
+        git -C kmake_bin commit -a -m "Update Linux ARM64 binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
       run: git -C kmake_bin tag linux_$GITHUB_SHA
