@@ -7,8 +7,12 @@ export function run(name: string, from: string) {
 		fs.writeFileSync(path.join(from, projectfile),
 			'let project = new Project(\'New Project\');\n'
 			+ '\n'
+			+ 'await project.addProject(\'Kinc\');\n'
+			+ '\n'
 			+ 'project.addFile(\'Sources/**\');\n'
 			+ 'project.setDebugDir(\'Deployment\');\n'
+			+ '\n'
+			+ 'project.flatten();\n'
 			+ '\n'
 			+ 'resolve(project);\n',
 		{ encoding: 'utf8' });
