@@ -1,4 +1,5 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
+import { GraphicsApi } from 'kmake/GraphicsApi';
 import { Project } from 'kmake/Project';
 import { Architecture } from 'kmake/Architecture';
 import { Options } from 'kmake/Options';
@@ -46,7 +47,7 @@ export class AndroidExporter extends Exporter {
 			versionCode: 1,
 			versionName: '1.0',
 			compileSdkVersion: 29,
-			minSdkVersion: 14,
+			minSdkVersion: Options.graphicsApi === GraphicsApi.Vulkan ? 24 : 15,
 			targetSdkVersion: 29,
 			screenOrientation: 'sensor',
 			permissions: new Array<string>(),
