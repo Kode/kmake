@@ -24,7 +24,7 @@ jobs:
         usesh: true
         mem: 2048
         prepare: pkg install -y gmake bash python38
-        run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j$(nproc)'
+        run: bash -c 'alias nproc='sysctl -n hw.ncpu' && export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j$(nproc)'
     - name: Get kmake_bin
       run: git clone https://github.com/Kode/kmake_bin.git
     - name: Copy binary
