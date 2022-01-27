@@ -17,10 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Get Submodules
-      run: git submodule update --init --recursive
-    - name: Get Kinc
-      run: git clone --recursive https://github.com/Kode/Kinc.git
     - name: Compile in FreeBSD VM
       id: build
       uses: vmactions/freebsd-vm@v0.1.5
