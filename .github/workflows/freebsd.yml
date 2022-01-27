@@ -1,0 +1,64 @@
+name: FreeBSD
+
+on:
+  push:
+    branches:
+    - master
+    - FreeBSD-Build
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+
+    runs-on: macos-10.15
+    name: FreeBSD build
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get Submodules
+      run: git submodule update --init --recursive
+    - name: Get Kinc
+      run: git clone --recursive https://github.com/Kode/Kinc.git
+    - name: Compile in FreeBSD VM
+      id: build
+      uses: vmactions/freebsd-vm@v0.1.5
+      with:
+        usesh: true
+        mem: 2048
+        prepare: pkg install -y gmake bash
+        run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j$(nproc)'
+    - name: Get kmake_bin
+      run: git clone https://github.com/Kode/kmake_bin.git
+    - name: Copy binary
+      run: cp out/Release/node kmake_bin/kmake-freebsd
+    - name: Set name
+      run: git config --global user.name "Robbot"
+    - name: Set email
+      run: git config --global user.email "robbot2019@robdangero.us"
+    - name: Commit binary
+      id: commit
+      continue-on-error: true
+      run: |
+        git -C kmake_bin add kmake-freebsd
+        git -C kmake_bin commit -a -m "Update FreeBSD binary to $GITHUB_SHA."
+    - name: Tag binary
+      if: steps.commit.outcome == 'success'
+      run: git -C kmake_bin tag freebsd_$GITHUB_SHA
+    - name: Push binary
+      id: push1
+      if: steps.commit.outcome == 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
+    - name: Pull
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      run: git -C kmake_bin pull
+    - name: Push binary again
+      if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
+      continue-on-error: true
+      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
