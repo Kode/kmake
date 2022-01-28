@@ -107,7 +107,7 @@ export class LinuxExporter extends Exporter {
 		this.p('DEF=' + defline);
 		this.p();
 
-		let cline = '-std=c99 ';
+		let cline = '';
 		if (project.cStd !== "") {
 			cline = '-std=' + project.cStd + ' ';
 		}
@@ -120,6 +120,9 @@ export class LinuxExporter extends Exporter {
 		this.p('CFLAGS=' + cline);
 
 		let cppline = '';
+		if (project.cppStd !== "") {
+			cppline = '-std=' + project.cppStd + ' ';
+		}
 		if (options.dynlib) {
 			cppline += '-fPIC ';
 		}
@@ -143,12 +146,6 @@ export class LinuxExporter extends Exporter {
 		}
 
 		let cpp = '';
-		if (project.cppStd !== "") {
-			cpp = '-std=' + project.cppStd + ' ';
-		}
-		//if (project.cppStd === "c++11" && options.compiler !== Compiler.Clang) {
-		//	cpp = '-std=c++11';
-		//}
 
 		let output = '-o "' + project.getSafeName() + '"';
 		if (options.lib) {
@@ -361,9 +358,12 @@ export class LinuxExporter extends Exporter {
 			let file = fileobject.file;
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc')) {
 				let args = [file.endsWith('.c') ? '/usr/bin/clang' : '/usr/bin/clang++', optimization, '-c', '-o', (options.debug ? 'Debug' : 'Release') + ofiles[file] + '.o'];
-				if (file.endsWith('.c')) {
-					args.push('-std=c99');
-				}
+				//if (file.endsWith('.c')) {
+				//	args.push('-std=' + (project.cStd !== '' ? project.cStd : 'c99'));
+				//}
+				//else if (file.endsWith('.cpp')) {
+				//	args.push('-std=' + (project.cppStd !== '' ? project.cppStd : 'c++11'));
+				//}
 				if (options.dynlib) {
 					args.push('-fPIC');
 				}
