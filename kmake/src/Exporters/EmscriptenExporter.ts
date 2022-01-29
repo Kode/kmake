@@ -23,7 +23,7 @@ export class EmscriptenExporter extends Exporter {
 		debugDirName = debugDirName.replace(/\\/g, '/');
 		if (debugDirName.endsWith('/')) debugDirName = debugDirName.substr(0, debugDirName.length - 1);
 		if (debugDirName.lastIndexOf('/') >= 0) debugDirName = debugDirName.substr(debugDirName.lastIndexOf('/') + 1);
-		
+
 		fs.copyDirSync(path.resolve(from, debugDirName), path.resolve(outputPath, debugDirName));
 
 		for (let fileobject of project.getFiles()) {
@@ -98,12 +98,12 @@ export class EmscriptenExporter extends Exporter {
 		if (!options.debug) {
 			defline += '-DNDEBUG ';
 		}
-		
+
 		for (const def of project.getDefines()) {
 			if (def.config && def.config.toLowerCase() === 'debug' && !options.debug) {
 				continue;
 			}
-			
+
 			if (def.config && def.config.toLowerCase() === 'release' && options.debug) {
 				continue;
 			}
@@ -115,6 +115,9 @@ export class EmscriptenExporter extends Exporter {
 		this.p();
 
 		let cline = '-std=c99 ';
+		if (project.cStd !== "") {
+			cline = '-std=' + project.cStd + ' ';
+		}
 		if (options.dynlib) {
 			cline += '-fPIC ';
 		}

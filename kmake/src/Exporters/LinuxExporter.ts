@@ -107,7 +107,10 @@ export class LinuxExporter extends Exporter {
 		this.p('DEF=' + defline);
 		this.p();
 
-		let cline = '-std=c99 ';
+		let cline = '';
+		if (project.cStd !== "") {
+			cline = '-std=' + project.cStd + ' ';
+		}
 		if (options.dynlib) {
 			cline += '-fPIC ';
 		}
@@ -117,6 +120,9 @@ export class LinuxExporter extends Exporter {
 		this.p('CFLAGS=' + cline);
 
 		let cppline = '';
+		if (project.cppStd !== "") {
+			cppline = '-std=' + project.cppStd + ' ';
+		}
 		if (options.dynlib) {
 			cppline += '-fPIC ';
 		}
@@ -140,9 +146,6 @@ export class LinuxExporter extends Exporter {
 		}
 
 		let cpp = '';
-		if (project.cpp11 && options.compiler !== Compiler.Clang) {
-			cpp = '-std=c++11';
-		}
 
 		let output = '-o "' + project.getSafeName() + '"';
 		if (options.lib) {
@@ -214,8 +217,8 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="1" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 5);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-g" />', 5);
 		this.p('</Compiler>', 4);
@@ -227,8 +230,8 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="0" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 5);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-O2" />', 5);
 		this.p('</Compiler>', 4);
@@ -238,8 +241,8 @@ export class LinuxExporter extends Exporter {
 		this.p('</Target>', 3);
 		this.p('</Build>', 2);
 		this.p('<Compiler>', 2);
-		if (project.cpp11) {
-			this.p('<Add option="-std=c++11" />', 3);
+		if (project.cppStd !== "") {
+			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-Wall" />', 3);
 		for (const def of project.getDefines()) {
@@ -356,7 +359,10 @@ export class LinuxExporter extends Exporter {
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc')) {
 				let args = [file.endsWith('.c') ? '/usr/bin/clang' : '/usr/bin/clang++', optimization, '-c', '-o', (options.debug ? 'Debug' : 'Release') + ofiles[file] + '.o'];
 				if (file.endsWith('.c')) {
-					args.push('-std=c99');
+					args.push('-std=' + (project.cStd !== '' ? project.cStd : 'c99'));
+				}
+				else if (file.endsWith('.cpp')) {
+					args.push('-std=' + (project.cppStd !== '' ? project.cppStd : 'c++11'));
 				}
 				if (options.dynlib) {
 					args.push('-fPIC');
