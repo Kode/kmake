@@ -39,21 +39,6 @@ export class VSCodeExporter extends Exporter {
 		}
 	}
 
-	intelliSenseMode(platform: string): string {
-		if (platform === Platform.Windows) {
-			return 'msvc-x64';
-		}
-		else if (platform === Platform.Linux) {
-			return 'gcc-x64';
-		}
-		else if (platform === Platform.OSX) {
-			return 'clang-x64';
-		}
-		else {
-			return 'unknown platform';
-		}
-	}
-
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		fs.ensureDirSync(path.join(from, '.vscode'));
 		this.writeFile(path.join(from, '.vscode', 'c_cpp_properties.json'));
@@ -78,9 +63,9 @@ export class VSCodeExporter extends Exporter {
 			includePath: includes,
 			defines: defines,
 			compilerPath: this.compilerPath(platform),
-			cStandard: 'c11',
-			cppStandard: 'c++17',
-			intelliSenseMode: this.intelliSenseMode(platform)
+			cStandard: project.cStd,
+			cppStandard: project.cppStd,
+			intelliSenseMode: "${default}"
 		};
 
 		if (platform === Platform.Windows) {

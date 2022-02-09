@@ -189,8 +189,8 @@ export class Project {
 	includes: {file: string, options: any}[];
 	excludes: string[];
 	customs: {file: string, command: string, output: string}[];
-	cpp11: boolean;
-	c11: boolean;
+	cppStd: string = "";
+	cStd: string = "";
 	kore: boolean;
 	kincProcessed: boolean;
 	targetOptions: any;
@@ -228,8 +228,8 @@ export class Project {
 		this.systemDependendLibraries = {};
 		this.includes = [];
 		this.excludes = [];
-		this.cpp11 = false;
-		this.c11 = false;
+		this.cppStd = "";
+		this.cStd = "";
 		this.kore = true;
 		this.targetOptions = {
 			android: {},
@@ -305,11 +305,11 @@ export class Project {
 				out.push(sub);
 			}
 			else {
-				if (sub.cpp11) {
-					this.cpp11 = true;
+				if (sub.cppStd !== "") {
+					this.cppStd = sub.cppStd;
 				}
-				if (sub.c11) {
-					this.c11 = true;
+				if (sub.cStd !== "") {
+					this.cStd = sub.cStd;
 				}
 				if (sub.cmd) {
 					this.cmd = true;
@@ -397,7 +397,7 @@ export class Project {
 					}
 				}
 			}
-			
+
 		}
 		this.subProjects = out;
 	}
@@ -671,6 +671,22 @@ export class Project {
 
 	setDebugDir(debugDir: string) {
 		this.debugDir = path.resolve(this.basedir, debugDir);
+	}
+
+	getCppStd() {
+		return this.cppStd;
+	}
+
+	setCppStd(std: string) {
+		this.cppStd = std;
+	}
+
+	getCStd() {
+		return this.cStd;
+	}
+
+	setCStd(std: string) {
+		this.cStd = std;
 	}
 
 	async addProject(directory: string, options: any = {}, projectFile: string = 'kfile.js') {
