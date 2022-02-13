@@ -36,7 +36,7 @@ function run(from: string, to: string, width: number, height: number, format: st
 function findIcon(icon: string, from: string) {
 	if (icon && fs.existsSync(path.join(from, icon))) return path.join(from, icon);
 	if (fs.existsSync(path.join(from, 'icon.png'))) return path.join(from, 'icon.png');
-	else return path.join(__dirname, '..', '..', 'kraffiti', 'icon.png');
+	else return path.join(__dirname, '..', 'kraffiti', 'icon.png');
 }
 
 export async function exportIco(icon: string, to: string, from: string) {
