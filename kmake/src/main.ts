@@ -417,6 +417,11 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 			log.error(data.toString(), false);
 		});
 
+		make.on('error', (err: any) => {
+			log.error('Compilation failed.');
+			reject();
+		});
+
 		make.on('close', function (code: number) {
 			const time = (new Date().getTime() - startDate.getTime()) / 1000;
 			const min = Math.floor(time / 60);
@@ -447,19 +452,25 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 				}
 				if (options.run) {
 					if ((options.customTarget && options.customTarget.baseTarget === Platform.OSX) || options.target === Platform.OSX) {
-						child_process.spawn('build/Release/' + project.name + '.app/Contents/MacOS/' + project.name, {stdio: 'inherit', cwd: options.to});
+						const spawned = child_process.spawn('build/Release/' + project.name + '.app/Contents/MacOS/' + project.name, {stdio: 'inherit', cwd: options.to});
+						spawned.on('close', () => { resolve(); });
 					}
 					else if ((options.customTarget && (options.customTarget.baseTarget === Platform.Linux || options.customTarget.baseTarget === Platform.Windows)) || options.target === Platform.Linux || options.target === Platform.Windows) {
-						child_process.spawn(path.resolve(options.from.toString(), project.getDebugDir(), solutionName), [], {stdio: 'inherit', cwd: path.resolve(options.from.toString(), project.getDebugDir())});
+						const spawned = child_process.spawn(path.resolve(options.from.toString(), project.getDebugDir(), solutionName), [], {stdio: 'inherit', cwd: path.resolve(options.from.toString(), project.getDebugDir())});
+						spawned.on('close', () => { resolve(); });
 					}
 					else {
 						log.info('--run not yet implemented for this platform');
+						resolve();
 					}
+				}
+				else {
+					resolve();
 				}
 			}
 			else {
 				log.error('Compilation failed.');
-				process.exit(code);
+				reject();
 			}
 		});
 	});
