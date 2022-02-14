@@ -48,8 +48,11 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
-#include <iostream>
 #include <list>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -719,8 +722,11 @@ class AsyncHooks : public MemoryRetainer {
   inline void no_force_checks();
   inline Environment* env();
 
+  // NB: This call does not take (co-)ownership of `execution_async_resource`.
+  // The lifetime of the `v8::Local<>` pointee must last until
+  // `pop_async_context()` or `clear_async_id_stack()` are called.
   inline void push_async_context(double async_id, double trigger_async_id,
-      v8::Local<v8::Object> execution_async_resource_);
+      v8::Local<v8::Object> execution_async_resource);
   inline bool pop_async_context(double async_id);
   inline void clear_async_id_stack();  // Used in fatal exceptions.
 
@@ -771,6 +777,8 @@ class AsyncHooks : public MemoryRetainer {
   friend class Environment;  // So we can call the constructor.
   explicit AsyncHooks(v8::Isolate* isolate, const SerializeInfo* info);
 
+  [[noreturn]] void FailWithCorruptedAsyncStack(double expected_async_id);
+
   // Stores the ids of the current execution context stack.
   AliasedFloat64Array async_ids_stack_;
   // Attached to a Uint32Array that tracks the number of active hooks for
@@ -782,7 +790,7 @@ class AsyncHooks : public MemoryRetainer {
   void grow_async_ids_stack();
 
   v8::Global<v8::Array> js_execution_async_resources_;
-  std::vector<v8::Global<v8::Object>> native_execution_async_resources_;
+  std::vector<v8::Local<v8::Object>> native_execution_async_resources_;
 
   // Non-empty during deserialization
   const SerializeInfo* info_ = nullptr;
@@ -1207,6 +1215,7 @@ class Environment : public MemoryRetainer {
   inline bool tracks_unmanaged_fds() const;
   inline bool hide_console_windows() const;
   inline bool no_global_search_paths() const;
+  inline bool no_browser_globals() const;
   inline uint64_t thread_id() const;
   inline worker::Worker* worker_context() const;
   Environment* worker_parent_env() const;
@@ -1552,7 +1561,7 @@ class Environment : public MemoryRetainer {
   // src/node_postmortem_metadata.cc to calculate offsets and generate debug
   // symbols for Environment, which assumes that the position of members in
   // memory are predictable. For more information please refer to
-  // `doc/guides/node-postmortem-support.md`
+  // `doc/contributing/node-postmortem-support.md`
   friend int GenDebugSymbols();
   HandleWrapQueue handle_wrap_queue_;
   ReqWrapQueue req_wrap_queue_;

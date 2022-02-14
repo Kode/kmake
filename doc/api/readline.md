@@ -33,7 +33,7 @@ The following simple example illustrates the basic use of the `readline` module.
 
 ```mjs
 import * as readline from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'process';
+import { stdin as input, stdout as output } from 'node:process';
 
 const rl = readline.createInterface({ input, output });
 
@@ -923,6 +923,11 @@ questionExample();
 <!-- YAML
 added: v0.7.7
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: Passing an invalid callback to the `callback` argument
+                 now throws `ERR_INVALID_ARG_TYPE` instead of
+                 `ERR_INVALID_CALLBACK`.
   - version: v12.7.0
     pr-url: https://github.com/nodejs/node/pull/28674
     description: The stream's write() callback and return value are exposed.
@@ -946,6 +951,11 @@ in a specified direction identified by `dir`.
 <!-- YAML
 added: v0.7.7
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: Passing an invalid callback to the `callback` argument
+                 now throws `ERR_INVALID_ARG_TYPE` instead of
+                 `ERR_INVALID_CALLBACK`.
   - version: v12.7.0
     pr-url: https://github.com/nodejs/node/pull/28641
     description: The stream's write() callback and return value are exposed.
@@ -1059,15 +1069,8 @@ a `'resize'` event on the `output` if or when the columns ever change
 ([`process.stdout`][] does this automatically when it is a TTY).
 
 When creating a `readline.Interface` using `stdin` as input, the program
-will not terminate until it receives `EOF` (<kbd>Ctrl</kbd>+<kbd>D</kbd> on
-Linux/macOS, <kbd>Ctrl</kbd>+<kbd>Z</kbd> followed by <kbd>Return</kbd> on
-Windows).
-If you want your application to exit without waiting for user input, you can
-[`unref()`][] the standard input stream:
-
-```js
-process.stdin.unref();
-```
+will not terminate until it receives an [EOF character][]. To exit without
+waiting for user input, call `process.stdin.unref()`.
 
 #### Use of the `completer` function
 
@@ -1102,6 +1105,11 @@ function completer(linePartial, callback) {
 <!-- YAML
 added: v0.7.7
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: Passing an invalid callback to the `callback` argument
+                 now throws `ERR_INVALID_ARG_TYPE` instead of
+                 `ERR_INVALID_CALLBACK`.
   - version: v12.7.0
     pr-url: https://github.com/nodejs/node/pull/28674
     description: The stream's write() callback and return value are exposed.
@@ -1123,6 +1131,11 @@ given [TTY][] `stream`.
 <!-- YAML
 added: v0.7.7
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: Passing an invalid callback to the `callback` argument
+                 now throws `ERR_INVALID_ARG_TYPE` instead of
+                 `ERR_INVALID_CALLBACK`.
   - version: v12.7.0
     pr-url: https://github.com/nodejs/node/pull/28674
     description: The stream's write() callback and return value are exposed.
@@ -1314,6 +1327,16 @@ const { createInterface } = require('readline');
     <td></td>
   </tr>
   <tr>
+    <td><kbd>Ctrl</kbd>+<kbd>Y</kbd></td>
+    <td>Yank (Recall) the previously deleted text</td>
+    <td>Only works with text deleted by <kbd>Ctrl</kbd>+<kbd>U</kbd> or <kbd>Ctrl</kbd>+<kbd>K</kbd></td>
+  </tr>
+  <tr>
+    <td><kbd>Meta</kbd>+<kbd>Y</kbd></td>
+    <td>Cycle among previously deleted lines</td>
+    <td>Only available when the last keystroke is <kbd>Ctrl</kbd>+<kbd>Y</kbd></td>
+  </tr>
+  <tr>
     <td><kbd>Ctrl</kbd>+<kbd>A</kbd></td>
     <td>Go to start of line</td>
     <td></td>
@@ -1346,6 +1369,23 @@ const { createInterface } = require('readline');
   <tr>
     <td><kbd>Ctrl</kbd>+<kbd>P</kbd></td>
     <td>Previous history item</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><kbd>Ctrl</kbd>+<kbd>-</kbd></td>
+    <td>Undo previous change</td>
+    <td>Any keystroke that emits key code <code>0x1F</code> will do this action.
+    In many terminals, for example <code>xterm</code>,
+    this is bound to <kbd>Ctrl</kbd>+<kbd>-</kbd>.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><kbd>Ctrl</kbd>+<kbd>6</kbd></td>
+    <td>Redo previous change</td>
+    <td>Many terminals don't have a default redo keystroke.
+    We choose key code <code>0x1E</code> to perform redo.
+    In <code>xterm</code>, it is bound to <kbd>Ctrl</kbd>+<kbd>6</kbd>
+    by default.</td>
     <td></td>
   </tr>
   <tr>
@@ -1395,6 +1435,7 @@ const { createInterface } = require('readline');
   </tr>
 </table>
 
+[EOF character]: https://en.wikipedia.org/wiki/End-of-file#EOF_character
 [Readable]: stream.md#readable-streams
 [TTY]: tty.md
 [TTY keybindings]: #tty-keybindings
@@ -1406,5 +1447,4 @@ const { createInterface } = require('readline');
 [`process.stdin`]: process.md#processstdin
 [`process.stdout`]: process.md#processstdout
 [`rl.close()`]: #rlclose
-[`unref()`]: net.md#socketunref
 [reading files]: #example-read-file-stream-line-by-line

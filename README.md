@@ -12,7 +12,7 @@
 
 Node.js is an open-source, cross-platform, JavaScript runtime environment.
 
-For information on using Node.js, see the [Node.js Website][].
+For information on using Node.js, see the [Node.js website][].
 
 The Node.js project uses an [open governance model](./GOVERNANCE.md). The
 [OpenJS Foundation][] provides support for the project.
@@ -194,6 +194,8 @@ For information about the governance of the Node.js project, see
   **Mary Marchini** <<oss@mmarchini.me>> (she/her)
 * [MylesBorins](https://github.com/MylesBorins) -
   **Myles Borins** <<myles.borins@gmail.com>> (he/him)
+* [RaisinTen](https://github.com/RaisinTen) -
+  **Darshan Sen** <<raisinten@gmail.com>> (he/him)
 * [richardlau](https://github.com/richardlau) -
   **Richard Lau** <<rlau@redhat.com>>
 * [ronag](https://github.com/ronag) -
@@ -310,8 +312,6 @@ For information about the governance of the Node.js project, see
   **Daniel Bevenius** <<daniel.bevenius@gmail.com>> (he/him)
 * [danielleadams](https://github.com/danielleadams) -
   **Danielle Adams** <<adamzdanielle@gmail.com>> (she/her)
-* [davisjam](https://github.com/davisjam) -
-  **Jamie Davis** <<davisjam@vt.edu>> (he/him)
 * [DerekNonGeneric](https://github.com/DerekNonGeneric) -
   **Derek Lewis** <<DerekNonGeneric@inf.is>> (he/him)
 * [devnexen](https://github.com/devnexen) -
@@ -360,6 +360,8 @@ For information about the governance of the Node.js project, see
   **Jan Krems** <<jan.krems@gmail.com>> (he/him)
 * [joaocgreis](https://github.com/joaocgreis) -
   **João Reis** <<reis@janeasystems.com>>
+* [joesepi](https://github.com/joesepi) -
+  **Joe Sepi** <<sepi@joesepi.com>> (he/him)
 * [joyeecheung](https://github.com/joyeecheung) -
   **Joyee Cheung** <<joyeec9h3@gmail.com>> (she/her)
 * [juanarbol](https://github.com/juanarbol) -
@@ -378,10 +380,10 @@ For information about the governance of the Node.js project, see
   **Denys Otrishko** <<shishugi@gmail.com>> (he/him)
 * [Lxxyx](https://github.com/Lxxyx) -
   **Zijian Liu** <<lxxyxzj@gmail.com>> (he/him)
-* [mafintosh](https://github.com/mafintosh) -
-  **Mathias Buus** <<mathiasbuus@gmail.com>> (he/him)
 * [mcollina](https://github.com/mcollina) -
   **Matteo Collina** <<matteo.collina@gmail.com>> (he/him)
+* [Mesteery](https://github.com/Mesteery) -
+  **Mestery** <<mestery@protonmail.com>> (he/him)
 * [mhdawson](https://github.com/mhdawson) -
   **Michael Dawson** <<midawson@redhat.com>> (he/him)
 * [miladfarca](https://github.com/miladfarca) -
@@ -486,6 +488,8 @@ For information about the governance of the Node.js project, see
   **Claudio Rodriguez** <<cjrodr@yahoo.com>>
 * [DavidCai1993](https://github.com/DavidCai1993) -
   **David Cai** <<davidcai1993@yahoo.com>> (he/him)
+* [davisjam](https://github.com/davisjam) -
+  **Jamie Davis** <<davisjam@vt.edu>> (he/him)
 * [digitalinfinity](https://github.com/digitalinfinity) -
   **Hitesh Kanwathirtha** <<digitalinfinity@gmail.com>> (he/him)
 * [eljefedelrodeodeljefe](https://github.com/eljefedelrodeodeljefe) -
@@ -540,6 +544,8 @@ For information about the governance of the Node.js project, see
   **Aleksey Smolenchuk** <<lxe@lxe.co>>
 * [maclover7](https://github.com/maclover7) -
   **Jon Moss** <<me@jonathanmoss.me>> (he/him)
+* [mafintosh](https://github.com/mafintosh) -
+  **Mathias Buus** <<mathiasbuus@gmail.com>> (he/him)
 * [matthewloring](https://github.com/matthewloring) -
   **Matthew Loring** <<mattloring@google.com>>
 * [micnic](https://github.com/micnic) -
@@ -631,7 +637,7 @@ For information about the governance of the Node.js project, see
 
 <!--lint enable prohibited-strings-->
 
-Collaborators follow the [Collaborator Guide](./doc/guides/collaborator-guide.md) in
+Collaborators follow the [Collaborator Guide](./doc/contributing/collaborator-guide.md) in
 maintaining the Node.js project.
 
 ### Triagers
@@ -645,7 +651,7 @@ maintaining the Node.js project.
 * [marsonya](https://github.com/marsonya) -
   **Akhil Marsonya** <<akhil.marsonya27@gmail.com>> (he/him)
 * [Mesteery](https://github.com/Mesteery) -
-  **Mestery** <<mestery@pm.me>>
+  **Mestery** <<mestery@protonmail.com>> (he/him)
 * [PoojaDurgad](https://github.com/PoojaDurgad) -
   **Pooja Durgad** <<Pooja.D.P@ibm.com>>
 * [RaisinTen](https://github.com/RaisinTen) -
@@ -697,7 +703,7 @@ gpg --keyserver pool.sks-keyservers.net --recv-keys 108F52B48DB57BB0CC439B2997B0
 gpg --keyserver pool.sks-keyservers.net --recv-keys B9E2F5981AA6E0CD28160D9FF13993A75599653C
 ```
 
-See the section above on [Verifying Binaries](#verifying-binaries) for how to
+See the section above on [Verifying binaries](#verifying-binaries) for how to
 use these keys to verify a downloaded file.
 
 <details>
@@ -725,6 +731,30 @@ use these keys to verify a downloaded file.
 
 </details>
 
+### Security release stewards
+
+When possible, the commitment to take slots in the
+security release steward rotation is made by companies in order
+to ensure individuals who act as security stewards have the
+support and recognition from their employer to be able to
+prioritize security releases. Security release stewards manage security
+releases on a rotation basis as outlined in the
+[security release process](./doc/contributing/security-release-process.md).
+
+* Datadog
+  * [bengl](https://github.com/bengl) -
+    **Bryan English** <<bryan@bryanenglish.com>> (he/him)
+  * [vdeturckheim](https://github.com/vdeturckheim) -
+    **Vladimir de Turckheim** <<vlad2t@hotmail.com>> (he/him)
+* NearForm
+  * [mcollina](https://github.com/mcollina) -
+    **Matteo Collina** <<matteo.collina@gmail.com>> (he/him)
+* Red Hat and IBM
+  * [joesepi](https://github.com/joesepi) -
+    **Joe Sepi** <<joesepi@ibm.com>> (he/him)
+  * [mhdawson](https://github.com/mhdawson) -
+    **Michael Dawson** <<midawson@redhat.com>> (he/him)
+
 ## License
 
 Node.js is available under the
@@ -735,8 +765,8 @@ license text.
 
 [Code of Conduct]: https://github.com/nodejs/admin/blob/HEAD/CODE_OF_CONDUCT.md
 [Contributing to the project]: CONTRIBUTING.md
-[Node.js Website]: https://nodejs.org/
+[Node.js website]: https://nodejs.org/
 [OpenJS Foundation]: https://openjsf.org/
-[Strategic initiatives]: doc/guides/strategic-initiatives.md
-[Technical values and prioritization]: doc/guides/technical-values.md
+[Strategic initiatives]: doc/contributing/strategic-initiatives.md
+[Technical values and prioritization]: doc/contributing/technical-values.md
 [Working Groups]: https://github.com/nodejs/TSC/blob/HEAD/WORKING_GROUPS.md

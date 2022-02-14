@@ -464,6 +464,10 @@ server.listen({
 });
 ```
 
+When `exclusive` is `true` and the underlying handle is shared, it is
+possible that several workers query a handle with different backlogs.
+In this case, the first `backlog` passed to the master process will be used.
+
 Starting an IPC server as root may cause the server path to be inaccessible for
 unprivileged users. Using `readableAll` and `writableAll` will make the server
 accessible for all users.
@@ -1136,6 +1140,12 @@ algorithm.
 
 <!-- YAML
 added: v0.1.90
+changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: Passing an invalid callback to the `callback` argument
+                 now throws `ERR_INVALID_ARG_TYPE` instead of
+                 `ERR_INVALID_CALLBACK`.
 -->
 
 * `timeout` {number}

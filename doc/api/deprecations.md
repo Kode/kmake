@@ -1595,6 +1595,9 @@ Type: End-of-Life
 
 <!-- YAML
 changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41479
+    description: End-of-Life.
   - version: v9.0.0
     pr-url: https://github.com/nodejs/node/pull/14249
     description: Runtime deprecation.
@@ -1603,25 +1606,15 @@ changes:
     description: Documentation-only deprecation.
 -->
 
-Type: Runtime
+Type: End-of-Life
 
-`tls.parseCertString()` is a trivial parsing helper that was made public by
-mistake. This function can usually be replaced with:
+`tls.parseCertString()` was a trivial parsing helper that was made public by
+mistake. While it was supposed to parse certificate subject and issuer strings,
+it never handled multi-value Relative Distinguished Names correctly.
 
-```js
-const querystring = require('querystring');
-querystring.parse(str, '\n', '=');
-```
-
-This function is not completely equivalent to `querystring.parse()`. One
-difference is that `querystring.parse()` does url decoding:
-
-```console
-> querystring.parse('%E5%A5%BD=1', '\n', '=');
-{ '好': '1' }
-> tls.parseCertString('%E5%A5%BD=1');
-{ '%E5%A5%BD': '1' }
-```
+Earlier versions of this document suggested using `querystring.parse()` as an
+alternative to `tls.parseCertString()`. However, `querystring.parse()` also does
+not handle all certificate subjects correctly and should not be used.
 
 ### DEP0077: `Module._debug()`
 
@@ -2898,10 +2891,9 @@ changes:
 
 Type: Runtime
 
-The `process.config` property is intended to provide access to configuration
-settings set when the Node.js binary was compiled. However, the property has
-been mutable by user code making it impossible to rely on. The ability to
-change the value has been deprecated and will be disabled in the future.
+The `process.config` property provides access to Node.js compile-time settings.
+However, the property is mutable and therefore subject to tampering. The ability
+to change the value will be removed in a future version of Node.js.
 
 ### DEP0151: Main index lookup and extension searching
 
@@ -3023,7 +3015,9 @@ it was an aborted or graceful destroy.
 
 <!-- YAML
 changes:
-  - version: v17.2.0
+  - version:
+      - v17.2.0
+      - v16.14.0
     pr-url: https://github.com/nodejs/node/pull/40860
     description: Documentation-only deprecation.
 -->
@@ -3047,6 +3041,53 @@ const w = new Writable({
 });
 ```
 
+### DEP0158: `buffer.slice(start, end)`
+
+<!-- YAML
+changes:
+  - version: v17.5.0
+    pr-url: https://github.com/nodejs/node/pull/41596
+    description: Documentation-only deprecation.
+-->
+
+Type: Documentation-only
+
+This method was deprecated because it is not compatible with
+`Uint8Array.prototype.slice()`, which is a superclass of `Buffer`.
+
+Use [`buffer.subarray`][] which does the same thing instead.
+
+### DEP0159: `ERR_INVALID_CALLBACK`
+
+<!-- YAML
+changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41678
+    description: End-of-Life.
+-->
+
+Type: End-of-Life
+
+This error code was removed due to adding more confusion to
+the errors used for value type validation.
+
+### DEPXXXX: `process.on('multipleResolves', handler)`
+
+<!-- YAML
+changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41896
+    description: Runtime deprecation.
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/41872
+    description: Documentation-only deprecation.
+-->
+
+Type: Runtime.
+
+This event was deprecated because it did not work with V8 promise combinators
+which diminished its usefulness.
+
 [Legacy URL API]: url.md#legacy-url-api
 [NIST SP 800-38D]: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
 [RFC 6066]: https://tools.ietf.org/html/rfc6066#section-3
@@ -3069,6 +3110,7 @@ const w = new Writable({
 [`WriteStream.open()`]: fs.md#class-fswritestream
 [`assert`]: assert.md
 [`asyncResource.runInAsyncScope()`]: async_context.md#asyncresourceruninasyncscopefn-thisarg-args
+[`buffer.subarray`]: buffer.md#bufsubarraystart-end
 [`child_process`]: child_process.md
 [`clearInterval()`]: timers.md#clearintervaltimeout
 [`clearTimeout()`]: timers.md#cleartimeouttimeout

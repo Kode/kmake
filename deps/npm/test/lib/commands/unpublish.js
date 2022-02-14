@@ -3,6 +3,23 @@ const { fake: mockNpm } = require('../../fixtures/mock-npm')
 
 let result = ''
 const noop = () => null
+const versions = async () => {
+  return {
+    versions: {
+      '1.0.0': {},
+      '1.0.1': {},
+    },
+  }
+}
+
+const singleVersion = async () => {
+  return {
+    versions: {
+      '1.0.0': {},
+    },
+  }
+}
+
 const config = {
   force: false,
   loglevel: 'silly',
@@ -26,7 +43,7 @@ const npm = mockNpm({
 const mocks = {
   libnpmaccess: { lsPackages: noop },
   libnpmpublish: { unpublish: noop },
-  'npm-registry-fetch': { json: noop },
+  'npm-registry-fetch': { json: versions },
   '../../../lib/utils/otplease.js': async (opts, fn) => fn(opts),
   '../../../lib/utils/get-identity.js': async () => 'foo',
   'proc-log': { silly () {}, verbose () {} },
@@ -59,8 +76,9 @@ t.test('no args --force', async t => {
 
   const libnpmpublish = {
     unpublish (spec, opts) {
+      t.ok(opts.log, 'gets passed a logger')
       t.equal(spec.raw, 'pkg@1.0.0', 'should unpublish expected spec')
-      t.same(
+      t.match(
         opts,
         {
           publishConfig: undefined,
@@ -160,12 +178,8 @@ t.test('unpublish <pkg>@version', async t => {
 
   const libnpmpublish = {
     unpublish (spec, opts) {
+      t.ok(opts.log, 'gets passed a logger')
       t.equal(spec.raw, 'pkg@1.0.0', 'should unpublish expected parsed spec')
-      t.same(
-        opts,
-        {},
-        'should unpublish with expected opts'
-      )
     },
   }
 
@@ -529,4 +543,33 @@ t.test('completion', async t => {
       expect: [],
     })
   })
+})
+
+t.test('show error on unpublish <pkg>@version with package.json and the last version', async t => {
+  const Unpublish = t.mock('../../../lib/commands/unpublish.js', {
+    ...mocks,
+    'npm-registry-fetch': { json: singleVersion },
+    path: { resolve: () => testDir, join: () => testDir + '/package.json' },
+  })
+  const unpublish = new Unpublish(npm)
+  await t.rejects(
+    unpublish.exec(['pkg@1.0.0']),
+    'Refusing to delete the last version of the package. ' +
+      'It will block from republishing a new version for 24 hours.\n' +
+      'Run with --force to do this.'
+  )
+})
+
+t.test('show error on unpublish <pkg>@version when the last version', async t => {
+  const Unpublish = t.mock('../../../lib/commands/unpublish.js', {
+    ...mocks,
+    'npm-registry-fetch': { json: singleVersion },
+  })
+  const unpublish = new Unpublish(npm)
+  await t.rejects(
+    unpublish.exec(['pkg@1.0.0']),
+    'Refusing to delete the last version of the package. ' +
+      'It will block from republishing a new version for 24 hours.\n' +
+      'Run with --force to do this.'
+  )
 })
