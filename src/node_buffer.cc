@@ -191,7 +191,7 @@ void CallbackInfo::OnBackingStoreFree() {
   // up the memory involved. In particular, the underlying `Environment` may
   // be gone at this point, so don’t attempt to call SetImmediateThreadsafe().
   if (callback_ == nullptr) return;
-
+return;
   env_->SetImmediateThreadsafe([self = std::move(self)](Environment* env) {
     CHECK_EQ(self->env_, env);  // Consistency check.
 
