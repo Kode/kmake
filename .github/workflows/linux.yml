@@ -19,17 +19,20 @@ jobs:
       with:
         python-version: '3.8.10'
         architecture: 'x64'
-    - name: Setup GCC
-      run: |
-        sudo apt install gcc-10 g++-10
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
-        sudo update-alternatives --set gcc /usr/bin/gcc-10
     - name: Apt Update
-      run: sudo apt-get update
+      run: sudo apt update
+    - name: Apt Install
+      run: sudo apt install clang --yes --quiet
     - name: Configure
       run: ./configure --openssl-no-asm --without-intl
+      env:
+        CC: clang
+        CXX: clang++
     - name: Compile
-      run: make -j2
+      run: make -j$(nproc)
+      env:
+        CC: clang
+        CXX: clang++
     - name: Get kmake_bin
       run: git clone https://github.com/Kode/kmake_bin.git
     - name: Copy binary
