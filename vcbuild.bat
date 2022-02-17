@@ -67,6 +67,7 @@ set link_module=
 set no_cctest=
 set cctest=
 set openssl_no_asm=
+set node_builtin_modules_path=
 set doc=
 set extra_msbuild_args=
 set exit_code=0
@@ -143,6 +144,7 @@ if /i "%1"=="link-module"   set "link_module= --link-module=%2%link_module%"&got
 if /i "%1"=="no-cctest"     set no_cctest=1&goto arg-ok
 if /i "%1"=="cctest"        set cctest=1&goto arg-ok
 if /i "%1"=="openssl-no-asm"   set openssl_no_asm=1&goto arg-ok
+if /i "%1"=="node-builtin-modules-path" set "node_builtin_modules_path= --node-builtin-modules-path=%2%node_builtin_modules_path%"&goto arg-ok-2
 if /i "%1"=="doc"           set doc=1&goto arg-ok
 if /i "%1"=="binlog"        set extra_msbuild_args=/binaryLogger:%config%\node.binlog&goto arg-ok
 
@@ -196,6 +198,7 @@ if defined i18n_arg         set configure_flags=%configure_flags% --with-intl=%i
 if defined config_flags     set configure_flags=%configure_flags% %config_flags%
 if defined target_arch      set configure_flags=%configure_flags% --dest-cpu=%target_arch%
 if defined openssl_no_asm   set configure_flags=%configure_flags% --openssl-no-asm
+if defined node_builtin_modules_path set configure_flags=%configure_flags% %node_builtin_modules_path%
 if defined DEBUG_HELPER     set configure_flags=%configure_flags% --verbose
 if "%target_arch%"=="x86" if "%PROCESSOR_ARCHITECTURE%"=="AMD64" set configure_flags=%configure_flags% --no-cross-compiling
 if "%target_arch%"=="arm64" set configure_flags=%configure_flags% --cross-compiling
