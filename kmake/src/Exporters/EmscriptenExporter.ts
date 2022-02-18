@@ -215,5 +215,6 @@ export class EmscriptenExporter extends Exporter {
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		this.exportMakefile(project, from, to, platform, vrApi, options);
+		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 }
