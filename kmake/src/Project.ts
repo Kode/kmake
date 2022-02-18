@@ -197,8 +197,8 @@ export class Project {
 	includes: {file: string, options: any}[];
 	excludes: string[];
 	customs: {file: string, command: string, output: string}[];
-	cppStd: string = "";
-	cStd: string = "";
+	cppStd: string = '';
+	cStd: string = '';
 	kore: boolean;
 	kincProcessed: boolean;
 	targetOptions: any;
@@ -236,8 +236,8 @@ export class Project {
 		this.systemDependendLibraries = {};
 		this.includes = [];
 		this.excludes = [];
-		this.cppStd = "";
-		this.cStd = "";
+		this.cppStd = '';
+		this.cStd = '';
 		this.kore = true;
 		this.targetOptions = {
 			android: {},
@@ -313,10 +313,10 @@ export class Project {
 				out.push(sub);
 			}
 			else {
-				if (sub.cppStd !== "") {
+				if (sub.cppStd !== '') {
 					this.cppStd = sub.cppStd;
 				}
-				if (sub.cStd !== "") {
+				if (sub.cStd !== '') {
 					this.cStd = sub.cStd;
 				}
 				if (sub.cmd) {

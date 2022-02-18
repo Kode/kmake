@@ -65,7 +65,7 @@ export class VSCodeExporter extends Exporter {
 			compilerPath: this.compilerPath(platform),
 			cStandard: project.cStd,
 			cppStandard: project.cppStd,
-			intelliSenseMode: "${default}"
+			intelliSenseMode: '${default}'
 		};
 
 		if (platform === Platform.Windows) {

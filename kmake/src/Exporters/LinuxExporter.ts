@@ -108,7 +108,7 @@ export class LinuxExporter extends Exporter {
 		this.p();
 
 		let cline = '';
-		if (project.cStd !== "") {
+		if (project.cStd !== '') {
 			cline = '-std=' + project.cStd + ' ';
 		}
 		if (options.dynlib) {
@@ -120,7 +120,7 @@ export class LinuxExporter extends Exporter {
 		this.p('CFLAGS=' + cline);
 
 		let cppline = '';
-		if (project.cppStd !== "") {
+		if (project.cppStd !== '') {
 			cppline = '-std=' + project.cppStd + ' ';
 		}
 		if (options.dynlib) {
@@ -217,7 +217,7 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="1" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cppStd !== "") {
+		if (project.cppStd !== '') {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-g" />', 5);
@@ -230,7 +230,7 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option type="0" />', 4);
 		this.p('<Option compiler="gcc" />', 4);
 		this.p('<Compiler>', 4);
-		if (project.cppStd !== "") {
+		if (project.cppStd !== '') {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-O2" />', 5);
@@ -241,7 +241,7 @@ export class LinuxExporter extends Exporter {
 		this.p('</Target>', 3);
 		this.p('</Build>', 2);
 		this.p('<Compiler>', 2);
-		if (project.cppStd !== "") {
+		if (project.cppStd !== '') {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-Wall" />', 3);

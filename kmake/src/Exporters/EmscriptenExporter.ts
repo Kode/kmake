@@ -115,7 +115,7 @@ export class EmscriptenExporter extends Exporter {
 		this.p();
 
 		let cline = '-std=c99 ';
-		if (project.cStd !== "") {
+		if (project.cStd !== '') {
 			cline = '-std=' + project.cStd + ' ';
 		}
 		if (options.dynlib) {

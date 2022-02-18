@@ -61,52 +61,64 @@ export abstract class Exporter {
 
 		this.p('project(' + name + ')');
 		switch (project.cppStd) {
-			case "gnu++03":
-			case "c++03": this.p('set(CMAKE_CXX_STANDARD 03)');
+			case 'gnu++03':
+			case 'c++03':
+				this.p('set(CMAKE_CXX_STANDARD 03)');
 				break;
-			case "gnu++11":
-			case "c++11": this.p('set(CMAKE_CXX_STANDARD 11)');
+			case 'gnu++11':
+			case 'c++11':
+				this.p('set(CMAKE_CXX_STANDARD 11)');
 				break;
-			case "gnu++14":
-			case "c++14": this.p('set(CMAKE_CXX_STANDARD 14)');
+			case 'gnu++14':
+			case 'c++14':
+				this.p('set(CMAKE_CXX_STANDARD 14)');
 				break;
-			case "gnu++17":
-			case "c++17": this.p('set(CMAKE_CXX_STANDARD 17)');
+			case 'gnu++17':
+			case 'c++17':
+				this.p('set(CMAKE_CXX_STANDARD 17)');
 				break;
-			case "gnu++2a":
-			case "c++2a":
-			case "gnu++20":
-			case "c++20": this.p('set(CMAKE_CXX_STANDARD 20)');
+			case 'gnu++2a':
+			case 'c++2a':
+			case 'gnu++20':
+			case 'c++20':
+				this.p('set(CMAKE_CXX_STANDARD 20)');
 				break;
-			case "gnu++2b":
-			case "c++2b":
-			case "gnu++23":
-			case "c++23": this.p('set(CMAKE_CXX_STANDARD 23)');
+			case 'gnu++2b':
+			case 'c++2b':
+			case 'gnu++23':
+			case 'c++23':
+				this.p('set(CMAKE_CXX_STANDARD 23)');
 				break;
-			default: this.p('set(CMAKE_CXX_STANDARD 98)');
+			default:
+				this.p('set(CMAKE_CXX_STANDARD 98)');
 				break;
 		}
 
 		switch (project.cStd) {
-			case "gnu9x":
-			case "gnu99":
-			case "c9x":
-			case "c99": this.p('set(CMAKE_C_STANDARD 99)');
+			case 'gnu9x':
+			case 'gnu99':
+			case 'c9x':
+			case 'c99':
+				this.p('set(CMAKE_C_STANDARD 99)');
 				break;
-			case "gnu1x":
-			case "gnu11":
-			case "c1x":
-			case "c11": this.p('set(CMAKE_C_STANDARD 11)');
+			case 'gnu1x':
+			case 'gnu11':
+			case 'c1x':
+			case 'c11':
+				this.p('set(CMAKE_C_STANDARD 11)');
 				break;
-			case "gnu18":
-			case "gnu17":
-			case "c18":
-			case "c17": this.p('set(CMAKE_C_STANDARD 17)');
+			case 'gnu18':
+			case 'gnu17':
+			case 'c18':
+			case 'c17':
+				this.p('set(CMAKE_C_STANDARD 17)');
 				break;
-			case "gnu2x":
-			case "c2x": this.p('set(CMAKE_C_STANDARD 23)');
+			case 'gnu2x':
+			case 'c2x':
+				this.p('set(CMAKE_C_STANDARD 23)');
 				break;
-			default: this.p('set(CMAKE_C_STANDARD 90)');
+			default:
+				this.p('set(CMAKE_C_STANDARD 90)');
 				break;
 		}
 

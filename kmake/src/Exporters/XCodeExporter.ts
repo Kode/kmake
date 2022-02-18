@@ -651,7 +651,7 @@ export class XCodeExporter extends Exporter {
 		this.p('COPY_PHASE_STRIP = NO;', 4);
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
 		this.p('ENABLE_TESTABILITY = YES;', 4);
-		if (project.cStd !== "" && project.cStd !== "c99") {
+		if (project.cStd !== '' && project.cStd !== 'c99') {
 			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
 		}
 		else {
@@ -742,7 +742,7 @@ export class XCodeExporter extends Exporter {
 		}
 		this.p('ENABLE_NS_ASSERTIONS = NO;', 4);
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
-		if (project.cStd !== "" && project.cStd !== "c99") {
+		if (project.cStd !== '' && project.cStd !== 'c99') {
 			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
 		}
 		else {

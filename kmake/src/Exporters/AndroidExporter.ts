@@ -196,7 +196,7 @@ export class AndroidExporter extends Exporter {
 		gradle = gradle.replace(/{cflags}/g, cflags);
 
 		cppflags = '-frtti -fexceptions ' + cppflags;
-		if (project.cppStd !== "") {
+		if (project.cppStd !== '') {
 			cppflags = '-std=' + project.cppStd + ' ' + cppflags;
 		}
 		gradle = gradle.replace(/{cppflags}/g, cppflags);
