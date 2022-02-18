@@ -73,11 +73,7 @@ let scriptdir = '.';
 // let lastScriptDir = '.';
 let cppEnabled = false;
 
-async function loadProject(directory: string, options: any =  {}, korefile: string = 'kfile.js'): Promise<Project> {
-	if (korefile.toLowerCase().includes('korefile.js')) {
-		cppEnabled = true;
-	}
-
+async function loadProject(directory: string, options: any =  {}, korefile: string = null): Promise<Project> {
 	return new Promise<Project>((resolve, reject) => {
 		projectInProgress += 1;
 		let resolver = async (project: Project) => {
@@ -102,6 +98,18 @@ async function loadProject(directory: string, options: any =  {}, korefile: stri
 
 		try {
 			scriptdir = directory;
+			if (!korefile) {
+				if (fs.existsSync(path.resolve(directory, 'kfile.js'))) {
+					korefile = 'kfile.js';
+				}
+				else if (fs.existsSync(path.resolve(directory, 'kincfile.js'))) {
+					korefile = 'kincfile.js';
+				}
+				else if (fs.existsSync(path.resolve(directory, 'korefile.js'))) {
+					korefile = 'korefile.js';
+					cppEnabled = true;
+				}
+			}
 			let file = fs.readFileSync(path.resolve(directory, korefile), 'utf8');
 			let AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
 			let project = new AsyncFunction(
@@ -689,17 +697,18 @@ export class Project {
 		this.cStd = std;
 	}
 
-	async addProject(directory: string, options: any = {}, projectFile: string = 'kfile.js') {
+	async addProject(directory: string, options: any = {}, projectFile: string = null) {
 		this.subProjects.push(await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile));
 	}
 
-	static async create(directory: string, to: string, platform: string, korefile: string) {
+	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean) {
 		Project.platform = platform;
 		Project.to = path.resolve(to);
 		let project = await loadProject(path.resolve(directory), null, korefile);
-		// if (project.kore && !project.kincProcessed) {
-		// await project.addProject(Project.koreDir);
-		// }
+		if (retro && project.kore && !project.kincProcessed) {
+			await project.addProject(Project.koreDir);
+			project.flatten();
+		}
 		let defines = getDefines(platform, project.isRotated());
 		for (let define of defines) {
 			project.addDefine(define);
