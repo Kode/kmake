@@ -35,7 +35,7 @@ export class AndroidExporter extends Exporter {
 		super();
 	}
 
-	async exportSolution(project: Project, from: string, to: string, platform: string, vr: any) {
+	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		this.safeName = project.getSafeName();
 		const indir = path.join(__dirname, '..', '..', 'Data', 'android');
 		const outdir = path.join(to.toString(), this.safeName);
@@ -144,6 +144,7 @@ export class AndroidExporter extends Exporter {
 		}
 
 		if (project.getDebugDir().length > 0) fs.copyDirSync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
+		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 
 	writeAppGradle(project: Project, outdir: string, from: string, targetOptions: TargetOptions, textData: any) {

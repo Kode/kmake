@@ -135,6 +135,7 @@ export class VSCodeExporter extends Exporter {
 
 		this.p(JSON.stringify(data, null, '\t'));
 		this.closeFile();
+		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 
 	program(project: Project, platform: string) {
