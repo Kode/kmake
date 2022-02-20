@@ -1,4 +1,29 @@
-Node.js is licensed for use as follows:
+kmake is licensed for use as follows:
+
+"""
+Copyright kmake contributors. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+"""
+
+This license applies to parts of kmake originating from the
+https://github.com/nodejs/node repository:
 
 """
 Copyright Node.js contributors. All rights reserved.
@@ -22,7 +47,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-This license applies to parts of Node.js originating from the
+This license applies to parts of kmake originating from the
 https://github.com/joyent/node repository:
 
 """
@@ -46,10 +71,10 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-The Node.js license applies to all parts of Node.js that are not externally
+The kmake license applies to all parts of kmake that are not externally
 maintained libraries.
 
-The externally maintained libraries used by Node.js are:
+The externally maintained libraries used by kmake are:
 
 - Acorn, located at deps/acorn, is licensed as follows:
   """
