@@ -24,7 +24,7 @@ jobs:
     - name: Apt Install
       run: sudo apt install clang-10 --yes --quiet
     - name: Configure
-      run: ./configure --openssl-no-asm --without-intl
+      run: ./configure --openssl-no-asm --without-intl --partly-static
       env:
         CC: clang-10
         CXX: clang++-10
@@ -84,7 +84,7 @@ jobs:
     - name: Add temporary install dir
       run: mkdir install
     - name: Configure
-      run: CC=/usr/bin/arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 CC_host="gcc-8 -m32" CXX_host="g++-8 -m32" ./configure --prefix=install --dest-cpu=arm --cross-compiling --dest-os=linux --openssl-no-asm --without-intl
+      run: CC=/usr/bin/arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 CC_host="gcc-8 -m32" CXX_host="g++-8 -m32" ./configure --prefix=install --dest-cpu=arm --cross-compiling --dest-os=linux --openssl-no-asm --without-intl --partly-static
     - name: Compile
       run: make -j$(nproc)
     - name: Get kmake_bin
@@ -137,7 +137,7 @@ jobs:
     - name: Add temporary install dir
       run: mkdir install
     - name: Configure
-      run: CC=/usr/bin/aarch64-linux-gnu-gcc-8 CXX=aarch64-linux-gnu-g++-8 CC_host="gcc-8" CXX_host="g++-8" ./configure --prefix=install --dest-cpu=arm64 --cross-compiling --dest-os=linux --openssl-no-asm --without-intl
+      run: CC=/usr/bin/aarch64-linux-gnu-gcc-8 CXX=aarch64-linux-gnu-g++-8 CC_host="gcc-8" CXX_host="g++-8" ./configure --prefix=install --dest-cpu=arm64 --cross-compiling --dest-os=linux --openssl-no-asm --without-intl --partly-static
     - name: Compile
       run: make -j$(nproc)
     - name: Get kmake_bin
