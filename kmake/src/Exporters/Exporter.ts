@@ -141,6 +141,7 @@ export abstract class Exporter {
 				releaseDefines += ' -D' + def.value;
 			}
 		}
+		releaseDefines += ' -DNDEBUG';
 		this.p('set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}' + releaseDefines + '")');
 		this.p('set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}' + releaseDefines + '")');
 

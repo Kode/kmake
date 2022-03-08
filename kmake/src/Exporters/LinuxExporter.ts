@@ -104,6 +104,9 @@ export class LinuxExporter extends Exporter {
 
 			defline += '-D' + def.value.replace(/\"/g, '\\"') + ' ';
 		}
+		if (!options.debug) {
+			defline += '-DNDEBUG ';
+		}
 		this.p('DEF=' + defline);
 		this.p();
 
@@ -221,6 +224,12 @@ export class LinuxExporter extends Exporter {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-g" />', 5);
+		for (const def of project.getDefines()) {
+			if (def.config && def.config.toLowerCase() !== 'debug') {
+				continue;
+			}
+			this.p('<Add option="-D' + def.value.replace(/\"/g, '\\"') + '" />', 3);
+		}
 		this.p('</Compiler>', 4);
 		this.p('</Target>', 3);
 		this.p('<Target title="Release">', 3);
@@ -234,6 +243,13 @@ export class LinuxExporter extends Exporter {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-O2" />', 5);
+		for (const def of project.getDefines()) {
+			if (def.config && def.config.toLowerCase() !== 'release') {
+				continue;
+			}
+			this.p('<Add option="-D' + def.value.replace(/\"/g, '\\"') + '" />', 3);
+		}
+		this.p('<Add option="-DNDEBUG" />', 3);
 		this.p('</Compiler>', 4);
 		this.p('<Linker>', 4);
 		this.p('<Add option="-s" />', 5);
@@ -245,9 +261,6 @@ export class LinuxExporter extends Exporter {
 			this.p('<Add option="-std=' + project.cppStd + '" />', 5);
 		}
 		this.p('<Add option="-Wall" />', 3);
-		for (const def of project.getDefines()) {
-			this.p('<Add option="-D' + def.value.replace(/\"/g, '\\"') + '" />', 3);
-		}
 		for (let inc of project.getIncludeDirs()) {
 			this.p('<Add directory="' + path.resolve(from, inc) + '" />', 3);
 		}
