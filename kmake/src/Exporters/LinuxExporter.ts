@@ -19,6 +19,48 @@ export class LinuxExporter extends Exporter {
 		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 
+	findFile(filepath: string, from: string, includeDirs: string[]): string {
+		if (fs.existsSync(path.join(from, filepath))) {
+			return path.join(from, filepath);
+		}
+
+		for (const include of includeDirs) {
+			if (fs.existsSync(path.join(include, filepath))) {
+				return path.join(include, filepath);
+			}	
+		}
+
+		return null;
+	}
+
+	parseCFile(from: string, filepath: string, includeDirs: string[]): string[] {
+		const file = fs.readFileSync(path.join(from, filepath), 'utf-8');
+		const includes: string[] = [];
+
+		const lines = file.split('\n');
+		for (const line of lines) {
+			if (line.startsWith('#include')) {
+				let inc = line.substring('#include'.length).trim();
+				let start = 0;
+				while (inc.charAt(start) === '<' || inc.charAt(start) === '"') {
+					++start;
+				}
+				let end = inc.length - 1;
+				while (inc.charAt(end) === '>' || inc.charAt(end) === '"') {
+					--end;
+				}
+				inc = inc.substring(start, end + 1);
+
+				const found = this.findFile(inc, path.dirname(path.join(from, filepath)), includeDirs);
+				if (found) {
+					includes.push(found);
+				}
+			}
+		}
+
+		return includes;
+	}
+
 	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		const cCompiler = Options.compiler === Compiler.Clang ? 'clang' : 'gcc';
 		const cppCompiler = Options.compiler === Compiler.Clang ? 'clang++' : 'g++';
@@ -179,8 +221,15 @@ export class LinuxExporter extends Exporter {
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
 				this.p();
 				let name = ofiles[file];
+
 				let realfile = path.relative(outputPath, path.resolve(from, file));
-				this.p(name + '.o: ' + realfile);
+				const includes = this.parseCFile(from, file, project.getIncludeDirs());
+
+				let dependenciesLine = name + '.o: ' + realfile;
+				for (const include of includes) {
+					dependenciesLine += ' ' + path.relative(outputPath, include);
+				}
+				this.p(dependenciesLine);
 
 				let compiler = cppCompiler;
 				let flags = '$(CPPFLAGS)';
