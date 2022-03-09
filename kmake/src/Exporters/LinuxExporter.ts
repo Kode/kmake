@@ -20,8 +20,10 @@ export class LinuxExporter extends Exporter {
 	}
 
 	findFile(filepath: string, from: string, includeDirs: string[]): string {
-		if (fs.existsSync(path.join(from, filepath))) {
-			return path.join(from, filepath);
+		if (from) {
+			if (fs.existsSync(path.join(from, filepath))) {
+				return path.join(from, filepath);
+			}
 		}
 
 		for (const include of includeDirs) {
@@ -41,17 +43,11 @@ export class LinuxExporter extends Exporter {
 		for (const line of lines) {
 			if (line.startsWith('#include')) {
 				let inc = line.substring('#include'.length).trim();
-				let start = 0;
-				while (inc.charAt(start) === '<' || inc.charAt(start) === '"') {
-					++start;
-				}
+				const searchCurrentDir = inc.charAt(0) === '"';
 				let end = inc.length - 1;
-				while (inc.charAt(end) === '>' || inc.charAt(end) === '"') {
-					--end;
-				}
-				inc = inc.substring(start, end + 1);
+				inc = inc.substring(1, inc.length - 1);
 
-				const found = this.findFile(inc, path.dirname(path.join(from, filepath)), includeDirs);
+				const found = this.findFile(inc, searchCurrentDir ? path.dirname(path.join(from, filepath)) : null, includeDirs);
 				if (found) {
 					includes.push(found);
 				}
