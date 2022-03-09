@@ -1,5 +1,4 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
-import { GraphicsApi } from 'kmake/GraphicsApi';
 import { Options } from 'kmake/Options';
 import { Platform } from 'kmake/Platform';
 import { Project } from 'kmake/Project';
@@ -44,7 +43,6 @@ export class LinuxExporter extends Exporter {
 			if (line.startsWith('#include')) {
 				let inc = line.substring('#include'.length).trim();
 				const searchCurrentDir = inc.charAt(0) === '"';
-				let end = inc.length - 1;
 				inc = inc.substring(1, inc.length - 1);
 
 				const found = this.findFile(inc, searchCurrentDir ? path.dirname(path.join(from, filepath)) : null, includeDirs);
