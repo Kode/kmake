@@ -34,9 +34,8 @@ export class LinuxExporter extends Exporter {
 		return null;
 	}
 
-	parseCFile(from: string, filepath: string, includeDirs: string[]): string[] {
-		const file = fs.readFileSync(path.join(from, filepath), 'utf-8');
-		const includes: string[] = [];
+	parseCFile(filepath: string, includes: string[], includeDirs: string[]): string[] {
+		const file = fs.readFileSync(filepath, 'utf-8');
 
 		const lines = file.split('\n');
 		for (const line of lines) {
@@ -45,9 +44,20 @@ export class LinuxExporter extends Exporter {
 				const searchCurrentDir = inc.charAt(0) === '"';
 				inc = inc.substring(1, inc.length - 1);
 
-				const found = this.findFile(inc, searchCurrentDir ? path.dirname(path.join(from, filepath)) : null, includeDirs);
+				const found = this.findFile(inc, searchCurrentDir ? path.dirname(filepath) : null, includeDirs);
 				if (found) {
-					includes.push(found);
+					let previouslyFound = false;
+					for (const include of includes) {
+						if (found === include) {
+							previouslyFound = true;
+							break;
+						}
+					}
+
+					if (!previouslyFound) {
+						includes.push(found);
+						this.parseCFile(found, includes, includeDirs);
+					}
 				}
 			}
 		}
@@ -217,7 +227,7 @@ export class LinuxExporter extends Exporter {
 				let name = ofiles[file];
 
 				let realfile = path.relative(outputPath, path.resolve(from, file));
-				const includes = this.parseCFile(from, file, project.getIncludeDirs());
+				const includes = this.parseCFile(path.join(from, file), [], project.getIncludeDirs());
 
 				let dependenciesLine = name + '.o: ' + realfile;
 				for (const include of includes) {
