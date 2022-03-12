@@ -20,14 +20,14 @@ export class LinuxExporter extends Exporter {
 
 	findFile(filepath: string, from: string, includeDirs: string[]): string {
 		if (from) {
-			if (fs.existsSync(path.join(from, filepath))) {
-				return path.join(from, filepath);
+			if (fs.existsSync(path.resolve(from, filepath))) {
+				return path.resolve(from, filepath);
 			}
 		}
 
 		for (const include of includeDirs) {
-			if (fs.existsSync(path.join(include, filepath))) {
-				return path.join(include, filepath);
+			if (fs.existsSync(path.resolve(include, filepath))) {
+				return path.resolve(include, filepath);
 			}	
 		}
 
@@ -225,9 +225,8 @@ export class LinuxExporter extends Exporter {
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
 				this.p();
 				let name = ofiles[file];
-
 				let realfile = path.relative(outputPath, path.resolve(from, file));
-				const includes = this.parseCFile(path.join(from, file), [], project.getIncludeDirs());
+				const includes = this.parseCFile(path.resolve(from, file), [], project.getIncludeDirs());
 
 				let dependenciesLine = name + '.o: ' + realfile;
 				for (const include of includes) {

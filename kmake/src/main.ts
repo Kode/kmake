@@ -570,6 +570,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	Project.koreDir = options.kinc;
 
+	options.from = path.resolve(options.from);
+	options.to = path.resolve(options.to);
+
 	log.info('Using Kinc (' + findKincVersion(options.kinc) + ') from ' + options.kinc);
 
 	debug = options.debug;
