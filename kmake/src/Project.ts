@@ -478,6 +478,12 @@ export class Project {
 			for (let sub of this.subProjects) sub.searchFiles(undefined);
 			this.searchFiles(this.basedir);
 			for (let includeobject of this.includes) {
+				if (path.isAbsolute(includeobject.file) && includeobject.file.includes('**')) {
+					const starIndex = includeobject.file.indexOf('**');
+					const endIndex = includeobject.file.substring(0, starIndex).replace(/\\/g, '/').lastIndexOf('/');
+					this.searchFiles(includeobject.file.substring(0, endIndex));
+				}
+
 				if (includeobject.file.startsWith('../')) {
 					let start = '../';
 					while (includeobject.file.startsWith(start)) {
@@ -513,7 +519,7 @@ export class Project {
 					inc = path.relative(this.basedir, inc);
 					include = inc;
 				}
-				if (this.matches(this.stringify(file), include)) {
+				if (this.matches(this.stringify(file), this.stringify(include))) {
 					this.addFileForReal(this.stringify(file), includeobject.options);
 				}
 			}
