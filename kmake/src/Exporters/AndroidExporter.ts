@@ -91,6 +91,9 @@ export class AndroidExporter extends Exporter {
 		}
 		fs.writeFileSync(path.join(outdir, 'gradle.properties'), textData['android_gradle_properties']);
 		fs.writeFileSync(path.join(outdir, 'gradlew'), textData['android_gradlew']);
+		if (os.platform() !== 'win32') {
+			fs.chmodSync(path.join(outdir, 'gradlew'), 0o755);
+		}
 		fs.writeFileSync(path.join(outdir, 'gradlew.bat'), textData['android_gradlew_bat']);
 		let settings = textData['android_settings_gradle'];
 		settings = settings.replace(/{name}/g, project.getName());

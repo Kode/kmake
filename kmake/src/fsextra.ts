@@ -1,4 +1,4 @@
-import { copyFileSync as fsCopyFileSync, existsSync as fsExistsSync, readdirSync as fsReaddirSync, statSync as fsStatSync, writeFileSync as fsWriteFileSync, readFileSync as fsReadFileSync, mkdirSync as fsMkdirSync, openSync as fsOpenSync, writeSync as fsWriteSync, closeSync as fsCloseSync } from 'fs';
+import { copyFileSync as fsCopyFileSync, existsSync as fsExistsSync, readdirSync as fsReaddirSync, statSync as fsStatSync, writeFileSync as fsWriteFileSync, readFileSync as fsReadFileSync, mkdirSync as fsMkdirSync, openSync as fsOpenSync, writeSync as fsWriteSync, closeSync as fsCloseSync, chmodSync as fsChmodSync } from 'fs';
 import * as path from 'path';
 
 function ensureDirSync(dir: string): void {
@@ -35,6 +35,7 @@ export {
 	fsWriteSync as writeSync,
 	fsCloseSync as closeSync,
 	fsCopyFileSync as copyFileSync,
+	fsChmodSync as chmodSync,
 	ensureDirSync,
 	copyDirSync
 };
