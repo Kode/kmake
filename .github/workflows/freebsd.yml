@@ -3,11 +3,10 @@ name: FreeBSD
 on:
   push:
     branches:
-    - master
-    - FreeBSD-Build
+    - main
   pull_request:
     branches:
-    - master
+    - main
 
 jobs:
   build:
@@ -19,16 +18,16 @@ jobs:
     - uses: actions/checkout@v2
     - name: Compile in FreeBSD VM
       id: build
-      uses: vmactions/freebsd-vm@v0.1.5
+      uses: vmactions/freebsd-vm@v0.1.6
       with:
-        usesh: true
+        usesh: false
         mem: 2048
         prepare: pkg install -y gmake bash python38
         run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j$(sysctl -n hw.ncpu)'
-    - name: Get kmake_bin
-      run: git clone https://github.com/Kode/kmake_bin.git
+    - name: Get KincTools_freebsd_x64
+      run: git clone https://github.com/Kode/KincTools_freebsd_x64.git
     - name: Copy binary
-      run: cp out/Release/node kmake_bin/kmake-freebsd
+      run: cp out/Release/node KincTools_freebsd_x64/kmake
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
@@ -37,24 +36,24 @@ jobs:
       id: commit
       continue-on-error: true
       run: |
-        git -C kmake_bin add kmake-freebsd
-        git -C kmake_bin commit -a -m "Update FreeBSD binary to $GITHUB_SHA."
+        git -C KincTools_freebsd_x64 add .
+        git -C KincTools_freebsd_x64 commit -a -m "Update kmake binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C kmake_bin tag freebsd_$GITHUB_SHA
+      run: git -C KincTools_freebsd_x64 tag kmake_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
       continue-on-error: true
-      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      run: git -C KincTools_freebsd_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_freebsd_x64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Pull
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
-      run: git -C kmake_bin pull --no-rebase
+      run: git -C KincTools_freebsd_x64 pull --no-rebase
     - name: Push binary again
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
       continue-on-error: true
-      run: git -C kmake_bin push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/kmake_bin.git main --tags
+      run: git -C KincTools_freebsd_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_freebsd_x64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
