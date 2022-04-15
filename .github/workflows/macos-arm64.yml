@@ -20,7 +20,7 @@ jobs:
         python-version: '3.8.10'
         architecture: 'x64'
     - name: Configure
-      run: ./configure --openssl-no-asm --without-intl --dest-cpu=arm64 --cross-compiling --dest-os=darwin
+      run: ./configure --openssl-no-asm --without-intl --dest-cpu=arm64 --cross-compiling --dest-os=mac
     - name: Compile
       run: make -j3
     - name: Get KincTools_macos_arm64
