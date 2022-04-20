@@ -22,6 +22,7 @@ import { Languages } from 'kmake/Languages';
 // import * as idl from 'webidl2'; // TODO
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
+import { JsonExporter } from 'kmake/Exporters/JsonExporter';
 
 const cpuCores: number = require('os').properCpuCount();
 
@@ -334,6 +335,9 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	let exporter: Exporter = null;
 	if (options.vscode) {
 		exporter = new VSCodeExporter();
+	}
+	else if (options.json) {
+		exporter = new JsonExporter();
 	}
 	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter();
 	else if (platform === Platform.Android) exporter = new AndroidExporter();
