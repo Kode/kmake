@@ -28,7 +28,7 @@ export class JsonExporter extends Exporter {
 		}
 		this.p('],', 1);
 
-		this.p('"libaries":', 1);
+		this.p('"libraries":', 1);
 		this.p('[', 1);
 		for (let i = 0; i < project.getLibs().length; ++i) {
 			const lib = project.getLibs()[i];
