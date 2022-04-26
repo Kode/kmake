@@ -1,15 +1,13 @@
 import * as child_process from 'child_process';
-import * as fs from 'fs-extra';
+import * as fs from 'kmake/fsextra';
 import * as os from 'os';
 import * as path from 'path';
-import * as chokidar from 'chokidar';
-import * as Throttle from 'promise-parallel-throttle';
-import {KhaExporter} from './Exporters/KhaExporter';
-import {GraphicsApi} from './GraphicsApi';
-import {Options} from './Options';
-import {Platform} from './Platform';
-import {AssetConverter} from './AssetConverter';
-import * as log from './log';
+import {GraphicsApi} from 'kmake/GraphicsApi';
+import {Options} from 'kmake/Options';
+import {Platform} from 'kmake/Platform';
+import {AssetConverter} from 'kmake/AssetConverter';
+import {Exporter} from 'kmake/Exporters/Exporter';
+import * as log from 'kmake/log';
 
 export interface Variable {
 	name: string;
@@ -36,25 +34,23 @@ export class CompiledShader {
 }
 
 export class ShaderCompiler {
-	exporter: KhaExporter;
+	exporter: Exporter;
 	platform: string;
 	compiler: string;
 	type: string;
 	to: string;
 	temp: string;
 	builddir: string;
-	options: Options;
 	shaderMatchers: Array<{ match: string, options: any }>;
 	watcher: fs.FSWatcher;
 
-	constructor(exporter: KhaExporter, platform: string, compiler: string, to: string, temp: string, builddir: string, options: Options, shaderMatchers: Array<{ match: string, options: any }>) {
+	constructor(exporter: Exporter, platform: string, compiler: string, to: string, temp: string, builddir: string, shaderMatchers: Array<{ match: string, options: any }>) {
 		this.exporter = exporter;
 		if (platform.endsWith('-native')) platform = platform.substr(0, platform.length - '-native'.length);
 		if (platform.endsWith('-hl')) platform = platform.substr(0, platform.length - '-hl'.length);
 		this.platform = platform;
 		this.compiler = compiler;
-		this.type = ShaderCompiler.findType(platform, options);
-		this.options = options;
+		this.type = ShaderCompiler.findType(platform);
 		this.to = to;
 		this.temp = temp;
 		this.builddir = builddir;
@@ -65,51 +61,44 @@ export class ShaderCompiler {
 		if (this.watcher) this.watcher.close();
 	}
 
-	static findType(platform: string, options: Options): string {
+	static findType(platform: string): string {
 		switch (platform) {
-		case Platform.Empty:
-		case Platform.Node:
-			return 'glsl';
-		case Platform.Flash:
-			return 'agal';
 		case Platform.Android:
-			if (options.graphics === GraphicsApi.Vulkan) {
+			if (Options.graphicsApi === GraphicsApi.Vulkan) {
 				return 'spirv';
 			}
-			else if (options.graphics === GraphicsApi.OpenGL || options.graphics === GraphicsApi.Default) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL || Options.graphicsApi === GraphicsApi.Default) {
 				return 'essl';
 			}
 			else {
 				throw new Error('Unsupported shader language.');
 			}
 		case Platform.HTML5:
-		case Platform.DebugHTML5:
-		case Platform.HTML5Worker:
 		case Platform.Tizen:
 		case Platform.Pi:
 			return 'essl';
 		case Platform.tvOS:
 		case Platform.iOS:
-			if (options.graphics === GraphicsApi.Metal || options.graphics === GraphicsApi.Default) {
+			if (Options.graphicsApi === GraphicsApi.Metal || Options.graphicsApi === GraphicsApi.Default) {
 				return 'metal';
 			}
-			else if (options.graphics === GraphicsApi.OpenGL) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL) {
 				return 'essl';
 			}
 			else {
 				throw new Error('Unsupported shader language.');
 			}
 		case Platform.Windows:
-			if (options.graphics === GraphicsApi.Vulkan) {
+			if (Options.graphicsApi === GraphicsApi.Vulkan) {
 				return 'spirv';
 			}
-			else if (options.graphics === GraphicsApi.OpenGL) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL) {
 				return 'glsl';
 			}
-			else if (options.graphics === GraphicsApi.Direct3D11 || options.graphics === GraphicsApi.Direct3D12 || options.graphics === GraphicsApi.Default) {
+			else if (Options.graphicsApi === GraphicsApi.Direct3D11 || Options.graphicsApi === GraphicsApi.Direct3D12 || Options.graphicsApi === GraphicsApi.Default) {
 				return 'd3d11';
 			}
-			else if (options.graphics === GraphicsApi.Direct3D9) {
+			else if (Options.graphicsApi === GraphicsApi.Direct3D9) {
 				return 'd3d9';
 			}
 			else {
@@ -117,57 +106,22 @@ export class ShaderCompiler {
 			}
 		case Platform.WindowsApp:
 			return 'd3d11';
-		case Platform.Xbox360:
-		case Platform.PlayStation3:
-			return 'd3d9';
 		case Platform.Linux:
-			if (options.graphics === GraphicsApi.Vulkan) {
+			if (Options.graphicsApi === GraphicsApi.Vulkan) {
 				return 'spirv';
 			}
-			else if (options.graphics === GraphicsApi.OpenGL || options.graphics === GraphicsApi.Default) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL || Options.graphicsApi === GraphicsApi.Default) {
 				return 'glsl';
 			}
 			else {
 				throw new Error('Unsupported shader language.');
 			}
 		case Platform.OSX:
-			if (options.graphics === GraphicsApi.Metal || options.graphics === GraphicsApi.Default) {
+			if (Options.graphicsApi === GraphicsApi.Metal || Options.graphicsApi === GraphicsApi.Default) {
 				return 'metal';
 			}
-			else if (options.graphics === GraphicsApi.OpenGL) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL) {
 				return 'glsl';
-			}
-			else {
-				throw new Error('Unsupported shader language.');
-			}
-		case Platform.Unity:
-			return 'hlsl';
-		case Platform.Krom:
-			if (options.graphics === GraphicsApi.Default) {
-				if (process.platform === 'win32') {
-					return 'd3d11';
-				}
-				else if (process.platform === 'darwin') {
-					return 'metal';
-				}
-				else {
-					return 'glsl';
-				}
-			}
-			else if (options.graphics === GraphicsApi.Vulkan) {
-				return 'spirv';
-			}
-			else if (options.graphics === GraphicsApi.Metal) {
-				return 'metal';
-			}
-			else if (options.graphics === GraphicsApi.OpenGL) {
-				return 'glsl';
-			}
-			else if (options.graphics === GraphicsApi.Direct3D11 || options.graphics === GraphicsApi.Direct3D12) {
-				return 'd3d11';
-			}
-			else if (options.graphics === GraphicsApi.Direct3D9) {
-				return 'd3d9';
 			}
 			else {
 				throw new Error('Unsupported shader language.');
@@ -183,7 +137,7 @@ export class ShaderCompiler {
 		return new Promise<CompiledShader[]>((resolve, reject) => {
 			let shaders: string[] = [];
 			let ready = false;
-			this.watcher = chokidar.watch(match, { ignored: /[\/\\]\.(git|DS_Store)/, persistent: watch });
+			this.watcher = fs.watch(match); // chokidar.watch(match, { ignored: /[\/\\]\.(git|DS_Store)/, persistent: watch });
 			this.watcher.on('add', (filepath: string) => {
 				let file = path.parse(filepath);
 				if (ready) {
@@ -254,7 +208,7 @@ export class ShaderCompiler {
 							// TODO: Remove when krafix has been recompiled everywhere
 							compiledShader.files.push(parsed.name + '.' + self.type);
 						}
-						compiledShader.name = AssetConverter.createExportInfo(parsed, false, options, self.exporter.options.from).name;
+						compiledShader.name = parsed.name; //AssetConverter.createExportInfo(parsed, false, options, Options.from).name;
 						compiledShaders.push(compiledShader);
 					}
 					else {
@@ -264,14 +218,14 @@ export class ShaderCompiler {
 					return Promise.resolve();
 				}
 
-				if (this.options.parallelAssetConversion !== 0) {
+				/*if (Options.parallelAssetConversion !== 0) {
 					let todo = shaders.map((shader, index) => {
 						return async () => {
 							await compile(shader, index);
 						};
 					});
 
-					let processes = this.options.parallelAssetConversion === -1
+					let processes = Options.parallelAssetConversion === -1
 						? require('os').cpus().length - 1
 						: this.options.parallelAssetConversion;
 
@@ -279,7 +233,7 @@ export class ShaderCompiler {
 						maxInProgress: processes,
 					});
 				}
-				else {
+				else {*/
 					let index = 0;
 					for (let shader of shaders) {
 						try {
@@ -291,7 +245,7 @@ export class ShaderCompiler {
 						}
 						index += 1;
 					}
-				}
+				//}
 
 				resolve(compiledShaders);
 				return;
@@ -332,7 +286,7 @@ export class ShaderCompiler {
 				fs.stat(to, (toErr: NodeJS.ErrnoException, toStats: fs.Stats) => {
 					if (options.noprocessing) {
 						if (!toStats || toStats.mtime.getTime() < fromStats.mtime.getTime()) {
-							fs.copySync(from, to, { overwrite: true });
+							fs.copyFileSync(from, to);
 						}
 						let compiledShader = new CompiledShader();
 						compiledShader.noembed = options.noembed;
@@ -345,7 +299,7 @@ export class ShaderCompiler {
 							resolve(null);
 						}
 						else {
-							if (this.type === 'metal' && this.platform !== Platform.Krom) {
+							if (this.type === 'metal') {
 								fs.ensureDirSync(path.join(this.builddir, 'Sources'));
 								let funcname = fileinfo.name;
 								funcname = funcname.replace(/-/g, '_');
@@ -358,26 +312,22 @@ export class ShaderCompiler {
 								temp = to;
 							}
 							let parameters = [this.type === 'hlsl' ? 'd3d9' : this.type, from, temp, this.temp, this.platform];
-							if (this.options.shaderversion) {
-								parameters.push('--version');
-								parameters.push(this.options.shaderversion);
-							}
-							else if (this.platform === Platform.Krom && os.platform() === 'linux') {
-								parameters.push('--version');
-								parameters.push('110');
-							}
-							if (this.options.glsl2) {
-								parameters.push('--glsl2');
-							}
-							if (this.options.debug) {
-								parameters.push('--debug');
-							}
+							//if (Options.shaderversion) {
+							//	parameters.push('--version');
+							//	parameters.push(Options.shaderversion);
+							//}
+							//if (Options.glsl2) {
+							//	parameters.push('--glsl2');
+							//}
+							//if (Options.debug) {
+							//	parameters.push('--debug');
+							//}
 							if (options.defines) {
 								for (let define of options.defines) {
 									parameters.push('-D' + define);
 								}
 							}
-							if (this.platform === Platform.HTML5 || this.platform === Platform.HTML5Worker || this.platform === Platform.Android) {
+							if (this.platform === Platform.HTML5 || this.platform === Platform.Android) {
 								parameters.push('--relax');
 							}
 
@@ -481,7 +431,7 @@ export class ShaderCompiler {
 								}
 
 								if (code === 0) {
-									if (this.type !== 'metal' || this.platform === Platform.Krom) {
+									if (this.type !== 'metal') {
 										if (compiledShader.files === null || compiledShader.files.length === 0) {
 											fs.renameSync(temp, to);
 										}
