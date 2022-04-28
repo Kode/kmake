@@ -23,6 +23,7 @@ import { Languages } from 'kmake/Languages';
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 import { JsonExporter } from 'kmake/Exporters/JsonExporter';
+import {ShaderCompiler, CompiledShader} from 'kmake/ShaderCompiler';
 
 const cpuCores: number = require('os').properCpuCount();
 
@@ -299,7 +300,28 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 
 	let files = project.getFiles();
 	if (!options.noshaders) {
-		let shaderCount = 0;
+		let compilerPath = '';
+		if (Project.koreDir !== '') {
+			compilerPath = path.resolve(Project.koreDir, 'Tools', 'krafix', 'krafix' + exec.sys());
+		}
+		
+		const matches = [];
+		for (let file of files) {
+			if (file.file.endsWith('.glsl')) {
+				matches.push({match: file.file, options: null});
+			}
+		}
+
+		let shaderCompiler = new ShaderCompiler(platform, compilerPath, project.getDebugDir(), options.to,
+			options.to /*builddir*/, matches);
+		try {
+			await shaderCompiler.run(false, false);
+		}
+		catch (err) {
+			return Promise.reject(err);
+		}
+
+		/*let shaderCount = 0;
 		for (let file of files) {
 			if (file.file.endsWith('.glsl')) {
 				++shaderCount;
@@ -321,7 +343,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 				++shaderIndex;
 				await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
-		}
+		}*/
 	}
 
 	if (options.onlyshaders) {

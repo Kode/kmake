@@ -6,7 +6,6 @@ import {GraphicsApi} from 'kmake/GraphicsApi';
 import {Options} from 'kmake/Options';
 import {Platform} from 'kmake/Platform';
 import {AssetConverter} from 'kmake/AssetConverter';
-import {Exporter} from 'kmake/Exporters/Exporter';
 import * as log from 'kmake/log';
 
 export interface Variable {
@@ -34,7 +33,6 @@ export class CompiledShader {
 }
 
 export class ShaderCompiler {
-	exporter: Exporter;
 	platform: string;
 	compiler: string;
 	type: string;
@@ -44,8 +42,7 @@ export class ShaderCompiler {
 	shaderMatchers: Array<{ match: string, options: any }>;
 	watcher: fs.FSWatcher;
 
-	constructor(exporter: Exporter, platform: string, compiler: string, to: string, temp: string, builddir: string, shaderMatchers: Array<{ match: string, options: any }>) {
-		this.exporter = exporter;
+	constructor(platform: string, compiler: string, to: string, temp: string, builddir: string, shaderMatchers: Array<{ match: string, options: any }>) {
 		if (platform.endsWith('-native')) platform = platform.substr(0, platform.length - '-native'.length);
 		if (platform.endsWith('-hl')) platform = platform.substr(0, platform.length - '-hl'.length);
 		this.platform = platform;
