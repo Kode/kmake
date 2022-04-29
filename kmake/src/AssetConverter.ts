@@ -1,24 +1,19 @@
-import {Callbacks} from './ProjectFile';
-import * as fs from 'fs-extra';
+import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import {KhaExporter} from './Exporters/KhaExporter';
-import * as log from './log';
-import * as chokidar from 'chokidar';
+import * as log from 'kmake/log';
 import * as crypto from 'crypto';
-import * as Throttle from 'promise-parallel-throttle';
-import { Options } from './Options';
+import { Options } from 'kmake/Options';
+import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class AssetConverter {
-	options: Options;
-	exporter: KhaExporter;
+	exporter: Exporter;
 	platform: string;
 	assetMatchers: Array<{ match: string, options: any }>;
 	watcher: fs.FSWatcher;
 
-	constructor(exporter: KhaExporter, options: Options, assetMatchers: Array<{ match: string, options: any }>) {
+	constructor(exporter: Exporter, platform: string, assetMatchers: Array<{ match: string, options: any }>) {
 		this.exporter = exporter;
-		this.options = options;
-		this.platform = options.target;
+		this.platform = platform;
 		this.assetMatchers = assetMatchers;
 	}
 
@@ -81,7 +76,7 @@ export class AssetConverter {
 		return new Promise<{ name: string, from: string, type: string, files: string[], file_sizes: number[], original_width: number, original_height: number, readable: boolean }[]>((resolve, reject) => {
 			let ready = false;
 			let files: string[] = [];
-			this.watcher = chokidar.watch(match, { ignored: /[\/\\]\.(svn|git|DS_Store)/, persistent: watch, followSymlinks: false });
+			this.watcher = fs.watch(match); // , { ignored: /[\/\\]\.(svn|git|DS_Store)/, persistent: watch, followSymlinks: false });
 
 			const onFileChange = async (file: string) => {
 				const fileinfo = path.parse(file);
@@ -94,7 +89,7 @@ export class AssetConverter {
 					outPath = fileinfo.name;
 				}
 				log.info('Reexporting ' + outPath + fileinfo.ext);
-				switch (fileinfo.ext) {
+				/*switch (fileinfo.ext) {
 					case '.png':
 					case '.jpg':
 					case '.jpeg':
@@ -128,7 +123,7 @@ export class AssetConverter {
 				}
 				for (let callback of Callbacks.postAssetReexporting) {
 					callback(outPath + fileinfo.ext);
-				}
+				}*/
 			};
 
 			this.watcher.on('add', (file: string) => {
@@ -166,9 +161,9 @@ export class AssetConverter {
 						case '.jpg':
 						case '.jpeg':
 						case '.hdr': {
-							let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, self.exporter.options.from);
+							/*let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, Options.from);
 							let images: { files: string[], sizes: number[] };
-							if (options.noprocessing) {
+							/*if (options.noprocessing) {
 								images = await self.exporter.copyBlob(self.platform, file, exportInfo.destination, options);
 							}
 							else {
@@ -176,16 +171,16 @@ export class AssetConverter {
 							}
 							if (!options.notinlist) {
 								parsedFiles.push({ name: exportInfo.name, from: file, type: 'image', files: images.files, file_sizes: images.sizes, original_width: options.original_width, original_height: options.original_height, readable: options.readable });
-							}
+							}*/
 							break;
 						}
 						case '.ogg':
 						case '.mp3':
 						case '.flac':
 						case '.wav': {
-							let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, self.exporter.options.from);
+							/*let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, Options.from);
 							let sounds: { files: string[], sizes: number[] };
-							if (options.noprocessing) {
+							/*if (options.noprocessing) {
 								sounds = await self.exporter.copyBlob(self.platform, file, exportInfo.destination, options);
 							}
 							else {
@@ -196,11 +191,11 @@ export class AssetConverter {
 							}
 							if (!options.notinlist) {
 								parsedFiles.push({ name: exportInfo.name, from: file, type: 'sound', files: sounds.files, file_sizes: sounds.sizes, original_width: undefined, original_height: undefined, readable: undefined });
-							}
+							}*/
 							break;
 						}
 						case '.ttf': {
-							let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, self.exporter.options.from);
+							/*let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, Options.from);
 							let fonts: { files: string[], sizes: number[] };
 							if (options.noprocessing) {
 								fonts = await self.exporter.copyBlob(self.platform, file, exportInfo.destination, options);
@@ -210,7 +205,7 @@ export class AssetConverter {
 							}
 							if (!options.notinlist) {
 								parsedFiles.push({ name: exportInfo.name, from: file, type: 'font', files: fonts.files, file_sizes: fonts.sizes, original_width: undefined, original_height: undefined, readable: undefined });
-							}
+							}*/
 							break;
 						}
 						case '.mp4':
@@ -218,7 +213,7 @@ export class AssetConverter {
 						case '.mov':
 						case '.wmv':
 						case '.avi': {
-							let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, self.exporter.options.from);
+							/*let exportInfo = AssetConverter.createExportInfo(fileinfo, false, options, Options.from);
 							let videos: { files: string[], sizes: number[] };
 							if (options.noprocessing) {
 								videos = await self.exporter.copyBlob(self.platform, file, exportInfo.destination, options);
@@ -231,21 +226,21 @@ export class AssetConverter {
 							}
 							if (!options.notinlist) {
 								parsedFiles.push({ name: exportInfo.name, from: file, type: 'video', files: videos.files, file_sizes: videos.sizes, original_width: undefined, original_height: undefined, readable: undefined });
-							}
+							}*/
 							break;
 						}
 						default: {
-							let exportInfo = AssetConverter.createExportInfo(fileinfo, true, options, self.exporter.options.from);
+							/*let exportInfo = AssetConverter.createExportInfo(fileinfo, true, options, Options.from);
 							let blobs = await self.exporter.copyBlob(self.platform, file, exportInfo.destination, options);
 							if (!options.notinlist) {
 								parsedFiles.push({ name: exportInfo.name, from: file, type: 'blob', files: blobs.files, file_sizes: blobs.sizes, original_width: undefined, original_height: undefined, readable: undefined });
-							}
+							}*/
 							break;
 						}
 					}
 				}
 
-				if (this.options.parallelAssetConversion !== 0) {
+				/*if (this.options.parallelAssetConversion !== 0) {
 					let todo = files.map((file, index) => {
 						return async () => {
 							await convertAsset(file, index);
@@ -259,13 +254,14 @@ export class AssetConverter {
 					await Throttle.all(todo, {
 						maxInProgress: processes,
 					});
-				} else {
+				}
+				else {*/
 					let index = 0;
 					for (let file of files) {
 						await convertAsset(file, index);
 						index += 1;
 					}
-				}
+				//}
 
 				fs.ensureDirSync(temp);
 				fs.writeFileSync(cachePath, JSON.stringify(cache), { encoding: 'utf8'});
