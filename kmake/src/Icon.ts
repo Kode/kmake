@@ -7,7 +7,7 @@ import * as path from 'path';
 import { Project } from 'kmake/Project';
 
 function run(from: string, to: string, width: number, height: number, format: string, background: number, callback: any) {
-	const exe = path.resolve(Project.koreDir !== '' ? Project.koreDir : 'Kinc', 'Tools', 'kraffiti', 'kraffiti' + exec.sys());
+	const exe = path.resolve(__dirname, 'kraffiti' + exec.sys());
 
 	let params = ['from=' + from, 'to=' + to, 'format=' + format, 'keepaspect'];
 	if (width > 0) params.push('width=' + width);
@@ -36,7 +36,7 @@ function run(from: string, to: string, width: number, height: number, format: st
 function findIcon(icon: string, from: string) {
 	if (icon && fs.existsSync(path.join(from, icon))) return path.join(from, icon);
 	if (fs.existsSync(path.join(from, 'icon.png'))) return path.join(from, 'icon.png');
-	else return path.join(__dirname, '..', 'kraffiti', 'icon.png');
+	else return path.join(__dirname, 'icon.png');
 }
 
 export async function exportIco(icon: string, to: string, from: string) {

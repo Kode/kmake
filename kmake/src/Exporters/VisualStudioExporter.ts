@@ -1098,7 +1098,7 @@ export class VisualStudioExporter extends Exporter {
 					this.p('<FileType>Document</FileType>', 2);
 					
 					const shaderDir = path.isAbsolute(project.getDebugDir()) ? project.getDebugDir() : path.join(from, project.getDebugDir());
-					const krafix = path.isAbsolute(Project.koreDir) ? path.join(Project.koreDir, 'Tools', 'krafix', 'krafix.exe') : path.join(from, Project.koreDir, 'Tools', 'krafix', 'krafix.exe');
+					const krafix = path.join(__dirname, 'krafix.exe');
 
 					this.p('<Command>"' + path.relative(to, krafix) + '" ' + getShaderLang() + ' "%(FullPath)" ' + path.relative(to, path.join(shaderDir, '%(Filename)')).replace(/\//g, '\\') + ' .\\ ' + platform + ' --quiet</Command>', 2);
 					this.p('<Outputs>' + path.relative(to, path.join(shaderDir, '%(Filename)')).replace(/\//g, '\\') + ';%(Outputs)</Outputs>', 2);
