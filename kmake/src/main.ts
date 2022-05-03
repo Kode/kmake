@@ -259,6 +259,49 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 	});
 }
 
+class Invocation {
+	projectDir: string;
+	type: string;
+	from: string;
+	to: string;
+	temp: string;
+	platform: string;
+	builddir: string;
+	name: string;
+}
+
+function compileShaders(invocations: Invocation[]): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		let runningInstances = 0;
+		let nextIndex = 0;
+		
+		function grabShader() {
+			let invocation = invocations[nextIndex];
+			++nextIndex;
+			++runningInstances;
+			
+			log.info('Compiling shader ' + nextIndex + ' of ' + invocations.length + ' (' + invocation.name + ').');
+			let promise = compileShader(invocation.projectDir, invocation.type, invocation.from, invocation.to, invocation.temp, invocation.platform, invocation.builddir);
+	
+			promise.then(() => {
+				--runningInstances;
+				if (nextIndex < invocations.length) {
+					grabShader();
+				}
+				else {
+					if (runningInstances == 0) {
+						resolve();
+					}
+				}
+			});
+		}
+	
+		for (let i = 0; i < cpuCores && i < invocations.length; ++i) {
+			grabShader();
+		}
+	});
+}
+
 async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, options: any) {
 	log.info('kfile found.');
 	if (options.onlyshaders) {
@@ -328,6 +371,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 			}
 		}
 		let shaderIndex = 0;
+		let invocations: Invocation[] = [];
 		for (let file of files) {
 			if (file.file.endsWith('.glsl')) {
 				let outfile = file.file;
@@ -336,14 +380,25 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 				outfile = outfile.substr(0, outfile.length - 5);
 
 				let parsedFile = path.parse(file.file);
-				log.info('Compiling shader ' + (shaderIndex + 1) + ' of ' + shaderCount + ' (' + parsedFile.name + ').');
 
 				const shader = path.isAbsolute(file.file) ? file.file : path.join(file.projectDir, file.file);
 
 				++shaderIndex;
-				await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
+				
+				invocations.push({
+					projectDir: from,
+					type: shaderLang(platform),
+					from: shader,
+					to: path.join(project.getDebugDir(), outfile),
+					temp: options.to,
+					platform: platform,
+					builddir: options.to,
+					name: parsedFile.name
+				});
+				//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
 		}
+		await compileShaders(invocations);
 	}
 
 	if (options.onlyshaders) {
