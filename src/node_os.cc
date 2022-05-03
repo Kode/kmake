@@ -32,6 +32,10 @@
 # include <climits>         // PATH_MAX on Solaris.
 #endif  // __POSIX__
 
+#if defined(__APPLE__) || defined(__FreeBSD__)
+#include <sys/sysctl.h>
+#endif
+
 #include <array>
 #include <cerrno>
 #include <cstring>
@@ -135,9 +139,20 @@ static void GetCPUInfo(const FunctionCallbackInfo<Value>& args) {
   args.GetReturnValue().Set(Array::New(isolate, result.data(), result.size()));
 }
 
+static int parse_number_at_end_of_line(char *line) {
+	char *end = &line[strlen(line) - 2];
+	int num = 0;
+	int multi = 1;
+	while (*end >= '0' && *end <= '9') {
+		num += (*end - '0') * multi;
+		multi *= 10;
+		--end;
+	}
+	return num;
+}
 
 static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
-#ifdef _WIN32
+#if defined(_WIN32)
   SYSTEM_LOGICAL_PROCESSOR_INFORMATION info[1024];
   DWORD returnLength = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) * 1024;
   BOOL success = GetLogicalProcessorInformation(&info[0], &returnLength);
@@ -161,6 +176,59 @@ static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
   }
 
   args.GetReturnValue().Set(proper_cpu_count);
+#elif defined(__linux__)
+  char line[1024];
+  FILE *file = fopen("/proc/cpuinfo", "r");
+
+  if (file != NULL) {
+    int cores[1024];
+    memset(cores, 0, sizeof(cores));
+
+    int cpu_count = 0;
+    int physical_id = -1;
+    int per_cpu_cores = -1;
+
+    while (fgets(line, sizeof(line), file)) {
+      if (strncmp(line, "processor", 9) == 0) {
+        if (physical_id >= 0 && per_cpu_cores > 0) {
+          if (physical_id + 1 > cpu_count) {
+            cpu_count = physical_id + 1;
+          }
+          cores[physical_id] = per_cpu_cores;
+          physical_id = -1;
+          per_cpu_cores = -1;
+        }
+      }
+      else if (strncmp(line, "physical id", 11) == 0) {
+        physical_id = parse_number_at_end_of_line(line);
+      }
+      else if (strncmp(line, "cpu cores", 9) == 0) {
+        per_cpu_cores = parse_number_at_end_of_line(line);
+      }
+    }
+    fclose(file);
+
+    if (physical_id >= 0 && per_cpu_cores > 0) {
+      if (physical_id + 1 > cpu_count) {
+        cpu_count = physical_id + 1;
+      }
+      cores[physical_id] = per_cpu_cores;
+    }
+
+    int proper_cpu_count = 0;
+    for (int i = 0; i < cpu_count; ++i) {
+      proper_cpu_count += cores[i];
+    }
+    args.GetReturnValue().Set(proper_cpu_count);
+  }
+  else {
+    args.GetReturnValue().Set(1);
+  };
+#elif defined(__APPLE__) || defined(__FreeBSD__)
+  uint32_t proper_cpu_count = 1;
+  size_t count_length = sizeof(count_length);
+  sysctlbyname("hw.physicalcpu", &proper_cpu_count, &count_length, 0, 0);
+  args.GetReturnValue().Set((int)proper_cpu_count);
 #else
   args.GetReturnValue().Set(1);
 #endif
