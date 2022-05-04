@@ -726,8 +726,8 @@ export async function run(options: any, loglog: any): Promise<string> {
 					}
 					break;
 				default:
-          const vswhere = path.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer', 'vswhere.exe');
-          const varspath = child_process.execFileSync(vswhere, ['-products', '*', '-latest', '-find', 'VC\\Auxiliary\\Build\\vcvars' + bits + '.bat'], {encoding: 'utf8'}).trim();
+					const vswhere = path.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer', 'vswhere.exe');
+					const varspath = child_process.execFileSync(vswhere, ['-products', '*', '-latest', '-find', 'VC\\Auxiliary\\Build\\vcvars' + bits + '.bat'], {encoding: 'utf8'}).trim();
 					if (fs.existsSync(varspath)) {
 						vsvars = varspath;
 					}
