@@ -15,28 +15,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.8.10'
-        architecture: 'x64'
-    - name: Apt Update
-      run: sudo apt update
-    - name: Apt Install
-      run: sudo apt install clang-10 --yes --quiet
-    - name: Configure
-      run: ./configure --openssl-no-asm --without-intl --partly-static
-      env:
-        CC: clang-10
-        CXX: clang++-10
-    - name: Compile
-      run: make -j$(nproc)
-      env:
-        CC: clang-10
-        CXX: clang++-10
+    - name: Docker Build
+      run: docker build -t kmakeimage .
+    - name: Docker Run
+      run: docker run kmakeimage --mount type=bind,source="$(pwd)",target=/workdir
     - name: Get KincTools_linux_x64
       run: git clone https://github.com/Kode/KincTools_linux_x64.git
     - name: Copy binary
-      run: cp out/Release/node KincTools_linux_x64/kmake
+      run: cp ./kmake KincTools_linux_x64/kmake
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
