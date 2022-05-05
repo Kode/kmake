@@ -18,7 +18,7 @@ jobs:
     - name: Docker Build
       run: docker build -t kmakeimage .
     - name: Docker Run
-      run: docker run kmakeimage --mount type=bind,source="$(pwd)",target=/workdir
+      run: docker run --mount type=bind,source="$(pwd)",target=/workdir kmakeimage
     - name: Get KincTools_linux_x64
       run: git clone https://github.com/Kode/KincTools_linux_x64.git
     - name: Copy binary
