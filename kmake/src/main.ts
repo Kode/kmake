@@ -296,8 +296,13 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 			});
 		}
 	
-		for (let i = 0; i < cpuCores && i < invocations.length; ++i) {
-			grabShader();
+		if (invocations.length === 0) {
+			resolve();
+		}
+		else {
+			for (let i = 0; i < cpuCores && i < invocations.length; ++i) {
+				grabShader();
+			}
 		}
 	});
 }
