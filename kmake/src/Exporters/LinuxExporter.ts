@@ -93,34 +93,9 @@ export class LinuxExporter extends Exporter {
 		}
 	}
 
-	getOS(): string {
-		try {
-			const data = fs.readFileSync('/etc/os-release', 'utf8');
-			const lines = data.split('\n');
-			let name = null;
-			for (const line of lines) {
-				if (line.trim().startsWith('NAME')) {
-					name = line.split('=')[1];
-					name = name.substring(1, name.length - 1);
-					break;
-				}
-			}
-			if (name) {
-				return name;
-			}
-			else {
-				return 'Unknown';
-			}
-		}
-		catch (error) {
-			return 'Unknown';
-		}
-	}
-
 	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		const cCompiler = this.getCCompiler();
 		const cppCompiler = this.getCPPCompiler();
-		const os = this.getOS();
 
 		let objects: any = {};
 		let ofiles: any = {};
@@ -183,9 +158,9 @@ export class LinuxExporter extends Exporter {
 		this.p('INC=' + incline);
 
 		let libsline = '-static-libgcc -static-libstdc++ -pthread';
-		if (Options.compiler === Compiler.MuslGcc || os.includes('Alpine')) {
-			libsline += ' -static';
-		}
+		//if (Options.compiler === Compiler.MuslGcc || os.includes('Alpine')) {
+		//	libsline += ' -static';
+		//}
 		for (let lib of project.getLibs()) {
 			libsline += ' -l' + lib;
 		}
