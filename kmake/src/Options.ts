@@ -15,5 +15,6 @@ export let Options = {
 	compiler: Compiler.Default,
 	visualStudioVersion: VisualStudioVersion.VS2022,
 	compile: false,
-	run: false
+	run: false,
+	cores: 1
 };

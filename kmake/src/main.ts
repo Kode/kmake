@@ -25,8 +25,6 @@ import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 import { JsonExporter } from 'kmake/Exporters/JsonExporter';
 import {ShaderCompiler, CompiledShader} from 'kmake/ShaderCompiler';
 
-const cpuCores: number = require('os').properCpuCount();
-
 let _global: any = global;
 _global.__base = __dirname + '/';
 
@@ -300,7 +298,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 			resolve();
 		}
 		else {
-			for (let i = 0; i < cpuCores && i < invocations.length; ++i) {
+			for (let i = 0; i < Options.cores && i < invocations.length; ++i) {
 				grabShader();
 			}
 		}
@@ -644,6 +642,13 @@ export async function run(options: any, loglog: any): Promise<string> {
 		Options.visualStudioVersion = options.visualstudio;
 	}
 
+	if (options.cores !== undefined) {
+		Options.cores = parseInt(options.cores);
+	}
+	else {
+		Options.cores = require('os').properCpuCount();
+	}
+
 	if (!options.kinc) {
 		let p = path.join(__dirname, '..', '..');
 		if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
@@ -688,7 +693,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 		let make: child_process.ChildProcess = null;
 
 		if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux || options.target === Platform.FreeBSD) {
-			make = child_process.spawn('make', ['-j', cpuCores.toString()], { cwd: path.join(options.to, options.buildPath) });
+			make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Pi) || options.target === Platform.Pi) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
