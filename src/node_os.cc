@@ -187,9 +187,11 @@ static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
     int cpu_count = 0;
     int physical_id = -1;
     int per_cpu_cores = -1;
+    int processor_count = 0;
 
     while (fgets(line, sizeof(line), file)) {
       if (strncmp(line, "processor", 9) == 0) {
+        ++processor_count;
         if (physical_id >= 0 && per_cpu_cores > 0) {
           if (physical_id + 1 > cpu_count) {
             cpu_count = physical_id + 1;
@@ -219,7 +221,13 @@ static void GetProperCPUCount(const FunctionCallbackInfo<Value>& args) {
     for (int i = 0; i < cpu_count; ++i) {
       proper_cpu_count += cores[i];
     }
-    args.GetReturnValue().Set(proper_cpu_count);
+
+    if (proper_cpu_count > 0) {
+      args.GetReturnValue().Set(proper_cpu_count);
+    }
+    else {
+      args.GetReturnValue().Set(processor_count == 0 ? 1 : processor_count);
+    }
   }
   else {
     args.GetReturnValue().Set(1);
