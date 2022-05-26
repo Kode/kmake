@@ -216,6 +216,7 @@ export class Project {
 	noFlatten: boolean = true;
 	isStaticLib: boolean = false;
 	isDynamicLib: boolean = false;
+	followSymbolicLinks: boolean = true;
 
 	constructor(name: string) {
 		this.name = name;
@@ -529,7 +530,13 @@ export class Project {
 		nextdir: for (let d of dirs) {
 			let dir = path.join(current, d);
 			if (d.startsWith('.')) continue;
-			if (!fs.statSync(dir).isDirectory()) continue;
+			const stats = fs.statSync(dir);
+			if (!stats.isDirectory()) {
+				continue;
+			}
+			if (!this.followSymbolicLinks && stats.isSymbolicLink()) {
+				continue;
+			}
 			for (let exclude of this.excludes) {
 				if (this.matchesAllSubdirs(path.relative(this.basedir, dir), exclude)) {
 					continue nextdir;
