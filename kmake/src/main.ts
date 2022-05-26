@@ -649,6 +649,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 		Options.cores = require('os').properCpuCount();
 	}
 
+	if (options.nosymlinks) {
+		Options.followSymbolicLinks = false;
+	}
+
 	if (!options.kinc) {
 		let p = path.join(__dirname, '..', '..');
 		if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {

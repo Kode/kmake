@@ -216,7 +216,6 @@ export class Project {
 	noFlatten: boolean = true;
 	isStaticLib: boolean = false;
 	isDynamicLib: boolean = false;
-	followSymbolicLinks: boolean = true;
 
 	constructor(name: string) {
 		this.name = name;
@@ -534,7 +533,7 @@ export class Project {
 			if (!stats.isDirectory()) {
 				continue;
 			}
-			if (!this.followSymbolicLinks && stats.isSymbolicLink()) {
+			if (!Options.followSymbolicLinks && stats.isSymbolicLink()) {
 				continue;
 			}
 			for (let exclude of this.excludes) {

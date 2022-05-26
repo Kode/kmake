@@ -14,6 +14,7 @@ export let Options = {
 	vrApi: VrApi.None,
 	compiler: Compiler.Default,
 	visualStudioVersion: VisualStudioVersion.VS2022,
+	followSymbolicLinks: true,
 	compile: false,
 	run: false,
 	cores: 1
