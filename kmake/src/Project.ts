@@ -506,11 +506,27 @@ export class Project {
 		let files = fs.readdirSync(current);
 		nextfile: for (let f in files) {
 			let file = path.join(current, files[f]);
-			if (fs.statSync(file).isDirectory()) continue;
+			
+			let follow = true;
+			try {
+				if (fs.statSync(file).isDirectory()) {
+					follow = false;
+				}
+			}
+			catch (err) {
+				follow = false;
+			}
+
+			if (!follow) {
+				continue;
+			}
+
 			// if (!current.isAbsolute())
 			file = path.relative(this.basedir, file);
 			for (let exclude of this.excludes) {
-				if (this.matches(this.stringify(file), exclude)) continue nextfile;
+				if (this.matches(this.stringify(file), exclude)) {
+					continue nextfile;
+				}
 			}
 			for (let includeobject of this.includes) {
 				let include = includeobject.file;
@@ -529,13 +545,25 @@ export class Project {
 		nextdir: for (let d of dirs) {
 			let dir = path.join(current, d);
 			if (d.startsWith('.')) continue;
-			const stats = fs.statSync(dir);
-			if (!stats.isDirectory()) {
+
+			let follow = true;
+			try {
+				const stats = fs.statSync(dir);
+				if (!stats.isDirectory()) {
+					follow = false;
+				}
+				if (!Options.followSymbolicLinks && stats.isSymbolicLink()) {
+					follow = false;
+				}
+			}
+			catch (err) {
+				follow = false;
+			}
+
+			if (!follow) {
 				continue;
 			}
-			if (!Options.followSymbolicLinks && stats.isSymbolicLink()) {
-				continue;
-			}
+
 			for (let exclude of this.excludes) {
 				if (this.matchesAllSubdirs(path.relative(this.basedir, dir), exclude)) {
 					continue nextdir;
