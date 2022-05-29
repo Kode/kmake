@@ -738,7 +738,9 @@ export class Project {
 	}
 
 	async addProject(directory: string, options: any = {}, projectFile: string = null) {
-		this.subProjects.push(await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile));
+		const project = await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile);
+		this.subProjects.push(project);
+		return project;
 	}
 
 	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean) {
