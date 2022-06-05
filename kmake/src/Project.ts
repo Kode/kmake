@@ -748,11 +748,11 @@ export class Project {
 		Project.to = path.resolve(to);
 		let project = await loadProject(path.resolve(directory), null, korefile);
 		if (retro && project.kore && !project.kincProcessed) {
-			await project.addProject(Project.koreDir);
-			project.flatten();
 			if (veryretro) {
 				project.cpp = true;
 			}
+			await project.addProject(Project.koreDir);
+			project.flatten();
 		}
 		let defines = getDefines(platform, project.isRotated());
 		for (let define of defines) {
