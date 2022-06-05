@@ -743,13 +743,16 @@ export class Project {
 		return project;
 	}
 
-	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean) {
+	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean) {
 		Project.platform = platform;
 		Project.to = path.resolve(to);
 		let project = await loadProject(path.resolve(directory), null, korefile);
 		if (retro && project.kore && !project.kincProcessed) {
 			await project.addProject(Project.koreDir);
 			project.flatten();
+			if (veryretro) {
+				project.cpp = true;
+			}
 		}
 		let defines = getDefines(platform, project.isRotated());
 		for (let define of defines) {

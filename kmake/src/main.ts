@@ -305,7 +305,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 	});
 }
 
-async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, options: any) {
+async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, options: any) {
 	log.info('kfile found.');
 	if (options.onlyshaders) {
 		log.info('Only compiling shaders.');
@@ -320,7 +320,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	Project.root = path.resolve(from);
 	let project: Project;
 	try {
-		project = await Project.create(from, to, platform, korefile, retro);
+		project = await Project.create(from, to, platform, korefile, retro, veryretro);
 		if (shaderLang(platform) === 'metal') {
 			project.addFile('build/Sources/*', {});
 		}
@@ -480,16 +480,16 @@ function isKoremakeProject(directory: string, korefile: string): boolean {
 
 async function exportProject(from: string, to: string, platform: string, korefile: string, options: any): Promise<Project> {
 	if (isKoremakeProject(from, korefile)) {
-		return exportKoremakeProject(from, to, platform, korefile, false, options);
+		return exportKoremakeProject(from, to, platform, korefile, false, false, options);
 	}
 	else if (isKoremakeProject(from, 'kfile.js')) {
-		return exportKoremakeProject(from, to, platform, 'kfile.js', false, options);
+		return exportKoremakeProject(from, to, platform, 'kfile.js', false, false, options);
 	}
 	else if (isKoremakeProject(from, 'kincfile.js')) {
-		return exportKoremakeProject(from, to, platform, 'kincfile.js', true, options);
+		return exportKoremakeProject(from, to, platform, 'kincfile.js', true, false, options);
 	}
 	else if (isKoremakeProject(from, 'korefile.js')) {
-		return exportKoremakeProject(from, to, platform, 'korefile.js', true, options);
+		return exportKoremakeProject(from, to, platform, 'korefile.js', true, true, options);
 	}
 	else {
 		throw 'kfile not found.';
