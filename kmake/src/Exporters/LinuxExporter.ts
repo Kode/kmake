@@ -234,7 +234,9 @@ export class LinuxExporter extends Exporter {
 		this.p('CPPFLAGS=' + cppline);
 
 		let optimization = '';
-		if (!options.debug) optimization = '-O2';
+		if (!options.debug && !options.lib) {
+			optimization = '-O2';
+		}
 		else optimization = '-g';
 
 		if (options.lib) {
