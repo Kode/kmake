@@ -234,7 +234,7 @@ export class LinuxExporter extends Exporter {
 		this.p('CPPFLAGS=' + cppline);
 
 		let optimization = '';
-		if (!options.debug && !options.lib) {
+		if (!options.debug) {
 			optimization = '-O2';
 		}
 		else optimization = '-g';
@@ -258,7 +258,12 @@ export class LinuxExporter extends Exporter {
 		else if (options.dynlib) {
 			output = '-shared -o "' + project.getSafeName() + '.so"';
 		}
-		this.p('\t' + (options.lib ? 'ar rcs' : cppCompiler) + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
+
+		if(options.lib) {
+			this.p('\t' + 'ar rcs ' + output + ' ' + ofilelist);
+		} else {
+			this.p('\t' + cppCompiler + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
+		}
 
 		for (let file of project.getFiles()) {
 			let precompiledHeader: string = null;
