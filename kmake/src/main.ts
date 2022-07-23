@@ -666,7 +666,8 @@ export async function run(options: any, loglog: any): Promise<string> {
 	Project.kincDir = options.kinc;
 	Project.koreDir = null;
 	const up = path.join(Project.kincDir, '..');
-	if (fs.statSync(path.join(up, 'Sources', 'Kore')).isDirectory()) {
+	const koreSources = path.join(up, 'Sources', 'Kore');
+	if (fs.existsSync(koreSources) && fs.statSync(koreSources).isDirectory()) {
 		Project.koreDir = up;
 	}
 
