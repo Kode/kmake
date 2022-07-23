@@ -439,8 +439,9 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 					let libfiles = fs.readdirSync(path.join(from.toString(), 'Backends', libdir));
 					for (let libfile of libfiles) {
 						if (libfile.endsWith('Exporter.js')) {
-							let Exporter = require(path.relative(__dirname, path.join(from.toString(), 'Backends', libdir, libfile)));
-							exporter = new Exporter();
+							const codePath = path.resolve(from.toString(), 'Backends', libdir, libfile);
+							const code = fs.readFileSync(codePath, {encoding: 'utf8'});
+							exporter = new Function('require', '__dirname', 'VisualStudioExporter', code)(require, path.resolve(from.toString(), 'Backends', libdir), VisualStudioExporter);
 							break;
 						}
 					}
