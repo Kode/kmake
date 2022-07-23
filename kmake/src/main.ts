@@ -163,7 +163,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
-		if (Project.koreDir !== '') {
+		if (Project.kincDir !== '') {
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 		}
 
@@ -347,7 +347,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	let files = project.getFiles();
 	if (!options.noshaders) {
 		/*let compilerPath = '';
-		if (Project.koreDir !== '') {
+		if (Project.kincDir !== '') {
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 		}
 		
@@ -663,7 +663,12 @@ export async function run(options: any, loglog: any): Promise<string> {
 		options.kinc = path.resolve(options.kinc);
 	}
 
-	Project.koreDir = options.kinc;
+	Project.kincDir = options.kinc;
+	Project.koreDir = null;
+	const up = path.join(Project.kincDir, '..');
+	if (fs.statSync(path.join(up, 'Sources', 'Kore')).isDirectory()) {
+		Project.koreDir = up;
+	}
 
 	options.from = path.resolve(options.from);
 	options.to = path.resolve(options.to);

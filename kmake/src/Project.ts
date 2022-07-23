@@ -175,6 +175,7 @@ export class Define {
 
 export class Project {
 	static platform: string;
+	static kincDir: string;
 	static koreDir: string;
 	static root: string;
 	static to: string;
@@ -749,9 +750,17 @@ export class Project {
 		let project = await loadProject(path.resolve(directory), null, korefile);
 		if (retro && project.kore && !project.kincProcessed) {
 			if (veryretro) {
-				project.cpp = true;
+				if (Project.koreDir) {
+					await project.addProject(Project.koreDir);
+				}
+				else {
+					log.error('Kore not found, falling back to Kinc, good luck.');
+					await project.addProject(Project.kincDir);
+				}
 			}
-			await project.addProject(Project.koreDir);
+			else {
+				await project.addProject(Project.kincDir);
+			}
 			project.flatten();
 		}
 		let defines = getDefines(platform, project.isRotated());
