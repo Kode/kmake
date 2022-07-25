@@ -219,11 +219,14 @@ export abstract class Exporter {
 			// take a guess at where the ndk could be
 
 			function ndkFromSdkRoot() {
-				if (!process.env['ANDROID_SDK_ROOT']) {
+				let sdkEnv = process.env['ANDROID_HOME'] ?? process.env['ANDROID_SDK_ROOT'];
+				if (!sdkEnv) return null;
+				let ndk_dir = path.join(sdkEnv, 'ndk');
+				if (!fs.existsSync(ndk_dir)) {
 					return null;
 				}
-				let ndk_dir = path.join(process.env['ANDROID_SDK_ROOT'], 'ndk');
 				let ndks = fs.readdirSync(ndk_dir);
+				ndks = ndks.filter(item => !item.startsWith("."));
 				if (ndks.length < 1) {
 					return null;
 				}
