@@ -5,7 +5,7 @@ export interface PlatformType {
 	OSX: string;
 	Android: string;
 	Linux: string;
-	HTML5: string;
+	Emscripten: string;
 	Tizen: string;
 	Pi: string;
 	tvOS: string;
@@ -24,7 +24,7 @@ export let Platform: PlatformType = {
 	OSX: 'osx',
 	Android: 'android',
 	Linux: 'linux',
-	HTML5: 'html5',
+	Emscripten: 'emscripten',
 	Tizen: 'tizen',
 	Pi: 'pi',
 	tvOS: 'tvos',

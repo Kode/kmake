@@ -70,7 +70,7 @@ export class ShaderCompiler {
 			else {
 				throw new Error('Unsupported shader language.');
 			}
-		case Platform.HTML5:
+		case Platform.Emscripten:
 		case Platform.Tizen:
 		case Platform.Pi:
 			return 'essl';
@@ -324,7 +324,7 @@ export class ShaderCompiler {
 									parameters.push('-D' + define);
 								}
 							}
-							if (this.platform === Platform.HTML5 || this.platform === Platform.Android) {
+							if (this.platform === Platform.Emscripten || this.platform === Platform.Android) {
 								parameters.push('--relax');
 							}
 

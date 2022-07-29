@@ -248,7 +248,7 @@ export class Project {
 			xboxSeriesXS: {},
 			playStation5: {},
 			stadia: {},
-			html5: {}
+			emscripten: {}
 		};
 		this.rotated = false;
 		this.cmd = false;

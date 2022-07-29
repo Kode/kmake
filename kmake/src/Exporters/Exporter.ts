@@ -271,7 +271,7 @@ export abstract class Exporter {
 				log.error('Platform is set to Android, but android toolchain not found.\nPlease set the ANDROID_NDK environment variable.');
 			}
 		}
-		else if (platform === Platform.HTML5) {
+		else if (platform === Platform.Emscripten) {
 			let emcc = child_process.spawnSync('emcc', ['--cflags']);
 			// log.info(emcc.status);
 			if (emcc.status === 0) {
@@ -279,7 +279,7 @@ export abstract class Exporter {
 				defaultArgs.push(...flags);
 			}
 			else {
-				log.error('Platform is set to HTML5, but could not find emcc. Please add it to your PATH environment variable.');
+				log.error('Platform is set to Emscripten, but emcc could not be found. Please add it to your PATH environment variable.');
 			}
 		}
 

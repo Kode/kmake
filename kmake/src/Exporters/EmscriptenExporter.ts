@@ -82,7 +82,7 @@ export class EmscriptenExporter extends Exporter {
 		this.p('INC=' + incline);
 
 		let libsline = '-static-libgcc -static-libstdc++';
-		if (project.targetOptions.html5.threads) {
+		if (project.targetOptions.emscripten.threads) {
 			libsline += ' -pthread';
 		}
 		/*if (project.cmd) {
@@ -151,7 +151,7 @@ export class EmscriptenExporter extends Exporter {
 
 		let cpp = '';
 		// cpp = '-std=c++11';
-		if (project.targetOptions.html5.threads) {
+		if (project.targetOptions.emscripten.threads) {
 			cpp += ' -pthread';
 		}
 

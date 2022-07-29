@@ -44,8 +44,8 @@ function fromPlatform(platform: string): string {
 			return 'Android';
 		case Platform.Linux:
 			return 'Linux';
-		case Platform.HTML5:
-			return 'HTML5';
+		case Platform.Emscripten:
+			return 'Emscripten';
 		case Platform.Tizen:
 			return 'Tizen';
 		case Platform.Pi:
@@ -130,7 +130,7 @@ function shaderLang(platform: string): string {
 				default:
 					throw new Error('Unsupported shader language.');
 			}
-		case Platform.HTML5:
+		case Platform.Emscripten:
 			switch (Options.graphicsApi) {
 				case GraphicsApi.WebGPU:
 					return 'spirv';
@@ -196,7 +196,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 			}
 
 			let krafix_platform = platform;
-			if (platform === Platform.HTML5 && Options.graphicsApi === GraphicsApi.WebGPU) {
+			if (platform === Platform.Emscripten && Options.graphicsApi === GraphicsApi.WebGPU) {
 				krafix_platform += '-webgpu';
 			}
 
@@ -421,7 +421,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	}
 	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter();
 	else if (platform === Platform.Android) exporter = new AndroidExporter();
-	else if (platform === Platform.HTML5) exporter = new EmscriptenExporter();
+	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter();
 	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter();
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter();
 	else if (platform === Platform.Tizen) exporter = new TizenExporter();
@@ -709,7 +709,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Pi) || options.target === Platform.Pi) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.HTML5) || options.target === Platform.HTML5) {
+		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Emscripten) || options.target === Platform.Emscripten) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && (options.customTarget.baseTarget === Platform.OSX || options.customTarget.baseTarget === Platform.iOS)) || options.target === Platform.OSX || options.target === Platform.iOS) {
