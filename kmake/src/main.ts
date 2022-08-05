@@ -13,6 +13,7 @@ import { Exporter } from 'kmake/Exporters/Exporter';
 import { AndroidExporter } from 'kmake/Exporters/AndroidExporter';
 import { LinuxExporter } from 'kmake/Exporters/LinuxExporter';
 import { EmscriptenExporter } from 'kmake/Exporters/EmscriptenExporter';
+import { WasmExporter } from './Exporters/WasmExporter';
 import { TizenExporter } from 'kmake/Exporters/TizenExporter';
 import { VisualStudioExporter } from 'kmake/Exporters/VisualStudioExporter';
 import { XCodeExporter } from 'kmake/Exporters/XCodeExporter';
@@ -151,6 +152,16 @@ function shaderLang(platform: string): string {
 				case GraphicsApi.OpenGL:
 				case GraphicsApi.Default:
 					return 'glsl';
+				default:
+					throw new Error('Unsupported shader language.');
+			}
+		case Platform.Wasm:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.WebGPU:
+					return 'spirv';
+				case GraphicsApi.OpenGL:
+				case GraphicsApi.Default:
+					return 'essl';
 				default:
 					throw new Error('Unsupported shader language.');
 			}
@@ -422,6 +433,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter();
 	else if (platform === Platform.Android) exporter = new AndroidExporter();
 	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter();
+	else if (platform === Platform.Wasm) exporter = new WasmExporter();
 	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter();
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter();
 	else if (platform === Platform.Tizen) exporter = new TizenExporter();
@@ -677,6 +689,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	log.info('Using Kinc (' + findKincVersion(options.kinc) + ') from ' + options.kinc);
 
+	if ((options.customTarget && options.customTarget.baseTarget === Platform.Wasm) || options.target === Platform.Wasm) {
+		log.info('Please not that the Wasm-target is still in early development. Please use the Emscripten-target in the meantime - the Wasm-target will eventually be a more elegant but harder to use alternative.');
+	}
+
 	debug = options.debug;
 
 	if (options.vr !== undefined) {
@@ -710,6 +726,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Emscripten) || options.target === Platform.Emscripten) {
+			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
+		}
+		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Wasm) || options.target === Platform.Wasm) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && (options.customTarget.baseTarget === Platform.OSX || options.customTarget.baseTarget === Platform.iOS)) || options.target === Platform.OSX || options.target === Platform.iOS) {

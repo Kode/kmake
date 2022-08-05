@@ -71,6 +71,7 @@ export class ShaderCompiler {
 				throw new Error('Unsupported shader language.');
 			}
 		case Platform.Emscripten:
+		case Platform.Wasm:
 		case Platform.Tizen:
 		case Platform.Pi:
 			return 'essl';
