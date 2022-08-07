@@ -13,7 +13,7 @@ import { Exporter } from 'kmake/Exporters/Exporter';
 import { AndroidExporter } from 'kmake/Exporters/AndroidExporter';
 import { LinuxExporter } from 'kmake/Exporters/LinuxExporter';
 import { EmscriptenExporter } from 'kmake/Exporters/EmscriptenExporter';
-import { WasmExporter } from './Exporters/WasmExporter';
+import { WasmExporter } from 'kmake/Exporters/WasmExporter';
 import { TizenExporter } from 'kmake/Exporters/TizenExporter';
 import { VisualStudioExporter } from 'kmake/Exporters/VisualStudioExporter';
 import { XCodeExporter } from 'kmake/Exporters/XCodeExporter';
