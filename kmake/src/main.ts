@@ -65,6 +65,8 @@ function fromPlatform(platform: string): string {
 			return 'PlayStation 5';
 		case Platform.FreeBSD:
 			return 'FreeBSD';
+		case Platform.Wasm:
+			return 'Web Assembly';
 		default:
 			throw 'Unknown platform ' + platform + '.';
 	}

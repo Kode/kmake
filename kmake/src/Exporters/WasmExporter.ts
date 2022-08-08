@@ -114,10 +114,7 @@ export class WasmExporter extends Exporter {
 		this.p('DEF=' + defline);
 		this.p();
 
-		let cline = '-std=c99 ';
-		if (project.cStd !== '') {
-			cline = '-std=' + project.cStd + ' ';
-		}
+		let cline = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
 		if (options.dynlib) {
 			cline += '-fPIC ';
 		}
@@ -126,7 +123,7 @@ export class WasmExporter extends Exporter {
 		}
 		this.p('CFLAGS=' + cline);
 
-		let cppline = '';
+		let cppline = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
 		if (options.dynlib) {
 			cppline += '-fPIC ';
 		}
@@ -146,21 +143,19 @@ export class WasmExporter extends Exporter {
 			this.p(project.getSafeName() + '.so: ' + gchfilelist + ofilelist);
 		}
 		else {
-			this.p('index.html' + ': ' + gchfilelist + ofilelist);
+			this.p(project.getSafeName() + '.wasm' + ': ' + gchfilelist + ofilelist);
 		}
 
 		let cpp = '';
 		// cpp = '-std=c++11';
-		if (project.targetOptions.emscripten.threads) {
-			cpp += ' -pthread';
-		}
 
-		let linkerFlags = '-s TOTAL_MEMORY=134217728 ';
+		let linkerFlags = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
+		/*let linkerFlags = '-s TOTAL_MEMORY=134217728 ';
 		if (Options.graphicsApi === GraphicsApi.WebGPU) {
 			linkerFlags += '-s USE_WEBGPU=1 ';
-		}
+		}*/
 
-		let output = ' ' + linkerFlags + '-o index.html --preload-file ' + debugDirName;
+		let output = ' ' + linkerFlags + '-o ' + project.getSafeName() + '.wasm ' + debugDirName;
 		if (options.lib) {
 			output = '-o "' + project.getSafeName() + '.a"';
 		}
