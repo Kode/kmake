@@ -81,10 +81,8 @@ export class WasmExporter extends Exporter {
 		}
 		this.p('INC=' + incline);
 
-		let libsline = '-static-libgcc -static-libstdc++';
-		if (project.targetOptions.emscripten.threads) {
-			libsline += ' -pthread';
-		}
+		let libsline = '';
+		
 		/*if (project.cmd) {
 			libsline += ' -static';
 		}*/
@@ -114,7 +112,7 @@ export class WasmExporter extends Exporter {
 		this.p('DEF=' + defline);
 		this.p();
 
-		let cline = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
+		let cline = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
 		if (options.dynlib) {
 			cline += '-fPIC ';
 		}
@@ -123,7 +121,7 @@ export class WasmExporter extends Exporter {
 		}
 		this.p('CFLAGS=' + cline);
 
-		let cppline = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
+		let cppline = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
 		if (options.dynlib) {
 			cppline += '-fPIC ';
 		}
@@ -155,7 +153,7 @@ export class WasmExporter extends Exporter {
 			linkerFlags += '-s USE_WEBGPU=1 ';
 		}*/
 
-		let output = ' ' + linkerFlags + '-o ' + project.getSafeName() + '.wasm ' + debugDirName;
+		let output = ' ' + linkerFlags + ' -o ' + project.getSafeName() + '.wasm ';
 		if (options.lib) {
 			output = '-o "' + project.getSafeName() + '.a"';
 		}
