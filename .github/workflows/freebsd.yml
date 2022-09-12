@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Compile in FreeBSD VM
       id: build
-      uses: vmactions/freebsd-vm@v0.2.0
+      uses: vmactions/freebsd-vm@v0.2.6
       with:
         usesh: false
         mem: 2048
