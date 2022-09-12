@@ -15,14 +15,14 @@ concurrency:
 jobs:
   build:
 
-    runs-on: macos-10.15
+    runs-on: macos-12
     name: FreeBSD build
 
     steps:
     - uses: actions/checkout@v2
     - name: Compile in FreeBSD VM
       id: build
-      uses: vmactions/freebsd-vm@v0.1.6
+      uses: vmactions/freebsd-vm@v0.2.0
       with:
         usesh: false
         mem: 2048
