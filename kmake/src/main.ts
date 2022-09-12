@@ -668,6 +668,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 		Options.followSymbolicLinks = false;
 	}
 
+	Options.debug = options.debug;
+	Options.shaderversion = options.shaderversion;
+
 	if (!options.kinc) {
 		let p = path.join(__dirname, '..', '..');
 		if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {

@@ -17,5 +17,7 @@ export let Options = {
 	followSymbolicLinks: true,
 	compile: false,
 	run: false,
-	cores: 1
+	cores: 1,
+	shaderversion: '',
+	debug: false
 };

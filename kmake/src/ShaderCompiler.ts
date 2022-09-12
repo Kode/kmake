@@ -310,16 +310,13 @@ export class ShaderCompiler {
 								temp = to;
 							}
 							let parameters = [this.type === 'hlsl' ? 'd3d9' : this.type, from, temp, this.temp, this.platform];
-							//if (Options.shaderversion) {
-							//	parameters.push('--version');
-							//	parameters.push(Options.shaderversion);
-							//}
-							//if (Options.glsl2) {
-							//	parameters.push('--glsl2');
-							//}
-							//if (Options.debug) {
-							//	parameters.push('--debug');
-							//}
+							if (Options.shaderversion) {
+								parameters.push('--version');
+								parameters.push(Options.shaderversion);
+							}
+							if (Options.debug) {
+								parameters.push('--debug');
+							}
 							if (options.defines) {
 								for (let define of options.defines) {
 									parameters.push('-D' + define);
