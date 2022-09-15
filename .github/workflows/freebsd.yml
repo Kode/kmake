@@ -25,6 +25,7 @@ jobs:
       uses: vmactions/freebsd-vm@v0.2.6
       with:
         usesh: false
+        sync: sshfs
         mem: 2048
         prepare: pkg install -y gmake bash python38
         run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j$(sysctl -n hw.ncpu)'
