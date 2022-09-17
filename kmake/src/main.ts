@@ -449,6 +449,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 					libdir.toLowerCase() === platform.toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).replace(/ /g, '').toLowerCase()
+					|| (libdir.toLowerCase() === 'xbox' && (platform === Platform.XboxScarlett || platform === Platform.XboxOne))
 				)) {
 					let libfiles = fs.readdirSync(path.join(from.toString(), 'Backends', libdir));
 					for (let libfile of libfiles) {
