@@ -179,11 +179,11 @@ export class Project {
 	static koreDir: string;
 	static root: string;
 	static to: string;
+	static debugDir: string = '';
 	name: string;
 	safeName: string;
 	version: string;
 	id: string;
-	debugDir: string;
 	basedir: string;
 	uuid: string;
 	files: File[];
@@ -222,7 +222,6 @@ export class Project {
 		this.name = name;
 		this.safeName = name.replace(/[^A-z0-9\-\_]/g, '-');
 		this.version = '1.0';
-		this.debugDir = '';
 		this.basedir = scriptdir;
 		this.uuid = crypto.randomUUID();
 
@@ -715,11 +714,11 @@ export class Project {
 	}
 
 	getDebugDir() {
-		return this.debugDir;
+		return Project.debugDir;
 	}
 
 	setDebugDir(debugDir: string) {
-		this.debugDir = path.resolve(this.basedir, debugDir);
+		Project.debugDir = path.resolve(this.basedir, debugDir);
 	}
 
 	getCppStd() {
