@@ -73,7 +73,7 @@ let scriptdir = '.';
 // let lastScriptDir = '.';
 let cppEnabled = false;
 
-async function loadProject(directory: string, options: any =  {}, korefile: string = null): Promise<Project> {
+async function loadProject(directory: string, parent: Project, options: any =  {}, korefile: string = null): Promise<Project> {
 	return new Promise<Project>((resolve, reject) => {
 		projectInProgress += 1;
 		let resolver = async (project: Project) => {
@@ -112,6 +112,7 @@ async function loadProject(directory: string, options: any =  {}, korefile: stri
 			}
 			let file = fs.readFileSync(path.resolve(directory, korefile), 'utf8');
 			let AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
+			Project.currentParent = parent;
 			let project = new AsyncFunction(
 				'log',
 				'Project',
@@ -132,6 +133,7 @@ async function loadProject(directory: string, options: any =  {}, korefile: stri
 				'__dirname',
 				'Options',
 				'targetDirectory',
+				'parentProject',
 				file)
 			(
 				log,
@@ -152,7 +154,8 @@ async function loadProject(directory: string, options: any =  {}, korefile: stri
 				reject,
 				directory,
 				options,
-				Project.to);
+				Project.to,
+				parent);
 			}
 		catch (error) {
 			log.error(error);
@@ -217,9 +220,12 @@ export class Project {
 	noFlatten: boolean = true;
 	isStaticLib: boolean = false;
 	isDynamicLib: boolean = false;
+	static currentParent: Project = null;
+	parent: Project;
 
 	constructor(name: string) {
 		this.name = name;
+		this.parent = Project.currentParent;
 		this.safeName = name.replace(/[^A-z0-9\-\_]/g, '-');
 		this.version = '1.0';
 		this.debugDir = '';
@@ -738,8 +744,19 @@ export class Project {
 		this.cStd = std;
 	}
 
+	getParentProjet(): Project {
+		return this.parent;
+	}
+
+	getRootProject(): Project {
+		if (!this.parent) {
+			return this;
+		}
+		return this.parent.getRootProject();
+	}
+
 	async addProject(directory: string, options: any = {}, projectFile: string = null) {
-		const project = await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), options, projectFile);
+		const project = await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), this, options, projectFile);
 		this.subProjects.push(project);
 		return project;
 	}
@@ -747,7 +764,7 @@ export class Project {
 	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean) {
 		Project.platform = platform;
 		Project.to = path.resolve(to);
-		let project = await loadProject(path.resolve(directory), null, korefile);
+		let project = await loadProject(path.resolve(directory), null, null, korefile);
 		if (retro && project.kore && !project.kincProcessed) {
 			if (veryretro) {
 				if (Project.koreDir) {
