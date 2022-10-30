@@ -50,7 +50,7 @@ export class AndroidExporter extends Exporter {
 			minSdkVersion: Options.graphicsApi === GraphicsApi.Vulkan ? 24 : 15,
 			targetSdkVersion: 32,
 			screenOrientation: 'sensor',
-			permissions: ["android.permission.VIBRATE"],
+			permissions: ['android.permission.VIBRATE'],
 			disableStickyImmersiveMode: false,
 			metadata: new Array<string>(),
 			customFilesPath: null,
