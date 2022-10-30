@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace "{package}"
     compileSdkVersion {compileSdkVersion}
     buildToolsVersion "30.0.3"
     defaultConfig {
