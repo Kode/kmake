@@ -26,7 +26,7 @@ jobs:
       with:
         usesh: false
         sync: sshfs
-        mem: 2048
+        mem: 3000
         prepare: pkg install -y gmake bash python38
         run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make'
     - name: Get KincTools_freebsd_x64
