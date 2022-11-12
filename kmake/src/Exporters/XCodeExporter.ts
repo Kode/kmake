@@ -617,7 +617,12 @@ export class XCodeExporter extends Exporter {
 		this.p('isa = XCBuildConfiguration;', 3);
 		this.p('buildSettings = {', 3);
 		this.p('ALWAYS_SEARCH_USER_PATHS = NO;', 4);
-		this.p('CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";', 4);
+		if (project.cppStd !== '' && project.cppStd !== 'gnu++14') {
+			this.p('CLANG_CXX_LANGUAGE_STANDARD = "' + project.cppStd + '";', 4);
+		}
+		else {
+			this.p('CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";', 4);
+		}
 		this.p('CLANG_CXX_LIBRARY = "compiler-default";', 4);
 		this.p('CLANG_ENABLE_MODULES = YES;', 4);
 		this.p('CLANG_ENABLE_OBJC_ARC = YES;', 4);
@@ -652,10 +657,10 @@ export class XCodeExporter extends Exporter {
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
 		this.p('ENABLE_TESTABILITY = YES;', 4);
 		if (project.cStd !== '' && project.cStd !== 'c99') {
-			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
+			this.p('GCC_C_LANGUAGE_STANDARD = "' + project.cStd + '";', 4);
 		}
 		else {
-			this.p('GCC_C_LANGUAGE_STANDARD = gnu99;', 4);
+			this.p('GCC_C_LANGUAGE_STANDARD = "gnu99";', 4);
 		}
 		this.p('GCC_DYNAMIC_NO_PIC = NO;', 4);
 		this.p('GCC_NO_COMMON_BLOCKS = YES;', 4);
@@ -705,7 +710,12 @@ export class XCodeExporter extends Exporter {
 		this.p('isa = XCBuildConfiguration;', 3);
 		this.p('buildSettings = {', 3);
 		this.p('ALWAYS_SEARCH_USER_PATHS = NO;', 4);
-		this.p('CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";', 4);
+		if (project.cppStd !== '' && project.cppStd !== 'gnu++14') {
+			this.p('CLANG_CXX_LANGUAGE_STANDARD = "' + project.cppStd + '";', 4);
+		}
+		else {
+			this.p('CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";', 4);
+		}
 		this.p('CLANG_CXX_LIBRARY = "compiler-default";', 4);
 		this.p('CLANG_ENABLE_MODULES = YES;', 4);
 		this.p('CLANG_ENABLE_OBJC_ARC = YES;', 4);
@@ -743,10 +753,10 @@ export class XCodeExporter extends Exporter {
 		this.p('ENABLE_NS_ASSERTIONS = NO;', 4);
 		this.p('ENABLE_STRICT_OBJC_MSGSEND = YES;', 4);
 		if (project.cStd !== '' && project.cStd !== 'c99') {
-			this.p('GCC_C_LANGUAGE_STANDARD = ' + project.cStd + ';', 4);
+			this.p('GCC_C_LANGUAGE_STANDARD = "' + project.cStd + '";', 4);
 		}
 		else {
-			this.p('GCC_C_LANGUAGE_STANDARD = gnu99;', 4);
+			this.p('GCC_C_LANGUAGE_STANDARD = "gnu99";', 4);
 		}
 		this.p('GCC_NO_COMMON_BLOCKS = YES;', 4);
 		this.p('GCC_PREPROCESSOR_DEFINITIONS = (', 4);
