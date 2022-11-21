@@ -358,7 +358,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	fs.ensureDirSync(to);
 
 	let files = project.getFiles();
-	if (!options.noshaders) {
+	if (!options.noshaders && !options.json) {
 		/*let compilerPath = '';
 		if (Project.kincDir !== '') {
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
@@ -479,8 +479,9 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 		throw 'No exporter found for platform ' + platform + '.';
 	}*/
 
-	if (exporter !== null)
+	if (exporter !== null) {
 		await exporter.exportSolution(project, from, to, platform, options.vrApi, options);
+	}
 	/*if (langExporter !== null) {
 		trees.forEach((tree, index) => {
 			langExporter.exportWrapper(tree, from, to, options, project.IDLfiles[index]);

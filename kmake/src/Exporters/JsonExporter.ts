@@ -11,7 +11,12 @@ export class JsonExporter extends Exporter {
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		this.writeFile(path.resolve(to, project.getSafeName() + '.json'));
+		if (options.stdout) {
+			this.writeStdout();
+		}
+		else {
+			this.writeFile(path.resolve(to, project.getSafeName() + '.json'));
+		}
 
 		this.p('{');
 
@@ -70,6 +75,11 @@ export class JsonExporter extends Exporter {
 
 		this.p('}')
 
-		this.closeFile();
+		if (options.stdout) {
+			this.closeStdout();
+		}
+		else {
+			this.closeFile();
+		}
 	}
 }

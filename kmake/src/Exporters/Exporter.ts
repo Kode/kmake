@@ -6,26 +6,62 @@ import * as log from 'kmake/log';
 import * as os from 'os';
 import * as child_process from 'child_process';
 
+enum WriteMode {
+	None,
+	File,
+	Stdout
+}
+
 export abstract class Exporter {
-	out: number;
+	writeMode: WriteMode = WriteMode.None;
+	outFile: number = 0;
+	outString: string = null;
 
 	constructor() {
 
 	}
 
 	writeFile(file: string) {
-		this.out = fs.openSync(file, 'w');
+		this.writeMode = WriteMode.File;
+		this.outFile = fs.openSync(file, 'w');
+		this.outString = null;
+	}
+
+	writeStdout() {
+		this.writeMode = WriteMode.Stdout;
+		this.outString = '';
+		this.outFile = 0;
 	}
 
 	closeFile() {
-		fs.closeSync(this.out);
+		fs.closeSync(this.outFile);
+		this.outFile = 0;
+		this.outString = null;
+		this.writeMode = WriteMode.None;
+	}
+
+	closeStdout() {
+		this.outString = null;
+		this.outFile = 0;
+		this.writeMode = WriteMode.None;
 	}
 
 	p(line: string = '', indent: number = 0) {
 		let tabs = '';
-		for (let i = 0; i < indent; ++i) tabs += '\t';
-		let data = Buffer.from(tabs + line + '\n');
-		fs.writeSync(this.out, data, 0, data.length, null);
+		for (let i = 0; i < indent; ++i) {
+			tabs += '\t';
+		}
+		
+		if (this.writeMode === WriteMode.Stdout) {
+			log.info(tabs + line);
+		}
+		else if (this.writeMode === WriteMode.File) {
+			let data = Buffer.from(tabs + line + '\n');
+			fs.writeSync(this.outFile, data, 0, data.length, null);
+		}
+		else {
+			throw 'Writing while not actually writing';
+		}
 	}
 
 	nicePath(from: string, to: string, filepath: string): string {
