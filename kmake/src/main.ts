@@ -259,7 +259,6 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 					resolve();
 				}
 				else {
-					// process.exitCode = 1;
 					reject('Shader compiler error.');
 				}
 			});
@@ -292,6 +291,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 			++runningInstances;
 			
 			log.info('Compiling shader ' + nextIndex + ' of ' + invocations.length + ' (' + invocation.name + ').');
+			
 			let promise = compileShader(invocation.projectDir, invocation.type, invocation.from, invocation.to, invocation.temp, invocation.platform, invocation.builddir);
 	
 			promise.then(() => {
@@ -304,6 +304,10 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 						resolve();
 					}
 				}
+			});
+
+			promise.catch((err) => {
+				reject('Compiling shader ' + invocation.name + ' failed.');
 			});
 		}
 	
@@ -414,6 +418,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 				//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
 		}
+
 		await compileShaders(invocations);
 	}
 
@@ -712,9 +717,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 		project = await exportProject(options.from, options.to, options.target, options.kfile, options);
 	}
 	catch (error) {
-		log.error(error);
 		throw error;
 	}
+	
 	let solutionName = project.getSafeName();
 	if (options.onlyshaders) {
 		return solutionName;

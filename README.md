@@ -8,6 +8,4 @@ For when you are only changing TypeScript and/or JavaScript files to create a bu
 
 Windows: `vcbuild.bat openssl-no-asm without-intl node-builtin-modules-path %cd%`
 
-*nix based: `./configure --openssl-no-asm --without-intl --node-builtin-modules-path $(pwd)`
-
-
+\*nix based: `./configure --openssl-no-asm --without-intl --node-builtin-modules-path $(pwd)`
