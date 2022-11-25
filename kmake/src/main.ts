@@ -259,7 +259,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 					resolve();
 				}
 				else {
-					reject('Shader compiler error.');
+					reject(compilerPath + ' ' + params.join(' '));
 				}
 			});
 		}
@@ -307,7 +307,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 			});
 
 			promise.catch((err) => {
-				reject('Compiling shader ' + invocation.name + ' failed.');
+				reject('Compiling shader ' + invocation.name + ' failed. Command was: ' + err);
 			});
 		}
 	
@@ -719,7 +719,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 	catch (error) {
 		throw error;
 	}
-	
+
 	let solutionName = project.getSafeName();
 	if (options.onlyshaders) {
 		return solutionName;
