@@ -578,7 +578,7 @@ export class XCodeExporter extends Exporter {
 		this.p('files = (', 3);
 		for (let file of files) {
 			if (file.isBuildFile())
-				this.p(file.getBuildId() + ' /* " + file.toString() + " in Sources */,', 4);
+				this.p(file.getBuildId() + ' /* ' + file.toString() + ' in Sources */,', 4);
 		}
 		this.p(');', 3);
 		this.p('runOnlyForDeploymentPostprocessing = 0;');
