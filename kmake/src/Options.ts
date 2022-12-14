@@ -18,6 +18,5 @@ export let Options = {
 	compile: false,
 	run: false,
 	cores: 1,
-	shaderversion: '',
 	debug: false
 };

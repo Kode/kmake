@@ -24,7 +24,6 @@ import { Languages } from 'kmake/Languages';
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 import { JsonExporter } from 'kmake/Exporters/JsonExporter';
-import {ShaderCompiler, CompiledShader} from 'kmake/ShaderCompiler';
 
 let _global: any = global;
 _global.__base = __dirname + '/';
@@ -172,7 +171,7 @@ function shaderLang(platform: string): string {
 	}
 }
 
-async function compileShader(projectDir: string, type: string, from: string, to: string, temp: string, platform: string, builddir: string, shaderversion: string) {
+async function compileShader(projectDir: string, type: string, from: string, to: string, temp: string, platform: string, builddir: string, shaderversion: number) {
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
@@ -217,7 +216,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 			if (debug) params.push('--debug');
 			if (shaderversion) {
 				params.push("--version");
-				params.push(shaderversion);
+				params.push(shaderversion.toString());
 			}
 			let compiler = child_process.spawn(compilerPath, params);
 
@@ -282,7 +281,7 @@ class Invocation {
 	platform: string;
 	builddir: string;
 	name: string;
-	shaderversion: string;
+	shaderversion: number;
 }
 
 function compileShaders(invocations: Invocation[]): Promise<void> {
@@ -368,14 +367,6 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 
 	let files = project.getFiles();
 
-	if (options.shaderversion) {
-		if (project.shaderVersion > parseInt(options.shaderversion)) {
-			options.shaderversion = project.shaderVersion.toString();
-		}
-	} else if (project.shaderVersion) {
-		options.shaderversion = project.shaderVersion.toString();
-	}
-
 	if (!options.noshaders && !options.json) {
 		/*let compilerPath = '';
 		if (Project.kincDir !== '') {
@@ -428,7 +419,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 					platform: platform,
 					builddir: options.to,
 					name: parsedFile.name,
-					shaderversion: options.shaderversion,
+					shaderversion: project.shaderVersion,
 				});
 				//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
@@ -691,7 +682,6 @@ export async function run(options: any, loglog: any): Promise<string> {
 	}
 
 	Options.debug = options.debug;
-	Options.shaderversion = options.shaderversion;
 
 	if (!options.kinc) {
 		let p = path.join(__dirname, '..', '..');
