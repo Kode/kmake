@@ -310,10 +310,10 @@ export class ShaderCompiler {
 								temp = to;
 							}
 							let parameters = [this.type === 'hlsl' ? 'd3d9' : this.type, from, temp, this.temp, this.platform];
-							if (Options.shaderversion) {
-								parameters.push('--version');
-								parameters.push(Options.shaderversion);
-							}
+							// if (Options.shaderversion) {
+							// 	parameters.push('--version');
+							// 	parameters.push(Options.shaderversion);
+							// }
 							if (Options.debug) {
 								parameters.push('--debug');
 							}
