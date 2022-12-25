@@ -223,6 +223,7 @@ export class Project {
 	isDynamicLib: boolean = false;
 	static currentParent: Project = null;
 	parent: Project;
+	shaderVersion: number;
 
 	constructor(name: string) {
 		this.name = name;
@@ -338,6 +339,14 @@ export class Project {
 				}
 				if (sub.macOSnoArm) {
 					this.macOSnoArm = true;
+				}
+				if (this.shaderVersion) {
+					if (sub.shaderVersion && sub.shaderVersion > this.shaderVersion) {
+						this.shaderVersion = sub.shaderVersion;
+					}
+				}
+				else if (sub.shaderVersion) {
+					this.shaderVersion = sub.shaderVersion;
 				}
 				if (sub.livePP) {
 					this.livePP = this.livePP;
@@ -517,7 +526,7 @@ export class Project {
 		let files = fs.readdirSync(current);
 		nextfile: for (let f in files) {
 			let file = path.join(current, files[f]);
-			
+
 			let follow = true;
 			try {
 				if (fs.statSync(file).isDirectory()) {
@@ -813,6 +822,10 @@ export class Project {
 
 	set cpp(value: boolean) {
 		cppEnabled = value;
+	}
+
+	setMinimumShaderVersion(version:number) {
+		this.shaderVersion = version;
 	}
 
 	// deprecated

@@ -24,7 +24,6 @@ import { Languages } from 'kmake/Languages';
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 import { JsonExporter } from 'kmake/Exporters/JsonExporter';
-import {ShaderCompiler, CompiledShader} from 'kmake/ShaderCompiler';
 
 let _global: any = global;
 _global.__base = __dirname + '/';
@@ -172,7 +171,7 @@ function shaderLang(platform: string): string {
 	}
 }
 
-async function compileShader(projectDir: string, type: string, from: string, to: string, temp: string, platform: string, builddir: string) {
+async function compileShader(projectDir: string, type: string, from: string, to: string, temp: string, platform: string, builddir: string, shaderversion: number) {
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
@@ -215,6 +214,10 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 
 			let params = [type, from, to, temp, krafix_platform];
 			if (debug) params.push('--debug');
+			if (shaderversion) {
+				params.push("--version");
+				params.push(shaderversion.toString());
+			}
 			let compiler = child_process.spawn(compilerPath, params);
 
 			compiler.stdout.on('data', (data: any) => {
@@ -278,22 +281,23 @@ class Invocation {
 	platform: string;
 	builddir: string;
 	name: string;
+	shaderversion: number;
 }
 
 function compileShaders(invocations: Invocation[]): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		let runningInstances = 0;
 		let nextIndex = 0;
-		
+
 		function grabShader() {
 			let invocation = invocations[nextIndex];
 			++nextIndex;
 			++runningInstances;
-			
+
 			log.info('Compiling shader ' + nextIndex + ' of ' + invocations.length + ' (' + invocation.name + ').');
-			
-			let promise = compileShader(invocation.projectDir, invocation.type, invocation.from, invocation.to, invocation.temp, invocation.platform, invocation.builddir);
-	
+
+			let promise = compileShader(invocation.projectDir, invocation.type, invocation.from, invocation.to, invocation.temp, invocation.platform, invocation.builddir, invocation.shaderversion);
+
 			promise.then(() => {
 				--runningInstances;
 				if (nextIndex < invocations.length) {
@@ -310,7 +314,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 				reject('Compiling shader ' + invocation.name + ' failed. Command was: ' + err);
 			});
 		}
-	
+
 		if (invocations.length === 0) {
 			resolve();
 		}
@@ -362,12 +366,13 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	fs.ensureDirSync(to);
 
 	let files = project.getFiles();
+
 	if (!options.noshaders && !options.json) {
 		/*let compilerPath = '';
 		if (Project.kincDir !== '') {
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 		}
-		
+
 		const matches = [];
 		for (let file of files) {
 			if (file.file.endsWith('.glsl')) {
@@ -404,7 +409,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 				const shader = path.isAbsolute(file.file) ? file.file : path.join(file.projectDir, file.file);
 
 				++shaderIndex;
-				
+
 				invocations.push({
 					projectDir: from,
 					type: shaderLang(platform),
@@ -413,7 +418,8 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 					temp: options.to,
 					platform: platform,
 					builddir: options.to,
-					name: parsedFile.name
+					name: parsedFile.name,
+					shaderversion: project.shaderVersion,
 				});
 				//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
 			}
@@ -676,7 +682,6 @@ export async function run(options: any, loglog: any): Promise<string> {
 	}
 
 	Options.debug = options.debug;
-	Options.shaderversion = options.shaderversion;
 
 	if (!options.kinc) {
 		let p = path.join(__dirname, '..', '..');
