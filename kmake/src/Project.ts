@@ -213,6 +213,7 @@ export class Project {
 	cppFlags: string[] = [];
 	stackSize: number;
 	icon: string = null;
+	livePP: string = null;
 	additionalBackends: string[] = [];
 	vsdeploy: boolean = false;
 	linkTimeOptimization: boolean = true;
@@ -337,6 +338,9 @@ export class Project {
 				}
 				if (sub.macOSnoArm) {
 					this.macOSnoArm = true;
+				}
+				if (sub.livePP) {
+					this.livePP = this.livePP;
 				}
 				let subbasedir = sub.basedir;
 
@@ -753,6 +757,10 @@ export class Project {
 			return this;
 		}
 		return this.parent.getRootProject();
+	}
+
+	addLivePP(livePP: string) {
+		this.livePP = livePP;
 	}
 
 	async addProject(directory: string, options: any = {}, projectFile: string = null) {
