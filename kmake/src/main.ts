@@ -80,9 +80,9 @@ function shaderLang(platform: string): string {
 				case GraphicsApi.Direct3D9:
 					return 'd3d9';
 				case GraphicsApi.Direct3D11:
-				case GraphicsApi.Default:
 					return 'd3d11';
 				case GraphicsApi.Direct3D12:
+				case GraphicsApi.Default:
 					return 'd3d11';
 				case GraphicsApi.Vulkan:
 					return 'spirv';
@@ -114,20 +114,20 @@ function shaderLang(platform: string): string {
 			}
 		case Platform.Android:
 			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
 				case GraphicsApi.Vulkan:
 					return 'spirv';
 				case GraphicsApi.OpenGL:
-				case GraphicsApi.Default:
 					return 'essl';
 				default:
 					throw new Error('Unsupported shader language.');
 			}
 		case Platform.Linux:
 			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
 				case GraphicsApi.Vulkan:
 					return 'spirv';
 				case GraphicsApi.OpenGL:
-				case GraphicsApi.Default:
 					return 'glsl';
 				default:
 					throw new Error('Unsupported shader language.');

@@ -61,10 +61,10 @@ export class ShaderCompiler {
 	static findType(platform: string): string {
 		switch (platform) {
 		case Platform.Android:
-			if (Options.graphicsApi === GraphicsApi.Vulkan) {
+			if (Options.graphicsApi === GraphicsApi.Vulkan || Options.graphicsApi === GraphicsApi.Default) {
 				return 'spirv';
 			}
-			else if (Options.graphicsApi === GraphicsApi.OpenGL || Options.graphicsApi === GraphicsApi.Default) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL) {
 				return 'essl';
 			}
 			else {
@@ -105,10 +105,10 @@ export class ShaderCompiler {
 		case Platform.WindowsApp:
 			return 'd3d11';
 		case Platform.Linux:
-			if (Options.graphicsApi === GraphicsApi.Vulkan) {
+			if (Options.graphicsApi === GraphicsApi.Vulkan || Options.graphicsApi === GraphicsApi.Default) {
 				return 'spirv';
 			}
-			else if (Options.graphicsApi === GraphicsApi.OpenGL || Options.graphicsApi === GraphicsApi.Default) {
+			else if (Options.graphicsApi === GraphicsApi.OpenGL) {
 				return 'glsl';
 			}
 			else {
