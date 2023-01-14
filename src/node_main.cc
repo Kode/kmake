@@ -41,7 +41,7 @@ static void CheckForDev(int* argc, char** argv) {
       int r = node::ReadFileSync(&temp,test_path);
       if (r != 0) {
         g_kmake_dev_path = NULL;
-        fprintf(stderr,"[ERROR] Failed to set the --dev path, the path specified isn't a kmake repo. Binary kmake source will be used.");
+        fprintf(stderr,"[ERROR] Failed to set the --dev path, the path specified isn't a kmake repo.Kmake source in binary will be used.");
       }
       i++;
       out_argc -= 2;
