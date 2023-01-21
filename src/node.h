@@ -107,6 +107,8 @@
 # endif
 #endif
 
+extern char* g_kmake_dev_path;
+
 // Forward-declare libuv loop
 struct uv_loop_s;
 

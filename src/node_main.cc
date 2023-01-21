@@ -22,6 +22,38 @@
 #include "node.h"
 #include <cstdio>
 
+#include "util.h" // Needed for node::ReadFileSync
+
+/*
+* This function will parse argv and if it finds --dev will take the next argument
+* and set g_make_dev_path to that value. This function will change the value of argv and argc.
+*/
+static void CheckForDev(int* argc, char** argv) {
+  char* temp_argv[64] = {0};
+  int out_argc = *argc;
+  int minus = 0;
+  for (int i = 0; i < *argc; ++i) {
+    if (strcmp("--dev", argv[i]) == 0 && *argc > i +1) {
+      g_kmake_dev_path = argv[i+1];
+      char test_path[260];
+      snprintf(test_path,260,"%s/lib/kmake/init.js",g_kmake_dev_path);
+      std::string temp;
+      int r = node::ReadFileSync(&temp,test_path);
+      if (r != 0) {
+        g_kmake_dev_path = NULL;
+        fprintf(stderr,"[ERROR] Failed to set the --dev path, the path specified isn't a kmake repo.Kmake source in binary will be used.");
+      }
+      i++;
+      out_argc -= 2;
+      minus = -2;
+      continue;
+    }
+    temp_argv[i+minus] = argv[i];
+  }
+  temp_argv[out_argc] = nullptr;
+  *argc = out_argc;
+  memcpy(argv,temp_argv,sizeof(char*) * (*argc +1));
+}
 #ifdef _WIN32
 #include <windows.h>
 #include <VersionHelpers.h>
@@ -83,6 +115,7 @@ int wmain(int argc, wchar_t* wargv[]) {
     }
   }
   argv[argc] = nullptr;
+  CheckForDev(&argc,argv);
   // Now that conversion is done, we can finally start.
   return node::Start(argc, argv);
 }
@@ -124,6 +157,7 @@ int main(int argc, char* argv[]) {
   // calls elsewhere in the program (e.g., any logging from V8.)
   setvbuf(stdout, nullptr, _IONBF, 0);
   setvbuf(stderr, nullptr, _IONBF, 0);
+  CheckForDev(&argc,argv);
   return node::Start(argc, argv);
 }
 #endif

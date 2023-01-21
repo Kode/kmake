@@ -2,6 +2,8 @@
 #include "util-inl.h"
 #include "debug_utils-inl.h"
 
+char* g_kmake_dev_path = NULL;
+
 namespace node {
 namespace native_module {
 
@@ -202,12 +204,29 @@ static std::string OnDiskFileName(const char* id) {
 
   return filename;
 }
+#else
+static std::string OnDiskFileName(const char* id) {
+  std::string filename = g_kmake_dev_path;
+  filename += "/";
+
+  if (strncmp(id, "internal/deps", strlen("internal/deps")) == 0) {
+    id += strlen("internal/");
+  } else {
+    filename += "lib/";
+  }
+  filename += id;
+  filename += ".js";
+
+  return filename;
+}
 #endif  // NODE_BUILTIN_MODULES_PATH
 
 MaybeLocal<String> NativeModuleLoader::LoadBuiltinModuleSource(Isolate* isolate,
                                                                const char* id) {
 #ifdef NODE_BUILTIN_MODULES_PATH
   if (strncmp(id, "embedder_main_", strlen("embedder_main_")) == 0) {
+#else
+  if(g_kmake_dev_path == NULL){
 #endif  // NODE_BUILTIN_MODULES_PATH
     const auto source_it = source_.find(id);
     if (UNLIKELY(source_it == source_.end())) {
@@ -216,6 +235,23 @@ MaybeLocal<String> NativeModuleLoader::LoadBuiltinModuleSource(Isolate* isolate,
     }
     return source_it->second.ToStringChecked(isolate);
 #ifdef NODE_BUILTIN_MODULES_PATH
+  }
+  std::string filename = OnDiskFileName(id);
+
+  std::string contents;
+  int r = ReadFileSync(&contents, filename.c_str());
+  if (r != 0) {
+    const std::string buf = SPrintF("Cannot read local builtin. %s: %s \"%s\"",
+                                    uv_err_name(r),
+                                    uv_strerror(r),
+                                    filename);
+    Local<String> message = OneByteString(isolate, buf.c_str());
+    isolate->ThrowException(v8::Exception::Error(message));
+    return MaybeLocal<String>();
+  }
+  return String::NewFromUtf8(
+      isolate, contents.c_str(), v8::NewStringType::kNormal, contents.length());
+#else
   }
   std::string filename = OnDiskFileName(id);
 
