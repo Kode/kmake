@@ -758,7 +758,13 @@ export async function run(options: any, loglog: any): Promise<string> {
 			make = child_process.spawn('xcodebuild', xcodeOptions, { cwd: options.to });
 		}
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Windows) || options.target === Platform.Windows
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.WindowsApp) || options.target === Platform.WindowsApp) {
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.WindowsApp) || options.target === Platform.WindowsApp
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.Switch) || options.target === Platform.Switch
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS4) || options.target === Platform.PS4
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS5) || options.target === Platform.PS5
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxOne) || options.target === Platform.XboxOne
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxScarlett) || options.target === Platform.XboxScarlett
+			) {
 			let vsvars: string = null;
 			const bits = dothemath ? '64' : '32';
 			switch (options.visualstudio) {
