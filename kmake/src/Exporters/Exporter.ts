@@ -307,7 +307,7 @@ export abstract class Exporter {
 				}
 			}
 			else {
-				log.error('Platform is set to Android, but android toolchain not found.\nPlease set the ANDROID_NDK environment variable.');
+				log.error('Platform is set to Android, but android toolchain not found.\nPlease set the ANDROID_NDK environment variable if you need a compile_commands.json for your IDE.');
 			}
 		}
 		else if (platform === Platform.Emscripten) {
@@ -318,7 +318,7 @@ export abstract class Exporter {
 				defaultArgs.push(...flags);
 			}
 			else {
-				log.error('Platform is set to Emscripten, but emcc could not be found. Please add it to your PATH environment variable.');
+				log.error('Platform is set to Emscripten, but emcc could not be found. Please add it to your PATH environment variable if you need a compile_commands.json for your IDE.');
 			}
 		}
 
