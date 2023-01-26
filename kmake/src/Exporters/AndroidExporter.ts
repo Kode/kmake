@@ -47,7 +47,7 @@ export class AndroidExporter extends Exporter {
 			versionCode: 1,
 			versionName: '1.0',
 			compileSdkVersion: 32,
-			minSdkVersion: Options.graphicsApi === GraphicsApi.Vulkan ? 24 : 15,
+			minSdkVersion: (Options.graphicsApi === GraphicsApi.Vulkan || Options.graphicsApi === GraphicsApi.Default) ? 24 : 15,
 			targetSdkVersion: 32,
 			screenOrientation: 'sensor',
 			permissions: ['android.permission.VIBRATE'],
