@@ -736,7 +736,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 		const dothemath = is64bit();
 		let make: child_process.ChildProcess = null;
 
-		if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux || options.target === Platform.FreeBSD) {
+		if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
+			make = child_process.spawn('ninja', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
+		}
+		else if ((options.customTarget && options.customTarget.baseTarget === Platform.FreeBSD) || options.target === Platform.FreeBSD) {
 			make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Pi) || options.target === Platform.Pi) {
