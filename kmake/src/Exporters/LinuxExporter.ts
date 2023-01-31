@@ -195,7 +195,7 @@ export class LinuxExporter extends Exporter {
 
 		let cline = cCompiler + ' ';
 		if (project.cStd !== '') {
-			cline = '-std=' + project.cStd + ' ';
+			cline += '-std=' + project.cStd + ' ';
 		}
 		if (options.dynlib) {
 			cline += '-fPIC ';
