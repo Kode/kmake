@@ -159,7 +159,7 @@ export class LinuxExporter extends Exporter {
 		cline += optimization + ' ';
 		cline += incline;
 		cline += defline;
-		this.p('rule cc\n  depfile = $out.d\n  command = ' + cline + '-MD -MF $out.d -c $in -o $out\n');
+		this.p('rule cc\n  deps = gcc\n  depfile = $out.d\n  command = ' + cline + '-MD -MF $out.d -c $in -o $out\n');
 
 		let cppline = cppCompiler + ' ';
 		if (project.cppStd !== '') {
@@ -174,7 +174,7 @@ export class LinuxExporter extends Exporter {
 		cppline += optimization + ' ';
 		cppline += incline;
 		cppline += defline;
-		this.p('rule cxx\n  depfile = $out.d\n  command = ' + cppline + '-MD -MF $out.d -c $in -o $out\n');
+		this.p('rule cxx\n  deps = gcc\n  depfile = $out.d\n  command = ' + cppline + '-MD -MF $out.d -c $in -o $out\n');
 
 		if (options.dynlib) {
 			this.p('rule link\n  pool = link_pool\n  command = ar rcs -shared -o $out $in');
