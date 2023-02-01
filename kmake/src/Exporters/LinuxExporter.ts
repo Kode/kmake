@@ -19,53 +19,6 @@ export class LinuxExporter extends Exporter {
 		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 
-	findFile(filepath: string, from: string, includeDirs: string[]): string {
-		if (from) {
-			if (fs.existsSync(path.resolve(from, filepath))) {
-				return path.resolve(from, filepath);
-			}
-		}
-
-		for (const include of includeDirs) {
-			if (fs.existsSync(path.resolve(include, filepath))) {
-				return path.resolve(include, filepath);
-			}	
-		}
-
-		return null;
-	}
-
-	parseCFile(filepath: string, includes: string[], includeDirs: string[]): string[] {
-		const file = fs.readFileSync(filepath, 'utf-8');
-
-		const lines = file.split('\n');
-		for (const line of lines) {
-			if (line.startsWith('#include')) {
-				let inc = line.substring('#include'.length).trim();
-				const searchCurrentDir = inc.charAt(0) === '"';
-				inc = inc.substring(1, inc.length - 1);
-
-				const found = this.findFile(inc, searchCurrentDir ? path.dirname(filepath) : null, includeDirs);
-				if (found) {
-					let previouslyFound = false;
-					for (const include of includes) {
-						if (found === include) {
-							previouslyFound = true;
-							break;
-						}
-					}
-
-					if (!previouslyFound) {
-						includes.push(found);
-						this.parseCFile(found, includes, includeDirs);
-					}
-				}
-			}
-		}
-
-		return includes;
-	}
-
 	getCCompiler(): string {
 		switch (Options.compiler) {
 			case Compiler.Default:
@@ -425,8 +378,9 @@ export class LinuxExporter extends Exporter {
 			}
 			if (precompiledHeader !== null) {
 				let realfile = path.relative(outputPath, path.resolve(from, file.file));
+				this.p('-include ' + path.basename(file.file) + '.d');
 				this.p(path.basename(realfile) + '.gch: ' + realfile);
-				this.p('\t' + cppCompiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
+				this.p('\t' + cppCompiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
 			}
 		}
 
@@ -436,13 +390,10 @@ export class LinuxExporter extends Exporter {
 				this.p();
 				let name = ofiles[file];
 				let realfile = path.relative(outputPath, path.resolve(from, file));
-				const includes = this.parseCFile(path.resolve(from, file), [], project.getIncludeDirs());
 
-				let dependenciesLine = name + '.o: ' + realfile;
-				for (const include of includes) {
-					dependenciesLine += ' ' + path.relative(outputPath, include);
-				}
-				this.p(dependenciesLine);
+				this.p('-include ' + name + '.d');
+
+				this.p(name + '.o: ' + realfile);
 
 				let compiler = cppCompiler;
 				let flags = '$(CPPFLAGS)';
@@ -455,7 +406,7 @@ export class LinuxExporter extends Exporter {
 					flags = '';
 				}
 
-				this.p('\t' + compiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
+				this.p('\t' + compiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
 			}
 		}
 
