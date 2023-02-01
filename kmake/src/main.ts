@@ -536,7 +536,7 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 		});
 
 		make.on('error', (err: any) => {
-			log.error('Compilation failed.');
+			log.error('Could not start the compiler.');
 			reject();
 		});
 
@@ -588,7 +588,7 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 			}
 			else {
 				log.error('Compilation failed.');
-				reject();
+				reject(code);
 			}
 		});
 	});
@@ -737,7 +737,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 		let make: child_process.ChildProcess = null;
 
 		if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
-			make = child_process.spawn('ninja', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
+			make = child_process.spawn('ninja', [], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if ((options.customTarget && options.customTarget.baseTarget === Platform.FreeBSD) || options.target === Platform.FreeBSD) {
 			make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
@@ -816,7 +816,34 @@ export async function run(options: any, loglog: any): Promise<string> {
 		}
 
 		if (make !== null) {
-			await compileProject(make, project, solutionName, options, dothemath);
+			try {
+				await compileProject(make, project, solutionName, options, dothemath);
+			}
+			catch (err) {
+				if (typeof(err) === 'number') {
+					throw 'Compile error';
+				}
+				else {
+					if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
+						log.error('Ninja could not be run, falling back to make.');
+						make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
+						try {
+							await compileProject(make, project, solutionName, options, dothemath);
+						}
+						catch (err) {
+							if (typeof(err) === 'number') {
+								throw 'Compile error';
+							}
+							else {
+								throw 'Compiler not found';
+							}
+						}
+					}
+					else {
+						throw 'Compiler not found';
+					}
+				}
+			}
 			return solutionName;
 		}
 		else {
