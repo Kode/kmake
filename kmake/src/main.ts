@@ -535,12 +535,19 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 			log.error(data.toString(), false);
 		});
 
+		let errored = false;
+
 		make.on('error', (err: any) => {
+			errored = true;
 			log.error('Could not start the compiler.');
 			reject();
 		});
 
 		make.on('close', function (code: number) {
+			if (errored) {
+				return;
+			}
+
 			const time = (new Date().getTime() - startDate.getTime()) / 1000;
 			const min = Math.floor(time / 60);
 			const sec = Math.floor(time - min * 60);
