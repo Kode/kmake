@@ -163,7 +163,7 @@ export class LinuxExporter extends Exporter {
 
 		let cppline = cppCompiler + ' ';
 		if (project.cppStd !== '') {
-			cppline = '-std=' + project.cppStd + ' ';
+			cppline += '-std=' + project.cppStd + ' ';
 		}
 		if (options.dynlib) {
 			cppline += '-fPIC ';
