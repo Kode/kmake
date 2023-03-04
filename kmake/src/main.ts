@@ -215,9 +215,13 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 			let params = [type, from, to, temp, krafix_platform];
 			if (debug) params.push('--debug');
 			if (shaderversion) {
-				params.push("--version");
+				params.push('--version');
 				params.push(shaderversion.toString());
 			}
+			if (Options.outputIntermediateSpirv) {
+				params.push('outputintermediatespirv');
+			}
+
 			let compiler = child_process.spawn(compilerPath, params);
 
 			compiler.stdout.on('data', (data: any) => {
@@ -686,6 +690,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	if (options.nosymlinks) {
 		Options.followSymbolicLinks = false;
+	}
+
+	if (options.outputintermediatespirv) {
+		Options.outputIntermediateSpirv = true;
 	}
 
 	Options.debug = options.debug;

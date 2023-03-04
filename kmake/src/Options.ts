@@ -18,5 +18,6 @@ export let Options = {
 	compile: false,
 	run: false,
 	cores: 1,
-	debug: false
+	debug: false,
+	outputIntermediateSpirv: false
 };
