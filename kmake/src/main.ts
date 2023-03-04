@@ -219,7 +219,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 				params.push(shaderversion.toString());
 			}
 			if (Options.outputIntermediateSpirv) {
-				params.push('outputintermediatespirv');
+				params.push('--outputintermediatespirv');
 			}
 
 			let compiler = child_process.spawn(compilerPath, params);
