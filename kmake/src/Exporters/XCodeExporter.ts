@@ -684,15 +684,10 @@ export class XCodeExporter extends Exporter {
 		this.p('GCC_WARN_UNUSED_FUNCTION = YES;', 4);
 		this.p('GCC_WARN_UNUSED_VARIABLE = YES;', 4);
 		if (platform === Platform.iOS) {
-			this.p('IPHONEOS_DEPLOYMENT_TARGET = 9.0;', 4);
+			this.p('IPHONEOS_DEPLOYMENT_TARGET = 11.0;', 4);
 		}
 		else {
-			if (Options.graphicsApi === GraphicsApi.OpenGL) {
-				this.p('MACOSX_DEPLOYMENT_TARGET = 10.9;', 4);
-			}
-			else {
-				this.p('MACOSX_DEPLOYMENT_TARGET = 10.11;', 4);
-			}
+			this.p('MACOSX_DEPLOYMENT_TARGET = 10.13;', 4);
 		}
 		this.p('MTL_ENABLE_DEBUG_INFO = YES;', 4);
 		this.p('ONLY_ACTIVE_ARCH = YES;', 4);
@@ -776,15 +771,10 @@ export class XCodeExporter extends Exporter {
 		this.p('GCC_WARN_UNUSED_FUNCTION = YES;', 4);
 		this.p('GCC_WARN_UNUSED_VARIABLE = YES;', 4);
 		if (platform === Platform.iOS) {
-			this.p('IPHONEOS_DEPLOYMENT_TARGET = 9.0;', 4);
+			this.p('IPHONEOS_DEPLOYMENT_TARGET = 11.0;', 4);
 		}
 		else {
-			if (Options.graphicsApi === GraphicsApi.OpenGL) {
-				this.p('MACOSX_DEPLOYMENT_TARGET = 10.9;', 4);
-			}
-			else {
-				this.p('MACOSX_DEPLOYMENT_TARGET = 10.11;', 4);
-			}
+			this.p('MACOSX_DEPLOYMENT_TARGET = 10.13;', 4);
 		}
 		this.p('MTL_ENABLE_DEBUG_INFO = NO;', 4);
 		if (platform === Platform.iOS) {
