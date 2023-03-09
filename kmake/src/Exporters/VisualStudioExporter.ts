@@ -972,12 +972,7 @@ export class VisualStudioExporter extends Exporter {
 			includeDirs.push(project.livePP);
 		}
 		for (let include of includeDirs) {
-			if (path.isAbsolute(include)) {
-				incstring += include + ';';
-			}
-			else {
-				incstring += path.resolve(from, include) + ';';
-			}
+			incstring += path.relative(to, path.resolve(from, include)) + ';';
 		}
 		if (incstring.length > 0) incstring = incstring.substr(0, incstring.length - 1);
 
@@ -992,8 +987,12 @@ export class VisualStudioExporter extends Exporter {
 			
 		} 
 		for (let lib of project.getLibs()) {
-			if (fs.existsSync(path.resolve(from, lib + '.lib'))) debuglibs += path.resolve(from, lib) + '.lib;';
-			else debuglibs += lib + '.lib;';
+			if (fs.existsSync(path.resolve(from, lib + '.lib'))) {
+				debuglibs += path.relative(to, path.resolve(from, lib)) + '.lib;';
+			}
+			else {
+				debuglibs += lib + '.lib;';
+			}
 		}
 
 		let releaselibs = '';
@@ -1008,8 +1007,12 @@ export class VisualStudioExporter extends Exporter {
 		}
 		for (let proj of project.getSubProjects()) releaselibs += 'Release\\' + proj.getSafeName() + '.lib;';
 		for (let lib of project.getLibs()) {
-			if (fs.existsSync(path.resolve(from, lib + '.lib'))) releaselibs += path.resolve(from, lib) + '.lib;';
-			else releaselibs += lib + '.lib;';
+			if (fs.existsSync(path.resolve(from, lib + '.lib'))) {
+				releaselibs += path.relative(to, path.resolve(from, lib)) + '.lib;';
+			}
+			else {
+				releaselibs += lib + '.lib;';
+			}
 		}
 
 		if (platform === Platform.WindowsApp) {
