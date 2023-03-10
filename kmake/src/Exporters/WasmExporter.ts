@@ -106,7 +106,7 @@ export class WasmExporter extends Exporter {
 				continue;
 			}
 
-			defline += '-D' + def.value + ' ';
+			defline += '-D' + def.value.replace(/\"/g, '\\"') + ' ';
 		}
 		defline += '-D KORE_DEBUGDIR="\\"' + debugDirName + '\\""' + ' ';
 		this.p('DEF=' + defline);
