@@ -26,9 +26,9 @@ jobs:
       with:
         usesh: false
         sync: sshfs
-        mem: 8192
-        prepare: pkg install -y gmake bash python38
-        run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j3'
+        mem: 10240
+        prepare: pkg install -y gcc gmake bash python3
+        run: bash -c 'export CC=/usr/bin/gcc && export CXX=/usr/bin/g++ && ./configure --openssl-no-asm --without-intl && make -j3'
     - name: Get KincTools_freebsd_x64
       run: git clone https://github.com/Kode/KincTools_freebsd_x64.git
     - name: Copy binary
