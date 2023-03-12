@@ -28,7 +28,7 @@ jobs:
         sync: sshfs
         mem: 10240
         prepare: pkg install -y gcc gmake bash python3
-        run: bash -c 'export CC=/usr/bin/gcc && export CXX=/usr/bin/g++ && ./configure --openssl-no-asm --without-intl && make -j3'
+        run: bash -c 'export CC=$(which gcc) && export CXX=$(which g++) && ./configure --openssl-no-asm --without-intl && make -j3 CFLAGS="-Wl,-rpath=/usr/local/lib/gcc12" CXXFLAGS="-Wl,-rpath=/usr/local/lib/gcc12" LDFLAGS="-Wl,-rpath=/usr/local/lib/gcc12"'
     - name: Get KincTools_freebsd_x64
       run: git clone https://github.com/Kode/KincTools_freebsd_x64.git
     - name: Copy binary
