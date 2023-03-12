@@ -3,7 +3,7 @@ name: FreeBSD
 on:
   push:
     branches:
-    - deactivated
+    - freebsd-fix-attempt
   pull_request:
     branches:
     - deactivated
@@ -26,9 +26,9 @@ jobs:
       with:
         usesh: false
         sync: sshfs
-        mem: 3000
+        mem: 8192
         prepare: pkg install -y gmake bash python38
-        run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make'
+        run: bash -c 'export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && ./configure --openssl-no-asm --without-intl && make -j3'
     - name: Get KincTools_freebsd_x64
       run: git clone https://github.com/Kode/KincTools_freebsd_x64.git
     - name: Copy binary
