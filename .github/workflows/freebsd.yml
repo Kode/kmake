@@ -19,16 +19,16 @@ jobs:
     name: FreeBSD build
 
     steps:
-    - uses: actions/checkout@v2
+    #- uses: actions/checkout@v2
     - name: Compile in FreeBSD VM
       id: build
       uses: vmactions/freebsd-vm@v0
       with:
         usesh: false
-        sync: sshfs
+        sync: rsync
         mem: 10240
         prepare: pkg install -y gcc gmake bash python3
-        run: bash -c 'export CC=$(which gcc) && export CXX=$(which g++) && ./configure --openssl-no-asm --without-intl && make CFLAGS="-Wl,-rpath=/usr/local/lib/gcc12" CXXFLAGS="-Wl,-rpath=/usr/local/lib/gcc12" LDFLAGS="-Wl,-rpath=/usr/local/lib/gcc12"'
+        run: bash -c 'export CC=$(which clang) && export CXX=$(which clang++) && ./configure --openssl-no-asm --without-intl && make -j3'
     - name: Get KincTools_freebsd_x64
       run: git clone https://github.com/Kode/KincTools_freebsd_x64.git
     - name: Copy binary
