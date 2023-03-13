@@ -25,7 +25,7 @@ jobs:
       uses: vmactions/freebsd-vm@v0
       with:
         release: 13.1
-        envs: 'secrets.ROBBOT_PASS'
+        envs: 'secrets.ROBBOT_PASS GITHUB_SHA'
         usesh: false
         sync: rsync
         copyback: false
@@ -33,13 +33,21 @@ jobs:
         prepare: pkg install -y gmake bash python3 git
         run: |
           bash -c 'export CC=$(which clang) && export CXX=$(which clang++) && ./configure --openssl-no-asm --without-intl && make -j3'
+          # Get KincTools_freebsd_x64
           git clone https://github.com/Kode/KincTools_freebsd_x64.git
+          # Copy binary
           cp out/Release/node KincTools_freebsd_x64/kmake
+          # Git config
           git config --global user.name "Robbot"
           git config --global user.email "robbot2019@robdangero.us"
-          git -C KincTools_freebsd_x64 add . || true
-          git -C KincTools_freebsd_x64 commit -a -m "Update kmake binary to $GITHUB_SHA." || true
-          git -C KincTools_freebsd_x64 tag kmake_$GITHUB_SHA || true
-          git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags || true
-          git -C KincTools_freebsd_x64 pull --no-rebase || true
-          git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags || true
+          # Commit binary
+          git -C KincTools_freebsd_x64 add . && set _commit=0 || set _commit=1
+          git -C KincTools_freebsd_x64 commit -a -m "Update kmake binary to $GITHUB_SHA." && set _commit=0 || set _commit=1
+          # Tag binary
+          if ( $_commit == 0 ) git -C KincTools_freebsd_x64 tag kmake_$GITHUB_SHA
+          # Push binary
+          git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags && set _push1=0 || set _push1=1
+          # Pull
+          if ( $_commit == 0 && $_push1 == 1 ) git -C KincTools_freebsd_x64 pull --no-rebase
+          # Push again
+          if ( $_commit == 0 && $_push1 == 1 ) git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags
