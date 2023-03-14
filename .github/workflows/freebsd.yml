@@ -21,11 +21,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Compile in FreeBSD VM
+      env:
+        ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
       id: build
       uses: vmactions/freebsd-vm@v0
       with:
         release: 13.1
-        envs: 'secrets.ROBBOT_PASS GITHUB_SHA'
+        envs: 'ROBBOT_PASS GITHUB_SHA'
         usesh: false
         sync: rsync
         copyback: false
@@ -46,8 +48,8 @@ jobs:
           # Tag binary
           if ( $_commit == 0 ) git -C KincTools_freebsd_x64 tag kmake_$GITHUB_SHA
           # Push binary
-          git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags && set _push1=0 || set _push1=1
+          git -C KincTools_freebsd_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_freebsd_x64.git main --tags && set _push1=0 || set _push1=1
           # Pull
           if ( $_commit == 0 && $_push1 == 1 ) git -C KincTools_freebsd_x64 pull --no-rebase
           # Push again
-          if ( $_commit == 0 && $_push1 == 1 ) git -C KincTools_freebsd_x64 push https://Kode-Robbot:${{ secrets.ROBBOT_PASS }}@github.com/Kode/KincTools_freebsd_x64.git main --tags
+          if ( $_commit == 0 && $_push1 == 1 ) git -C KincTools_freebsd_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_freebsd_x64.git main --tags || true
