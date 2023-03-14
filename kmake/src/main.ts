@@ -24,6 +24,7 @@ import { Languages } from 'kmake/Languages';
 import { BeefLang } from 'kmake/Languages/BeefLang';
 import { FreeBSDExporter } from 'kmake/Exporters/FreeBSDExporter';
 import { JsonExporter } from 'kmake/Exporters/JsonExporter';
+import { Compiler } from 'kmake/Compiler';
 
 let _global: any = global;
 _global.__base = __dirname + '/';
@@ -675,6 +676,38 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	if (options.compiler !== undefined) {
 		Options.compiler = options.compiler;
+	}
+
+	if (options.cc !== undefined) {
+		Options.ccPath = options.cc;
+		Options.compiler = Compiler.Custom;
+	}
+
+	if (options.cxx !== undefined) {
+		Options.cxxPath = options.cxx;
+		Options.compiler = Compiler.Custom;
+	}
+
+	if (options.ar !== undefined) {
+		Options.arPath = options.ar;
+		Options.compiler = Compiler.Custom;
+	}
+
+	if (Options.compiler === Compiler.Custom) {
+		let error = false;
+		if (Options.ccPath === '') {
+			log.error('Missing C compiler path');
+			error = true;
+		}
+		if (Options.cxxPath === '') {
+			log.error('Missing C++ compiler path');
+			error = true;
+		}
+		if ((options.lib || options.dynlib) && Options.arPath === '') {
+			log.error('Missing ar path');
+			error = true;
+		}
+		if (error) throw 'Missing compiler path(s)';
 	}
 
 	if (options.visualstudio !== undefined) {

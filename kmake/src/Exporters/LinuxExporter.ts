@@ -28,6 +28,8 @@ export class LinuxExporter extends Exporter {
 				return 'clang';
 			case Compiler.MuslGcc:
 				return 'musl-gcc';
+			case Compiler.Custom:
+				return Options.ccPath;
 			default:
 				throw 'Unsupported compiler ' + Options.compiler;
 		}
@@ -42,6 +44,8 @@ export class LinuxExporter extends Exporter {
 				return 'clang++';
 			case Compiler.MuslGcc:
 				return 'g++';
+			case Compiler.Custom:
+				return Options.cxxPath;
 			default:
 				throw 'Unsupported compiler ' + Options.compiler;
 		}
@@ -183,7 +187,7 @@ export class LinuxExporter extends Exporter {
 			this.p('rule link\n  pool = link_pool\n  command = ar rcs -o $out $in');
 		}
 		else {
-			this.p('rule link\n  pool = link_pool\n  command = g++ -o $out ' + optimization + ' $in ' + libsline);
+			this.p('rule link\n  pool = link_pool\n  command = ' + this.getCPPCompiler() + ' -o $out ' + optimization + ' $in ' + libsline);
 		}
 
 		for (let fileobject of project.getFiles()) {

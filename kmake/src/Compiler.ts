@@ -3,5 +3,6 @@ export enum Compiler {
 	GCC = 'gcc',
 	Clang = 'clang',
 	MSVC = 'msvc',
-	MuslGcc = 'musl-gcc'
+	MuslGcc = 'musl-gcc',
+	Custom = 'custom'
 }
