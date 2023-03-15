@@ -678,17 +678,17 @@ export async function run(options: any, loglog: any): Promise<string> {
 		Options.compiler = options.compiler;
 	}
 
-	if (options.cc !== undefined) {
+	if (options.cc) {
 		Options.ccPath = options.cc;
 		Options.compiler = Compiler.Custom;
 	}
 
-	if (options.cxx !== undefined) {
+	if (options.cxx) {
 		Options.cxxPath = options.cxx;
 		Options.compiler = Compiler.Custom;
 	}
 
-	if (options.ar !== undefined) {
+	if (options.ar) {
 		Options.arPath = options.ar;
 		Options.compiler = Compiler.Custom;
 	}
