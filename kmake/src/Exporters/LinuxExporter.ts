@@ -181,7 +181,7 @@ export class LinuxExporter extends Exporter {
 		this.p('rule cxx\n  deps = gcc\n  depfile = $out.d\n  command = ' + cppline + '-MD -MF $out.d -c $in -o $out\n');
 
 		if (options.dynlib) {
-			this.p('rule link\n  pool = link_pool\n  command = ar rcs -shared -o $out $in');
+			this.p('rule link\n  pool = link_pool\n  command = ' + this.getCPPCompiler() + ' -fPIC -shared -o $out ' + optimization + ' $in ');
 		}
 		else if (options.lib) {
 			this.p('rule link\n  pool = link_pool\n  command = ar rcs -o $out $in');
