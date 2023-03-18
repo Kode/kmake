@@ -972,7 +972,11 @@ export class VisualStudioExporter extends Exporter {
 			includeDirs.push(project.livePP);
 		}
 		for (let include of includeDirs) {
-			incstring += path.relative(to, path.resolve(from, include)) + ';';
+			let relativized = path.relative(to, path.resolve(from, include));
+			if (relativized === '') {
+				relativized = '.';
+			}
+			incstring += relativized + ';';
 		}
 		if (incstring.length > 0) incstring = incstring.substr(0, incstring.length - 1);
 
