@@ -430,7 +430,7 @@ export class VisualStudioExporter extends Exporter {
 		for (let file of project.getFiles()) {
 			let dir = getDir(file);
 			if (dir !== lastdir) lastdir = dir;
-			if (file.file.endsWith('.cg') || file.file.endsWith('.hlsl')) {
+			if (file.file.endsWith('.cg') || file.file.endsWith('.hlsl') || file.file.endsWith('.glsl')) {
 				this.p('<CustomBuild Include="' + this.nicePath(from, to, file.file) + '">', 2);
 				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
 				this.p('</CustomBuild>', 2);
