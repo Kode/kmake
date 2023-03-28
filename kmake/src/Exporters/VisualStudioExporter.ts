@@ -329,6 +329,28 @@ export class VisualStudioExporter extends Exporter {
 		}
 	}
 
+	itemGroup(from: string, to: string, project: Project, type: string, prefix: () => void, filter: (file: File) => boolean) {
+		let lastdir = '';
+		this.p('<ItemGroup>', 1);
+		for (let file of project.getFiles()) {
+			let dir = getDir(file);
+			if (dir !== lastdir) lastdir = dir;
+			if (filter(file)) {
+				let filepath = '';
+				if (project.noFlatten && !path.isAbsolute(file.file)) {
+					filepath = path.resolve(project.basedir + '/' + file.file);
+				}
+				else {
+					filepath = this.nicePath(from, to, file.file);
+				}
+				this.p('<' + type + ' Include="' + filepath + '">', 2);
+				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
+				this.p('</' + type + '>', 2);
+			}
+		}
+		this.p('</ItemGroup>', 1);
+	}
+
 	exportFilters(from: string, to: string, project: Project, platform: string) {
 		for (let proj of project.getSubProjects()) this.exportFilters(from, to, proj, platform);
 
@@ -385,71 +407,21 @@ export class VisualStudioExporter extends Exporter {
 			}
 		}
 
-		lastdir = '';
-		this.p('<ItemGroup>', 1);
-		for (let file of project.getFiles()) {
-			let dir = getDir(file);
-			if (dir !== lastdir) lastdir = dir;
-			if (file.file.endsWith('.h') || file.file.endsWith('.hpp')) {
-				let filepath = '';
-				if (project.noFlatten && !path.isAbsolute(file.file)) {
-					filepath = path.resolve(project.basedir + '/' + file.file);
-				}
-				else {
-					filepath = this.nicePath(from, to, file.file);
-				}
-				this.p('<ClInclude Include="' + filepath + '">', 2);
-				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
-				this.p('</ClInclude>', 2);
-			}
-		}
-		this.p('</ItemGroup>', 1);
+		this.itemGroup(from, to, project, 'ClInclude', () => {}, (file: File) => {
+			return file.file.endsWith('.h') || file.file.endsWith('.hpp');
+		});
 
-		lastdir = '';
-		this.p('<ItemGroup>', 1);
-		for (let file of project.getFiles()) {
-			let dir = getDir(file);
-			if (dir !== lastdir) lastdir = dir;
-			if (file.file.endsWith('.cpp') || file.file.endsWith('.c') || file.file.endsWith('.cc') || file.file.endsWith('.cxx')) {
-				let filepath = '';
-				if (project.noFlatten && !path.isAbsolute(file.file)) {
-					filepath = path.resolve(project.basedir + '/' + file.file);
-				}
-				else {
-					filepath = this.nicePath(from, to, file.file);
-				}
-				this.p('<ClCompile Include="' + filepath + '">', 2);
-				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
-				this.p('</ClCompile>', 2);
-			}
-		}
-		this.p('</ItemGroup>', 1);
+		this.itemGroup(from, to, project, 'ClCompile', () => {}, (file: File) => {
+			return file.file.endsWith('.cpp') || file.file.endsWith('.c') || file.file.endsWith('.cc') || file.file.endsWith('.cxx');
+		});
 
-		lastdir = '';
-		this.p('<ItemGroup>', 1);
-		for (let file of project.getFiles()) {
-			let dir = getDir(file);
-			if (dir !== lastdir) lastdir = dir;
-			if (file.file.endsWith('.cg') || file.file.endsWith('.hlsl') || file.file.endsWith('.glsl')) {
-				this.p('<CustomBuild Include="' + this.nicePath(from, to, file.file) + '">', 2);
-				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
-				this.p('</CustomBuild>', 2);
-			}
-		}
-		this.p('</ItemGroup>', 1);
+		this.itemGroup(from, to, project, 'CustomBuild', () => {}, (file: File) => {
+			return file.file.endsWith('.cg') || file.file.endsWith('.hlsl') || file.file.endsWith('.glsl');
+		});
 
-		lastdir = '';
-		this.p('<ItemGroup>', 1);
-		for (let file of project.getFiles()) {
-			let dir = getDir(file);
-			if (dir !== lastdir) lastdir = dir;
-			if (file.file.endsWith('.asm')) {
-				this.p('<MASM Include="' + this.nicePath(from, to, file.file) + '">', 2);
-				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
-				this.p('</MASM>', 2);
-			}
-		}
-		this.p('</ItemGroup>', 1);
+		this.itemGroup(from, to, project, 'MASM', () => {}, (file: File) => {
+			return file.file.endsWith('.asm');
+		});
 
 		if (project.vsdeploy) {
 			lastdir = '';
@@ -467,27 +439,18 @@ export class VisualStudioExporter extends Exporter {
 		}
 
 		if (platform === Platform.Windows) {
-			lastdir = '';
-			this.p('<ItemGroup>', 1);
-			this.p('<None Include="icon.ico">', 2);
-			this.p('<Filter>Ressourcendateien</Filter>', 3);
-			this.p('</None>', 2);
-			this.p('</ItemGroup>', 1);
-			this.p('<ItemGroup>', 1);
-			this.p('<ResourceCompile Include="resources.rc">', 2);
-			this.p('<Filter>Ressourcendateien</Filter>', 3);
-			this.p('</ResourceCompile>', 2);
-			for (let file of project.getFiles()) {
-				let dir = getDir(file);
-				if (dir !== lastdir)
-					lastdir = dir;
-				if (file.file.endsWith('.rc')) {
-					this.p('<ResourceCompile Include="' + this.nicePath(from, to, file.file) + '">', 2);
-					this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
-					this.p('</ResourceCompile>', 2);
-				}
-			}
-			this.p('</ItemGroup>', 1);
+			this.itemGroup(from, to, project, 'ResourceCompile', () => {
+				this.p('<None Include="icon.ico">', 2);
+				this.p('<Filter>Ressourcendateien</Filter>', 3);
+				this.p('</None>', 2);
+				this.p('</ItemGroup>', 1);
+				this.p('<ItemGroup>', 1);
+				this.p('<ResourceCompile Include="resources.rc">', 2);
+				this.p('<Filter>Ressourcendateien</Filter>', 3);
+				this.p('</ResourceCompile>', 2);
+			}, (file: File) => {
+				return file.file.endsWith('.rc');
+			});
 		}
 
 		this.p('</Project>');
