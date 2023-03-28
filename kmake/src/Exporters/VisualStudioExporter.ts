@@ -329,6 +329,14 @@ export class VisualStudioExporter extends Exporter {
 		}
 	}
 
+	prettyDir(dir: string) {
+		let prettyDir = dir;
+		while (prettyDir.startsWith('../')) {
+			prettyDir = prettyDir.substring(3);
+		}
+		return prettyDir.replace(/\//g, '\\');
+	}
+
 	itemGroup(from: string, to: string, project: Project, type: string, prefix: () => void, filter: (file: File) => boolean) {
 		let lastdir = '';
 		this.p('<ItemGroup>', 1);
@@ -338,13 +346,14 @@ export class VisualStudioExporter extends Exporter {
 			if (filter(file)) {
 				let filepath = '';
 				if (project.noFlatten && !path.isAbsolute(file.file)) {
-					filepath = path.resolve(project.basedir + '/' + file.file);
+					filepath = path.resolve(path.join(project.basedir, file.file));
 				}
 				else {
 					filepath = this.nicePath(from, to, file.file);
 				}
+
 				this.p('<' + type + ' Include="' + filepath + '">', 2);
-				this.p('<Filter>' + dir.replace(/\//g, '\\') + '</Filter>', 3);
+				this.p('<Filter>' + this.prettyDir(dir) + '</Filter>', 3);
 				this.p('</' + type + '>', 2);
 			}
 		}
@@ -379,9 +388,12 @@ export class VisualStudioExporter extends Exporter {
 
 		this.p('<ItemGroup>', 1);
 		for (let dir of dirs) {
-			this.p('<Filter Include="' + dir.replace(/\//g, '\\') + '">', 2);
-			this.p('<UniqueIdentifier>{' + crypto.randomUUID().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
-			this.p('</Filter>', 2);
+			const pretty = this.prettyDir(dir);
+			if (pretty !== '..') {
+				this.p('<Filter Include="' + pretty + '">', 2);
+				this.p('<UniqueIdentifier>{' + crypto.randomUUID().toString().toUpperCase() + '}</UniqueIdentifier>', 3);
+				this.p('</Filter>', 2);
+			}
 		}
 		if (platform === Platform.WindowsApp) {
 			this.p('<Filter Include="Package">', 2);
