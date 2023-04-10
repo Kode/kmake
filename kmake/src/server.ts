@@ -6,12 +6,17 @@ import * as path from 'path';
 export async function run(options: any, loglog: any): Promise<void> {
 	log.set(loglog);
 
-	log.info('Running server on ' + options.port);
+	log.info('Running server on ' + options.port + '...');
   
 	const server = http.createServer((request, response) => {
-		let filePath = 'build/' + request.url;
-		if (filePath === 'build/') {
-			filePath = 'build/index.html';
+		let baseDir = 'build/Release';
+		if (options.debug) {
+			baseDir = 'build/Debug';
+		}
+
+		let filePath = baseDir + request.url;
+		if (request.url === '/') {
+			filePath = baseDir + '/index.html';
 		}
 
 		const extname = path.extname(filePath);
@@ -40,12 +45,14 @@ export async function run(options: any, loglog: any): Promise<void> {
 				break;
 		}
 
+		console.log('Reading file ' + filePath + '.');
 		fs.readFile(filePath, (error, content) => {
 			response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
 			response.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
 
 			if (error) {
 				if (error.code == 'ENOENT'){
+					console.log('File ' + filePath + ' not found.');
 					fs.readFile('./404.html', (error, content) => {
 						response.writeHead(200, { 'Content-Type': contentType });
 						response.end(content, 'utf-8');
