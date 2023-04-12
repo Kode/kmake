@@ -180,10 +180,14 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 		}
 
-		if (fs.existsSync(path.join(projectDir, 'Backends'))) {
-			let libdirs = fs.readdirSync(path.join(projectDir, 'Backends'));
+		let libsdir = path.join(projectDir, 'Backends');
+		if (Project.kincDir) {
+			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		}
+		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
+			let libdirs = fs.readdirSync(path.join(libsdir));
 			for (let ld in libdirs) {
-				let libdir = path.join(projectDir, 'Backends', libdirs[ld]);
+				let libdir = path.join(libsdir, libdirs[ld]);
 				if (fs.statSync(libdir).isDirectory()) {
 					let exe = path.join(libdir, 'krafix', 'krafix-' + platform + '.exe');
 					if (fs.existsSync(exe)) {
@@ -457,22 +461,25 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.Tizen) exporter = new TizenExporter();
 	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxScarlett || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
+		if (Project.kincDir) {
+			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
 			let libdirs = fs.readdirSync(libsdir);
 			for (let libdir of libdirs) {
-				if (fs.statSync(path.join(from.toString(), 'Backends', libdir)).isDirectory()
+				if (fs.statSync(path.join(libsdir, libdir)).isDirectory()
 				&& (
 					libdir.toLowerCase() === platform.toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).replace(/ /g, '').toLowerCase()
 					|| (libdir.toLowerCase() === 'xbox' && (platform === Platform.XboxScarlett || platform === Platform.XboxOne))
 				)) {
-					let libfiles = fs.readdirSync(path.join(from.toString(), 'Backends', libdir));
+					let libfiles = fs.readdirSync(path.join(libsdir, libdir));
 					for (let libfile of libfiles) {
 						if (libfile.endsWith('Exporter.js')) {
-							const codePath = path.resolve(from.toString(), 'Backends', libdir, libfile);
+							const codePath = path.resolve(libsdir, libdir, libfile);
 							const code = fs.readFileSync(codePath, {encoding: 'utf8'});
-							exporter = new Function('require', '__dirname', 'VisualStudioExporter', code)(require, path.resolve(from.toString(), 'Backends', libdir), VisualStudioExporter);
+							exporter = new Function('require', '__dirname', 'VisualStudioExporter', code)(require, path.resolve(libsdir, libdir), VisualStudioExporter);
 							break;
 						}
 					}
