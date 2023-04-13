@@ -856,7 +856,29 @@ export async function run(options: any, loglog: any): Promise<string> {
 			}
 			if (vsvars !== null) {
 				const signing = ((options.customTarget && options.customTarget.baseTarget === Platform.WindowsApp) || options.target === Platform.WindowsApp) ? '/p:AppxPackageSigningEnabled=false' : '';
-				fs.writeFileSync(path.join(options.to, 'build.bat'), '@call "' + vsvars + '"\n' + '@MSBuild.exe "' + path.resolve(options.to, solutionName + '.vcxproj') + '" /m /clp:ErrorsOnly ' + signing + ' /p:Configuration=' + (options.debug ? 'Debug' : 'Release') + ',Platform=' + (dothemath ? 'x64' : 'win32'));
+
+				let compilePlatform = dothemath ? 'x64' : 'win32';
+
+				let libsdir = path.join(options.from, 'Backends');
+				if (Project.kincDir) {
+					libsdir = path.join(Project.kincDir, '..', 'Backends');
+				}
+				if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
+					let libdirs = fs.readdirSync(libsdir);
+					for (let libdir of libdirs) {
+						if (fs.statSync(path.join(libsdir, libdir)).isDirectory()
+						&& (
+							libdir.toLowerCase() === options.target.toLowerCase()
+							|| libdir.toLowerCase() === fromPlatform(options.target).toLowerCase()
+							|| libdir.toLowerCase() === fromPlatform(options.target).replace(/ /g, '').toLowerCase()
+							|| (libdir.toLowerCase() === 'xbox' && (options.target === Platform.XboxScarlett || options.target === Platform.XboxOne))
+						)) {
+							compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform'), 'utf-8').trim();
+						}
+					}
+				}
+
+				fs.writeFileSync(path.join(options.to, 'build.bat'), '@call "' + vsvars + '"\n' + '@MSBuild.exe "' + path.resolve(options.to, solutionName + '.vcxproj') + '" /m /clp:ErrorsOnly ' + signing + ' /p:Configuration=' + (options.debug ? 'Debug' : 'Release') + ',Platform=' + compilePlatform);
 				make = child_process.spawn('build.bat', [], {cwd: options.to});
 			}
 			else {
