@@ -19,13 +19,14 @@ import {
 import * as path from 'path';
 
 function ensureDirSync(dir: string): void {
-	const parent = path.normalize(path.join(dir, '..'));
-	if (!fsExistsSync(parent)) {
-		ensureDirSync(parent);
-	}
-	if (!fsExistsSync(dir)) {
-		fsMkdirSync(dir);
-	}
+    try {
+        if (!fsExistsSync(dir)) {
+            fsMkdirSync(dir, { recursive: true });
+            console.log(`Directory ${dir} was created.`);
+        }
+    } catch (err) {
+        console.error(`Error creating directory ${dir}: ${err}`);
+    }
 }
 
 function copyDirSync(from: string, to: string): void {

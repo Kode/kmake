@@ -739,6 +739,7 @@ export class Project {
 
 	setDebugDir(debugDir: string) {
 		this.debugDir = path.resolve(this.basedir, debugDir);
+		fs.ensureDirSync(this.debugDir);
 	}
 
 	getCppStd() {
