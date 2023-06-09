@@ -739,7 +739,9 @@ export class Project {
 
 	setDebugDir(debugDir: string) {
 		this.debugDir = path.resolve(this.basedir, debugDir);
-		fs.ensureDirSync(this.debugDir);
+		if(!fs.existsSync(this.debugDir)) {
+			throw new Error(`Debug directory ${this.debugDir} does not exist`);
+		}
 	}
 
 	getCppStd() {
