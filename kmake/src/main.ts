@@ -335,6 +335,95 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 	});
 }
 
+function compileKong(from: string, to: string, platform: string, dirs: string[]): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		let compilerPath = '';
+
+		if (Project.kincDir !== '') {
+			compilerPath = path.resolve(__dirname, 'kongruent' + exec.sys());
+		}
+
+		let libsdir = path.join(from, 'Backends');
+		if (Project.kincDir) {
+			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		}
+		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
+			let libdirs = fs.readdirSync(path.join(libsdir));
+			for (let ld in libdirs) {
+				let libdir = path.join(libsdir, libdirs[ld]);
+				if (fs.statSync(libdir).isDirectory()) {
+					let exe = path.join(libdir, 'krafix', 'kong-' + platform + '.exe');
+					if (fs.existsSync(exe)) {
+						compilerPath = exe;
+					}
+				}
+			}
+		}
+
+		if (compilerPath !== '') {
+			let params: string[] = [];
+			params.push('--platform');
+			params.push(platform);
+			for (const dir of dirs) {
+				params.push('--input');
+				params.push(dir);
+			}
+			params.push('--output');
+			params.push(to);
+			let compiler = child_process.spawn(compilerPath, params);
+
+			compiler.stdout.on('data', (data: any) => {
+				log.info(data.toString());
+			});
+
+			let errorLine = '';
+			let newErrorLine = true;
+			let errorData = false;
+
+			function parseData(data: string) {
+
+			}
+
+			compiler.stderr.on('data', (data: any) => {
+				let str: string = data.toString();
+				for (let char of str) {
+					if (char === '\n') {
+						if (errorData) {
+							parseData(errorLine.trim());
+						}
+						else {
+							log.error(errorLine.trim());
+						}
+						errorLine = '';
+						newErrorLine = true;
+						errorData = false;
+					}
+					else if (newErrorLine && char === '#') {
+						errorData = true;
+						newErrorLine = false;
+					}
+					else {
+						errorLine += char;
+						newErrorLine = false;
+					}
+				}
+			});
+
+			compiler.on('close', (code: number) => {
+				if (code === 0) {
+					resolve();
+				}
+				else {
+					reject(compilerPath + ' ' + params.join(' '));
+				}
+			});
+		}
+		else {
+			throw 'Could not find Kong.';
+		}
+	});
+}
+
 async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, options: any) {
 	log.info('kfile found.');
 	if (options.onlyshaders) {
@@ -377,64 +466,69 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	let files = project.getFiles();
 
 	if (!options.noshaders && !options.json) {
-		/*let compilerPath = '';
-		if (Project.kincDir !== '') {
-			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
+		if (project.kongDirs.length > 0) {
+			await compileKong(from, to, platform, project.kongDirs);
 		}
-
-		const matches = [];
-		for (let file of files) {
-			if (file.file.endsWith('.glsl')) {
-				matches.push({match: file.file, options: null});
+		else {
+			/*let compilerPath = '';
+			if (Project.kincDir !== '') {
+				compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 			}
-		}
 
-		let shaderCompiler = new ShaderCompiler(platform, compilerPath, project.getDebugDir(), options.to,
-			options.to builddir, matches);
-		try {
-			await shaderCompiler.run(false, false);
-		}
-		catch (err) {
-			return Promise.reject(err);
-		}*/
-
-		let shaderCount = 0;
-		for (let file of files) {
-			if (file.file.endsWith('.glsl')) {
-				++shaderCount;
+			const matches = [];
+			for (let file of files) {
+				if (file.file.endsWith('.glsl')) {
+					matches.push({match: file.file, options: null});
+				}
 			}
-		}
-		let shaderIndex = 0;
-		let invocations: Invocation[] = [];
-		for (let file of files) {
-			if (file.file.endsWith('.glsl')) {
-				let outfile = file.file;
-				const index = outfile.lastIndexOf('/');
-				if (index > 0) outfile = outfile.substr(index);
-				outfile = outfile.substr(0, outfile.length - 5);
 
-				let parsedFile = path.parse(file.file);
-
-				const shader = path.isAbsolute(file.file) ? file.file : path.join(file.projectDir, file.file);
-
-				++shaderIndex;
-
-				invocations.push({
-					projectDir: from,
-					type: shaderLang(platform),
-					from: shader,
-					to: path.join(project.getDebugDir(), outfile),
-					temp: options.to,
-					platform: platform,
-					builddir: options.to,
-					name: parsedFile.name,
-					shaderversion: project.shaderVersion,
-				});
-				//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
+			let shaderCompiler = new ShaderCompiler(platform, compilerPath, project.getDebugDir(), options.to,
+				options.to builddir, matches);
+			try {
+				await shaderCompiler.run(false, false);
 			}
-		}
+			catch (err) {
+				return Promise.reject(err);
+			}*/
 
-		await compileShaders(invocations);
+			let shaderCount = 0;
+			for (let file of files) {
+				if (file.file.endsWith('.glsl')) {
+					++shaderCount;
+				}
+			}
+			let shaderIndex = 0;
+			let invocations: Invocation[] = [];
+			for (let file of files) {
+				if (file.file.endsWith('.glsl')) {
+					let outfile = file.file;
+					const index = outfile.lastIndexOf('/');
+					if (index > 0) outfile = outfile.substr(index);
+					outfile = outfile.substr(0, outfile.length - 5);
+
+					let parsedFile = path.parse(file.file);
+
+					const shader = path.isAbsolute(file.file) ? file.file : path.join(file.projectDir, file.file);
+
+					++shaderIndex;
+
+					invocations.push({
+						projectDir: from,
+						type: shaderLang(platform),
+						from: shader,
+						to: path.join(project.getDebugDir(), outfile),
+						temp: options.to,
+						platform: platform,
+						builddir: options.to,
+						name: parsedFile.name,
+						shaderversion: project.shaderVersion,
+					});
+					//await compileShader(from, shaderLang(platform), shader, path.join(project.getDebugDir(), outfile), options.to, platform, options.to);
+				}
+			}
+
+			await compileShaders(invocations);
+		}
 	}
 
 	if (options.onlyshaders) {

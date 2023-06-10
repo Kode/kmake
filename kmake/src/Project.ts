@@ -224,6 +224,7 @@ export class Project {
 	static currentParent: Project = null;
 	parent: Project;
 	shaderVersion: number;
+	kongDirs: string[];
 
 	constructor(name: string) {
 		this.name = name;
@@ -242,6 +243,7 @@ export class Project {
 		this.includeDirs = [];
 		this.defines = [];
 		this.libs = [];
+		this.kongDirs = [];
 		this.systemDependendLibraries = {};
 		this.includes = [];
 		this.excludes = [];
@@ -396,6 +398,7 @@ export class Project {
 				}
 				for (let i of sub.includeDirs) if (!contains(this.includeDirs, path.resolve(subbasedir, i))) this.includeDirs.push(path.resolve(subbasedir, i));
 				for (let j of sub.javadirs) if (!contains(this.javadirs, path.resolve(subbasedir, j))) this.javadirs.push(path.resolve(subbasedir, j));
+				for (let k of sub.kongDirs) if (!contains(this.kongDirs, path.resolve(subbasedir, k))) this.kongDirs.push(path.resolve(subbasedir, k));
 				for (let lib of sub.libs) {
 					if (lib.indexOf('/') < 0 && lib.indexOf('\\') < 0) {
 						if (!contains(this.libs, lib)) this.libs.push(lib);
@@ -645,7 +648,9 @@ export class Project {
 
 	addDefine(value: string, config: string = null) {
 		const define = {value, config};
-		if (containsDefine(this.defines, define)) return;
+		if (containsDefine(this.defines, define)) {
+			return;
+		}
 		this.defines.push(define);
 	}
 
@@ -700,12 +705,27 @@ export class Project {
 		}
 	}
 
+	addKongDir(dir: string) {
+		this.kongDirs.push(dir);
+		this.addDefine('KINC_KONG');
+	}
+
+	addKongDirs() {
+		for (let i = 0; i < arguments.length; ++i) {
+			this.addKongDir(arguments[i]);
+		}
+	}
+
 	getFiles() {
 		return this.files;
 	}
 
 	getJavaDirs() {
 		return this.javadirs;
+	}
+
+	getKongDirs() {
+		return this.kongDirs;
 	}
 
 	getBasedir() {
