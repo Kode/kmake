@@ -129,8 +129,6 @@ export class LinuxExporter extends Exporter {
 		}
 		libsline += ' ';
 
-
-
 		let defline = '';
 		for (const def of project.getDefines()) {
 			if (def.config && def.config.toLowerCase() === 'debug' && !options.debug) {
