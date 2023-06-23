@@ -82,7 +82,7 @@ export class FreeBSDExporter extends Exporter {
 			incline += '-I' + inc + ' ';
 		}
 		incline += '-I/usr/local/include'; // Add search dir for FreeBSD
-		console.log(incline);
+
 		this.p('INC=' + incline);
 
 		let libsline = '-static-libgcc -static-libstdc++ -pthread';

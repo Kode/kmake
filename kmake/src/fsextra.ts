@@ -1,3 +1,4 @@
+import * as log from 'kmake/log';
 import {
 	copyFileSync as fsCopyFileSync,
 	existsSync as fsExistsSync,
@@ -25,7 +26,7 @@ function ensureDirSync(dir: string): void {
 		}
 	}
 	catch (err) {
-		console.error(`Error creating directory ${dir}: ${err}`);
+		log.error(`Error creating directory ${dir}: ${err}`);
 	}
 }
 

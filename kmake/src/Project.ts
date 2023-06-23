@@ -65,7 +65,7 @@ let projectInProgress = 0;
 process.on('exit', (code: number) => {
 	if (projectInProgress > 0) {
 		process.exitCode = 1;
-		console.error('Error: kfile did not call resolve, no project created.');
+		log.error('Error: kfile did not call resolve, no project created.');
 	}
 });
 

@@ -45,14 +45,14 @@ export async function run(options: any, loglog: any): Promise<void> {
 				break;
 		}
 
-		console.log('Reading file ' + filePath + '.');
+		log.info('Reading file ' + filePath + '.');
 		fs.readFile(filePath, (error, content) => {
 			response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
 			response.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
 
 			if (error) {
 				if (error.code == 'ENOENT'){
-					console.log('File ' + filePath + ' not found.');
+					log.info('File ' + filePath + ' not found.');
 					fs.readFile('./404.html', (error, content) => {
 						response.writeHead(200, { 'Content-Type': contentType });
 						response.end(content, 'utf-8');
