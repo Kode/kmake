@@ -501,9 +501,13 @@ export class Project {
 			for (let sub of this.subProjects) sub.searchFiles(undefined);
 			this.searchFiles(this.basedir);
 			for (let includeobject of this.includes) {
-				if (path.isAbsolute(includeobject.file) && includeobject.file.includes('**')) {
-					const starIndex = includeobject.file.indexOf('**');
+				if (path.isAbsolute(includeobject.file) && (includeobject.file.includes('**') || includeobject.file.includes('*'))) {
+					const starIndex = includeobject.file.indexOf('**') > -1 ? includeobject.file.indexOf('**') : includeobject.file.indexOf('*');
 					const endIndex = includeobject.file.substring(0, starIndex).replace(/\\/g, '/').lastIndexOf('/');
+					this.searchFiles(includeobject.file.substring(0, endIndex));
+				}
+				if(path.isAbsolute(includeobject.file) && (includeobject.file.includes('.h') || includeobject.file.includes('.c') || includeobject.file.includes('.cpp') || includeobject.file.includes('.cxx') || includeobject.file.includes('.cc'))){
+					const endIndex = includeobject.file.replace(/\\/g, '/').lastIndexOf('/');
 					this.searchFiles(includeobject.file.substring(0, endIndex));
 				}
 
@@ -529,7 +533,7 @@ export class Project {
 		let files = fs.readdirSync(current);
 		nextfile: for (let f in files) {
 			let file = path.join(current, files[f]);
-
+			
 			let follow = true;
 			try {
 				if (fs.statSync(file).isDirectory()) {
