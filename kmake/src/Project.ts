@@ -672,6 +672,15 @@ export class Project {
 		}
 	}
 
+	removeDefine(value: string, config: string = null) {
+		this.defines = this.defines.filter((element: Define) => {
+			if (element.value === value && element.config === config) {
+				return false;
+			}
+			return true;
+		});
+	}
+
 	addIncludeDir(include: string) {
 		if (contains(this.includeDirs, include)) return;
 		this.includeDirs.push(include);
