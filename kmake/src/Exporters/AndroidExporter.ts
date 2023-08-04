@@ -46,9 +46,9 @@ export class AndroidExporter extends Exporter {
 			installLocation: 'internalOnly',
 			versionCode: 1,
 			versionName: '1.0',
-			compileSdkVersion: 32,
-			minSdkVersion: (Options.graphicsApi === GraphicsApi.Vulkan || Options.graphicsApi === GraphicsApi.Default) ? 24 : 15,
-			targetSdkVersion: 32,
+			compileSdkVersion: 33,
+			minSdkVersion: (Options.graphicsApi === GraphicsApi.Vulkan || Options.graphicsApi === GraphicsApi.Default) ? 24 : 21,
+			targetSdkVersion: 33,
 			screenOrientation: 'sensor',
 			permissions: ['android.permission.VIBRATE'],
 			disableStickyImmersiveMode: false,
@@ -84,10 +84,10 @@ export class AndroidExporter extends Exporter {
 
 		fs.writeFileSync(path.join(outdir, '.gitignore'), textData['android_gitignore']);
 		if (targetOptions.globalBuildGradlePath) {
-			fs.copyFileSync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle'));
+			fs.copyFileSync(targetOptions.globalBuildGradlePath, path.join(outdir, 'build.gradle.kts'));
 		}
 		else {
-			fs.writeFileSync(path.join(outdir, 'build.gradle'), textData['android_build_gradle']);
+			fs.writeFileSync(path.join(outdir, 'build.gradle.kts'), textData['android_build_gradle']);
 		}
 		fs.writeFileSync(path.join(outdir, 'gradle.properties'), textData['android_gradle_properties']);
 		fs.writeFileSync(path.join(outdir, 'gradlew'), textData['android_gradlew']);
@@ -97,7 +97,7 @@ export class AndroidExporter extends Exporter {
 		fs.writeFileSync(path.join(outdir, 'gradlew.bat'), textData['android_gradlew_bat']);
 		let settings = textData['android_settings_gradle'];
 		settings = settings.replace(/{name}/g, project.getName());
-		fs.writeFileSync(path.join(outdir, 'settings.gradle'), settings);
+		fs.writeFileSync(path.join(outdir, 'settings.gradle.kts'), settings);
 
 		fs.ensureDirSync(path.join(outdir, 'app'));
 		fs.writeFileSync(path.join(outdir, 'app', '.gitignore'), textData['android_app_gitignore']);
@@ -137,8 +137,10 @@ export class AndroidExporter extends Exporter {
 		let modules = textData['android_idea_modules_xml'];
 		modules = modules.replace(/{name}/g, project.getName());
 		fs.writeFileSync(path.join(outdir, '.idea', 'modules.xml'), modules);
+		fs.writeFileSync(path.join(outdir, '.idea', 'compiler.xml'), textData['android_idea_compiler_xml']);
+		fs.writeFileSync(path.join(outdir, '.idea', 'kotlinc.xml'), textData['android_idea_kotlinc_xml']);
 		fs.ensureDirSync(path.join(outdir, '.idea', 'modules'));
-		fs.writeFileSync(path.join(outdir, '.idea', 'modules', project.getName() + '.xml'), textData['android_idea_modules_my_application_iml']);
+		fs.writeFileSync(path.join(outdir, '.idea', 'modules', project.getName() + '.app.main.iml'), textData['android_idea_modules_my_application_iml']);
 
 		if (targetOptions.customFilesPath != null) {
 			const dir = targetOptions.customFilesPath;
@@ -212,7 +214,7 @@ export class AndroidExporter extends Exporter {
 		javasources += '\'' + path.relative(path.join(outdir, 'app'), path.join(Project.kincDir.toString(), 'Backends', 'System', 'Android', 'Java-Sources')).replace(/\\/g, '/') + '\'';
 		gradle = gradle.replace(/{javasources}/g, javasources);
 
-		fs.writeFileSync(path.join(outdir, 'app', 'build.gradle'), gradle);
+		fs.writeFileSync(path.join(outdir, 'app', 'build.gradle.kts'), gradle);
 	}
 
 	writeCMakeLists(project: Project, outdir: string, from: string, targetOptions: TargetOptions, textData: any) {
@@ -281,6 +283,7 @@ export class AndroidExporter extends Exporter {
 		manifest = manifest.replace(/{versionCode}/g, targetOptions.versionCode.toString());
 		manifest = manifest.replace(/{versionName}/g, targetOptions.versionName);
 		manifest = manifest.replace(/{screenOrientation}/g, targetOptions.screenOrientation);
+		manifest = manifest.replace(/{targetSdkVersion}/g, targetOptions.targetSdkVersion);
 		manifest = manifest.replace(/{permissions}/g, targetOptions.permissions.map((p) => { return '\n\t<uses-permission android:name="' + p + '"/>'; }).join(''));
 		let metadata = targetOptions.disableStickyImmersiveMode ? '\n\t\t<meta-data android:name="disableStickyImmersiveMode" android:value="true"/>' : '';
 		for (const meta of targetOptions.metadata) {

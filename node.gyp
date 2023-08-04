@@ -964,7 +964,7 @@
           'process_outputs_as_sources': 1,
           'inputs': [
             'tools/text_to_header.py',
-            'kmake/Data/android/build.gradle'
+            'kmake/Data/android/build.gradle.kts'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/android_build_gradle.h',
@@ -973,7 +973,7 @@
             '<(python)',
             'tools/text_to_header.py',
             'android_build_gradle',
-            'kmake/Data/android/build.gradle',
+            'kmake/Data/android/build.gradle.kts',
             '<@(_outputs)',
           ],
         },
@@ -1054,7 +1054,7 @@
           'process_outputs_as_sources': 1,
           'inputs': [
             'tools/text_to_header.py',
-            'kmake/Data/android/settings.gradle'
+            'kmake/Data/android/settings.gradle.kts'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/android_settings_gradle.h',
@@ -1063,7 +1063,7 @@
             '<(python)',
             'tools/text_to_header.py',
             'android_settings_gradle',
-            'kmake/Data/android/settings.gradle',
+            'kmake/Data/android/settings.gradle.kts',
             '<@(_outputs)',
           ],
         },
@@ -1072,7 +1072,7 @@
           'process_outputs_as_sources': 1,
           'inputs': [
             'tools/text_to_header.py',
-            'kmake/Data/android/app/build.gradle'
+            'kmake/Data/android/app/build.gradle.kts'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/android_app_build_gradle.h',
@@ -1081,7 +1081,7 @@
             '<(python)',
             'tools/text_to_header.py',
             'android_app_build_gradle',
-            'kmake/Data/android/app/build.gradle',
+            'kmake/Data/android/app/build.gradle.kts',
             '<@(_outputs)',
           ],
         },
@@ -1248,11 +1248,47 @@
           ],
         },
         {
+          'action_name': 'android_idea_compiler_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/compiler.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_compiler_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_compiler_xml',
+            'kmake/Data/android/idea/compiler.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
+          'action_name': 'android_idea_kotlinc_xml',
+          'process_outputs_as_sources': 1,
+          'inputs': [
+            'tools/text_to_header.py',
+            'kmake/Data/android/idea/kotlinc.xml'
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/android_idea_kotlinc_xml.h',
+          ],
+          'action': [
+            '<(python)',
+            'tools/text_to_header.py',
+            'android_idea_kotlinc_xml',
+            'kmake/Data/android/idea/kotlinc.xml',
+            '<@(_outputs)',
+          ],
+        },
+        {
           'action_name': 'android_idea_modules_my_application_iml',
           'process_outputs_as_sources': 1,
           'inputs': [
             'tools/text_to_header.py',
-            'kmake/Data/android/idea/modules/MyApplication.iml'
+            'kmake/Data/android/idea/modules/app/My_Application.app.main.iml'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/android_idea_modules_my_application_iml.h',
@@ -1261,7 +1297,7 @@
             '<(python)',
             'tools/text_to_header.py',
             'android_idea_modules_my_application_iml',
-            'kmake/Data/android/idea/modules/MyApplication.iml',
+            'kmake/Data/android/idea/modules/app/My_Application.app.main.iml',
             '<@(_outputs)',
           ],
         },
