@@ -16,7 +16,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    sourceSets.getByName("main") {
+        java.setSrcDirs(listOf("../../../Kinc/Backends/System/Android/Java-Sources"))
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
