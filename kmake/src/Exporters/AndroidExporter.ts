@@ -42,7 +42,7 @@ export class AndroidExporter extends Exporter {
 		fs.ensureDirSync(outdir);
 
 		const targetOptions: TargetOptions = {
-			package: 'tech.kode.kore',
+			package: 'tech.kinc',
 			installLocation: 'internalOnly',
 			versionCode: 1,
 			versionName: '1.0',
@@ -140,7 +140,8 @@ export class AndroidExporter extends Exporter {
 		fs.writeFileSync(path.join(outdir, '.idea', 'compiler.xml'), textData['android_idea_compiler_xml']);
 		fs.writeFileSync(path.join(outdir, '.idea', 'kotlinc.xml'), textData['android_idea_kotlinc_xml']);
 		fs.ensureDirSync(path.join(outdir, '.idea', 'modules'));
-		fs.writeFileSync(path.join(outdir, '.idea', 'modules', project.getName() + '.app.main.iml'), textData['android_idea_modules_my_application_iml']);
+		fs.ensureDirSync(path.join(outdir, '.idea', 'modules', 'app'));
+		fs.writeFileSync(path.join(outdir, '.idea', 'modules', 'app', project.getName() + '.app.main.iml'), textData['android_idea_modules_my_application_iml']);
 
 		if (targetOptions.customFilesPath != null) {
 			const dir = targetOptions.customFilesPath;
