@@ -53,6 +53,8 @@
 #include "android_idea_gradle_xml.h"
 #include "android_idea_misc_xml.h"
 #include "android_idea_modules_xml.h"
+#include "android_idea_compiler_xml.h"
+#include "android_idea_kotlinc_xml.h"
 #include "android_idea_modules_my_application_iml.h"
 #include "android_main_androidmanifest_xml.h"
 #include "android_main_res_values_strings_xml.h"
@@ -2448,6 +2450,8 @@ static void GetEmbeddedData(const FunctionCallbackInfo<Value>& args) {
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_gradle_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_gradle_xml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_misc_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_misc_xml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_modules_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_modules_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_compiler_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_compiler_xml));
+  data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_kotlinc_xml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_kotlinc_xml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_idea_modules_my_application_iml"), FIXED_ONE_BYTE_STRING(isolate, android_idea_modules_my_application_iml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_main_androidmanifest_xml"), FIXED_ONE_BYTE_STRING(isolate, android_main_androidmanifest_xml));
   data->Set(env->context(), FIXED_ONE_BYTE_STRING(isolate, "android_main_res_values_strings_xml"), FIXED_ONE_BYTE_STRING(isolate, android_main_res_values_strings_xml));
