@@ -361,7 +361,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 		}
 
 		if (compilerPath !== '') {
-			to = path.join(to, 'Kong-' + platform);
+			to = path.join(to, 'Kong-' + platform + '-' + Options.graphicsApi);
 			fs.ensureDirSync(to);
 
 			project.addFile(to + '/**', undefined);
@@ -369,6 +369,8 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			let params: string[] = [];
 			params.push('-p');
 			params.push(platform);
+			params.push('-a');
+			params.push(Options.graphicsApi);
 			for (const dir of dirs) {
 				params.push('-i');
 				params.push(dir);
