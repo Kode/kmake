@@ -172,6 +172,70 @@ function shaderLang(platform: string): string {
 	}
 }
 
+function graphicsApi(platform: string): string {
+	switch (platform) {
+		case Platform.Windows:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.Direct3D12;
+				default:
+					return Options.graphicsApi;
+			}
+		case Platform.WindowsApp:
+			return GraphicsApi.Direct3D11;
+		case Platform.iOS:
+		case Platform.tvOS:
+		case Platform.OSX:
+			switch (Options.graphicsApi) {
+			case GraphicsApi.Default:
+				return GraphicsApi.Metal;
+			default:
+				return Options.graphicsApi;
+			}
+		case Platform.Android:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.Vulkan;
+				default:
+					return Options.graphicsApi;
+			}
+		case Platform.Linux:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.Vulkan;
+				default:
+					return Options.graphicsApi;
+			}
+		case Platform.Emscripten:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.OpenGL;
+				default:
+					return Options.graphicsApi;
+			}
+		case Platform.Tizen:
+			return GraphicsApi.OpenGL;
+		case Platform.Pi:
+			return GraphicsApi.OpenGL;
+		case Platform.FreeBSD:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.OpenGL;
+				default:
+					return Options.graphicsApi;
+			}
+		case Platform.Wasm:
+			switch (Options.graphicsApi) {
+				case GraphicsApi.Default:
+					return GraphicsApi.OpenGL;
+				default:
+					return Options.graphicsApi;
+			}
+		default:
+			return Options.graphicsApi;
+	}
+}
+
 async function compileShader(projectDir: string, type: string, from: string, to: string, temp: string, platform: string, builddir: string, shaderversion: number) {
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
@@ -361,7 +425,9 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 		}
 
 		if (compilerPath !== '') {
-			to = path.join(to, 'Kong-' + platform + '-' + Options.graphicsApi);
+			let api = graphicsApi(platform);
+			
+			to = path.join(to, 'Kong-' + platform + '-' + api);
 			fs.ensureDirSync(to);
 
 			project.addFile(to + '/**', undefined);
@@ -370,7 +436,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			params.push('-p');
 			params.push(platform);
 			params.push('-a');
-			params.push(Options.graphicsApi);
+			params.push(api);
 			for (const dir of dirs) {
 				params.push('-i');
 				params.push(dir);
