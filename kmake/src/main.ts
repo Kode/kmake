@@ -335,7 +335,7 @@ function compileShaders(invocations: Invocation[]): Promise<void> {
 	});
 }
 
-function compileKong(from: string, to: string, platform: string, dirs: string[]): Promise<void> {
+function compileKong(project: Project, from: string, to: string, platform: string, dirs: string[]): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
@@ -352,7 +352,7 @@ function compileKong(from: string, to: string, platform: string, dirs: string[])
 			for (let ld in libdirs) {
 				let libdir = path.join(libsdir, libdirs[ld]);
 				if (fs.statSync(libdir).isDirectory()) {
-					let exe = path.join(libdir, 'krafix', 'kong-' + platform + '.exe');
+					let exe = path.join(libdir, 'kong', 'kong-' + platform + '.exe');
 					if (fs.existsSync(exe)) {
 						compilerPath = exe;
 					}
@@ -361,14 +361,19 @@ function compileKong(from: string, to: string, platform: string, dirs: string[])
 		}
 
 		if (compilerPath !== '') {
+			to = path.join(to, 'Kong-' + platform);
+			fs.ensureDirSync(to);
+
+			project.addFile(to + '/**', undefined);
+
 			let params: string[] = [];
-			params.push('--platform');
+			params.push('-p');
 			params.push(platform);
 			for (const dir of dirs) {
-				params.push('--input');
+				params.push('-i');
 				params.push(dir);
 			}
-			params.push('--output');
+			params.push('-o');
 			params.push(to);
 			let compiler = child_process.spawn(compilerPath, params);
 
@@ -467,7 +472,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 
 	if (!options.noshaders && !options.json) {
 		if (project.kongDirs.length > 0) {
-			await compileKong(from, to, platform, project.kongDirs);
+			await compileKong(project, from, to, platform, project.kongDirs);
 		}
 		else {
 			/*let compilerPath = '';
