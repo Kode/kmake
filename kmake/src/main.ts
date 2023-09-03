@@ -431,6 +431,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			fs.ensureDirSync(to);
 
 			project.addFile(to + '/**', undefined);
+			project.addIncludeDir(to);
 
 			let params: string[] = [];
 			params.push('-p');
