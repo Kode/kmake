@@ -224,7 +224,7 @@ export class AndroidExporter extends Exporter {
 		let debugDefines = '';
 		for (const def of project.getDefines()) {
 			if (!def.config || def.config.toLowerCase() === 'debug') {
-				debugDefines += ' -D' + def.value;
+				debugDefines += ' -D' + def.value.replace(/\"/g, '\\\\\\\"');
 			}
 		}
 		cmake = cmake.replace(/{debug_defines}/g, debugDefines);
@@ -232,7 +232,7 @@ export class AndroidExporter extends Exporter {
 		let releaseDefines = '';
 		for (const def of project.getDefines()) {
 			if (!def.config || def.config.toLowerCase() === 'release') {
-				releaseDefines += ' -D' + def.value;
+				releaseDefines += ' -D' + def.value.replace(/\"/g, '\\\\\\\"');
 			}
 		}
 		cmake = cmake.replace(/{release_defines}/g, releaseDefines);
