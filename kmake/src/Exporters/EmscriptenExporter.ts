@@ -81,7 +81,7 @@ export class EmscriptenExporter extends Exporter {
 		}
 		this.p('INC=' + incline);
 
-		let libsline = '-static-libgcc -static-libstdc++';
+		let libsline = '-static-libgcc -static-libstdc++ -sUSE_GLFW=2';
 		if (project.targetOptions.emscripten.threads) {
 			libsline += ' -pthread';
 		}
