@@ -878,6 +878,12 @@ export class VisualStudioExporter extends Exporter {
 
 		this.p('<PropertyGroup Label="UserMacros" />', 1);
 
+		if (project.getExecutableName()) {
+			this.p('<PropertyGroup>', 1);
+			this.p('<TargetName>' + project.getExecutableName() + '</TargetName>', 2);
+			this.p('</PropertyGroup>', 1);
+		}
+
 		if (platform === Platform.WindowsApp) {
 			const configurations = ['Debug', 'Release'];
 			for (let configuration of configurations) {

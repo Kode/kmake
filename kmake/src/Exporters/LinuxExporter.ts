@@ -211,12 +211,17 @@ export class LinuxExporter extends Exporter {
 		}
 		this.p();
 
-		let outputname = project.getSafeName();
+		let executableName = project.getSafeName();
+		if (project.getExecutableName()) {
+			executableName = project.getExecutableName();
+		}
+
+		let outputname = executableName;
 		if (options.lib) {
-			outputname = project.getSafeName() + '.a';
+			outputname = executableName + '.a';
 		}
 		else if (options.dynlib) {
-			outputname = project.getSafeName() + '.so';
+			outputname = executableName + '.so';
 		}
 
 		this.p('build ' + outputname + ': link ' + ofilelist);
@@ -346,24 +351,29 @@ export class LinuxExporter extends Exporter {
 		}
 		else optimization = '-g';
 
+		let executableName = project.getSafeName();
+		if (project.getExecutableName()) {
+			executableName = project.getExecutableName();
+		}
+
 		if (options.lib) {
-			this.p(project.getSafeName() + '.a: ' + gchfilelist + ofilelist);
+			this.p(executableName + '.a: ' + gchfilelist + ofilelist);
 		}
 		else if (options.dynlib) {
-			this.p(project.getSafeName() + '.so: ' + gchfilelist + ofilelist);
+			this.p(executableName + '.so: ' + gchfilelist + ofilelist);
 		}
 		else {
-			this.p(project.getSafeName() + ': ' + gchfilelist + ofilelist);
+			this.p(executableName + ': ' + gchfilelist + ofilelist);
 		}
 
 		let cpp = '';
 
-		let output = '-o "' + project.getSafeName() + '"';
+		let output = '-o "' + executableName + '"';
 		if (options.lib) {
-			output = '-o "' + project.getSafeName() + '.a"';
+			output = '-o "' + executableName + '.a"';
 		}
 		else if (options.dynlib) {
-			output = '-shared -o "' + project.getSafeName() + '.so"';
+			output = '-shared -o "' + executableName + '.so"';
 		}
 
 		if (options.lib) {
@@ -432,7 +442,13 @@ export class LinuxExporter extends Exporter {
 		this.p('<Option compiler="gcc" />', 2);
 		this.p('<Build>', 2);
 		this.p('<Target title="Debug">', 3);
-		this.p('<Option output="bin/Debug/' + project.getSafeName() + '" prefix_auto="1" extension_auto="1" />', 4);
+
+		let executableName = project.getSafeName();
+		if (project.getExecutableName()) {
+			executableName = project.getExecutableName();
+		}
+
+		this.p('<Option output="bin/Debug/' + executableName + '" prefix_auto="1" extension_auto="1" />', 4);
 		if (project.getDebugDir().length > 0) this.p('<Option working_dir="' + path.resolve(from, project.getDebugDir()) + '" />', 4);
 		this.p('<Option object_output="obj/Debug/" />', 4);
 		this.p('<Option type="1" />', 4);
@@ -451,7 +467,7 @@ export class LinuxExporter extends Exporter {
 		this.p('</Compiler>', 4);
 		this.p('</Target>', 3);
 		this.p('<Target title="Release">', 3);
-		this.p('<Option output="bin/Release/' + project.getSafeName() + '" prefix_auto="1" extension_auto="1" />', 4);
+		this.p('<Option output="bin/Release/' + executableName + '" prefix_auto="1" extension_auto="1" />', 4);
 		if (project.getDebugDir().length > 0) this.p('<Option working_dir="' + path.resolve(from, project.getDebugDir()) + '" />', 4);
 		this.p('<Option object_output="obj/Release/" />', 4);
 		this.p('<Option type="0" />', 4);

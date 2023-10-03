@@ -225,6 +225,7 @@ export class Project {
 	parent: Project;
 	shaderVersion: number;
 	kongDirs: string[];
+	executableName: string;
 
 	constructor(name: string) {
 		this.name = name;
@@ -264,6 +265,15 @@ export class Project {
 		this.cmd = false;
 		this.stackSize = 0;
 		this.kincProcessed = false;
+		this.executableName = null;
+	}
+
+	setExecutableName(name: string) {
+		this.executableName = name;
+	}
+
+	getExecutableName(): string {
+		return this.executableName;
 	}
 
 	addBackend(name: string) {
