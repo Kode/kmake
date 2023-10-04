@@ -154,12 +154,12 @@ export class FreeBSDExporter extends Exporter {
 
 		let cpp = '';
 
-		let output = '-o "' + project.getSafeName() + '"';
+		let output = '-o "' + executableName + '"';
 		if (options.lib) {
-			output = '-o "' + project.getSafeName() + '.a"';
+			output = '-o "' + executableName + '.a"';
 		}
 		else if (options.dynlib) {
-			output = '-shared -o "' + project.getSafeName() + '.so"';
+			output = '-shared -o "' + executableName + '.so"';
 		}
 		this.p('\t' + (options.lib ? 'ar rcs' : cppCompiler) + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
 
