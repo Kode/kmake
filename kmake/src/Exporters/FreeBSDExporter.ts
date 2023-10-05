@@ -106,6 +106,9 @@ export class FreeBSDExporter extends Exporter {
 			}
 			defline += '-D' + def.value + ' ';
 		}
+		if (!options.debug) {
+			defline += '-DNDEBUG ';
+		}
 		this.p('DEF=' + defline);
 		this.p();
 
