@@ -81,7 +81,7 @@ export class EmscriptenExporter extends Exporter {
 		}
 		this.p('INC=' + incline);
 
-		let libsline = '-static-libgcc -static-libstdc++ -sUSE_GLFW=2';
+		let libsline = '-static-libgcc -static-libstdc++';
 		if (project.targetOptions.emscripten.threads) {
 			libsline += ' -pthread';
 		}
@@ -89,7 +89,12 @@ export class EmscriptenExporter extends Exporter {
 			libsline += ' -static';
 		}*/
 		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
+			if (lib.startsWith('USE_')) {
+				libsline += ' -s' + lib;
+			}
+			else {
+				libsline += ' -l' + lib;
+			}
 		}
 		this.p('LIB=' + libsline);
 
