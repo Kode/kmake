@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     sourceSets.getByName("main") {
-        java.setSrcDirs(listOf("{javasources}"))
+        java.setSrcDirs(listOf({javasources}))
     }
     buildTypes {
         release {

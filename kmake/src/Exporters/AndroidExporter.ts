@@ -210,9 +210,9 @@ export class AndroidExporter extends Exporter {
 
 		let javasources = '';
 		for (let dir of project.getJavaDirs()) {
-			javasources += '\'' + path.relative(path.join(outdir, 'app'), path.resolve(from, dir)).replace(/\\/g, '/') + '\', ';
+			javasources += '"' + path.relative(path.join(outdir, 'app'), path.resolve(from, dir)).replace(/\\/g, '/') + '", ';
 		}
-		javasources += '\'' + path.relative(path.join(outdir, 'app'), path.join(Project.kincDir.toString(), 'Backends', 'System', 'Android', 'Java-Sources')).replace(/\\/g, '/') + '\'';
+		javasources += '"' + path.relative(path.join(outdir, 'app'), path.join(Project.kincDir.toString(), 'Backends', 'System', 'Android', 'Java-Sources')).replace(/\\/g, '/') + '"';
 		gradle = gradle.replace(/{javasources}/g, javasources);
 
 		fs.writeFileSync(path.join(outdir, 'app', 'build.gradle.kts'), gradle);
