@@ -483,12 +483,21 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 				}
 			});
 
-			compiler.on('close', (code: number) => {
+			compiler.on('error', (err) => {
+				reject('Could not run Kong (because ' + err + ') with ' + compilerPath + ' ' + params.join(' '));
+			});
+
+			compiler.on('close', (code: number, signal: NodeJS.Signals) => {
 				if (code === 0) {
 					resolve();
 				}
 				else {
-					reject(compilerPath + ' ' + params.join(' '));
+					if (code === null) {
+						reject('Kong signaled ' + signal + ' for ' + compilerPath + ' ' + params.join(' '));
+					}
+					else {
+						reject('Kong returned ' + code + ' for ' + compilerPath + ' ' + params.join(' '));
+					}
 				}
 			});
 		}
