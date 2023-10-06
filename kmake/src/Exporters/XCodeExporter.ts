@@ -761,6 +761,7 @@ export class XCodeExporter extends Exporter {
 		}
 		this.p('GCC_NO_COMMON_BLOCKS = YES;', 4);
 		this.p('GCC_PREPROCESSOR_DEFINITIONS = (', 4);
+		this.p('NDEBUG,', 5);
 		for (const define of project.getDefines()) {
 			if (define.config && define.config.toLowerCase() === 'debug') {
 				continue;
