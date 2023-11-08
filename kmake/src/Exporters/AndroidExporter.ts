@@ -184,7 +184,7 @@ export class AndroidExporter extends Exporter {
 					arch = arch + ', "' + item + '"';
 				}
 			}
-			arch = `ndk { abiFilters ${arch} }`;
+			arch = `ndk { abiFilters += listOf(${arch}) }`;
 		}
 		else {
 			switch (Options.architecture) {
@@ -196,7 +196,7 @@ export class AndroidExporter extends Exporter {
 				default: throw 'Unknown architecture ' + Options.architecture;
 			}
 			if (Options.architecture !== Architecture.Default) {
-				arch = `ndk {abiFilters '${arch}'}`;
+				arch = `ndk {abiFilters += listOf('${arch}')}`;
 			}
 		}
 		gradle = gradle.replace(/{architecture}/g, arch);
