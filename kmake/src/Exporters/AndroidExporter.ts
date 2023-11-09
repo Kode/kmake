@@ -196,7 +196,7 @@ export class AndroidExporter extends Exporter {
 				default: throw 'Unknown architecture ' + Options.architecture;
 			}
 			if (Options.architecture !== Architecture.Default) {
-				arch = `ndk {abiFilters += listOf('${arch}')}`;
+				arch = `ndk {abiFilters += listOf("${arch}")}`;
 			}
 		}
 		gradle = gradle.replace(/{architecture}/g, arch);
