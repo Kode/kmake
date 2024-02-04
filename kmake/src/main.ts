@@ -408,7 +408,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 		}
 
 		let libsdir = path.join(from, 'Backends');
-		if (Project.kincDir) {
+		if (Project.kincDir && !fs.existsSync(libsdir)) {
 			libsdir = path.join(Project.kincDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
@@ -638,7 +638,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.Tizen) exporter = new TizenExporter();
 	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxScarlett || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
-		if (Project.kincDir) {
+		if (Project.kincDir && !fs.existsSync(libsdir)) {
 			libsdir = path.join(Project.kincDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
@@ -1042,7 +1042,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 				let compilePlatform = dothemath ? 'x64' : 'win32';
 
 				let libsdir = path.join(options.from, 'Backends');
-				if (Project.kincDir) {
+				if (Project.kincDir && !fs.existsSync(libsdir)) {
 					libsdir = path.join(Project.kincDir, '..', 'Backends');
 				}
 				if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
