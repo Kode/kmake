@@ -245,7 +245,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 		}
 
 		let libsdir = path.join(projectDir, 'Backends');
-		if (Project.kincDir) {
+		if (Project.kincDir && !fs.existsSync(libsdir)) {
 			libsdir = path.join(Project.kincDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
