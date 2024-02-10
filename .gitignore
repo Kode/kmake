@@ -163,3 +163,4 @@ __pycache__
 # === Rules for C++ development ===
 compile_commands.json
 /kmake/node_modules
+/glob/build
