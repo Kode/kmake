@@ -19,6 +19,8 @@ directory open_dir(const char *dirname);
 file read_next_file(directory *dir);
 void close_dir(directory *dir);
 
+const char *working_dir(void);
+
 #ifdef __cplusplus
 }
 #endif

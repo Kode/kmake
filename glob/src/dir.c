@@ -42,6 +42,15 @@ void close_dir(directory *dir) {
 	FindClose(dir->handle);
 }
 
+static char current_working_dir[MAX_PATH];
+
+const char *working_dir(void) {
+	wchar_t path[MAX_PATH];
+	DWORD length = GetCurrentDirectoryW(MAX_PATH, path);
+	WideCharToMultiByte(CP_ACP, 0, path, length, current_working_dir, MAX_PATH, NULL, NULL);
+	return current_working_dir;
+}
+
 #else
 
 #include <string.h>

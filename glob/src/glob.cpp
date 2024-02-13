@@ -21,10 +21,12 @@ string find_base_dir(const string &pattern) {
 }
 
 string to_absolute(const string &path) {
-	return "";
+	return string(working_dir()) + "/" + path;
 }
 
 int main(int argc, char **argv) {
+	string absolute = to_absolute(pattern);
+
 	string base = find_base_dir(pattern);
 	directory dir = open_dir(base.c_str());
 	file f = read_next_file(&dir);
