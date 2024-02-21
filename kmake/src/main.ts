@@ -507,6 +507,8 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 	});
 }
 
+let consoleCompilePlatform: string = null;
+
 async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, options: any) {
 	log.info('kfile found.');
 	if (options.onlyshaders) {
@@ -657,6 +659,8 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 							const codePath = path.resolve(libsdir, libdir, libfile);
 							const code = fs.readFileSync(codePath, {encoding: 'utf8'});
 							exporter = new Function('require', '__dirname', 'VisualStudioExporter', code)(require, path.resolve(libsdir, libdir), VisualStudioExporter);
+							let vsExporter: VisualStudioExporter = exporter as VisualStudioExporter;
+							consoleCompilePlatform = vsExporter.getSystems(platform)[0];
 							break;
 						}
 					}
@@ -1041,31 +1045,8 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 				let compilePlatform = dothemath ? 'x64' : 'win32';
 
-				let libsdir = path.join(options.from, 'Backends');
-				if (Project.kincDir && !fs.existsSync(libsdir)) {
-					libsdir = path.join(Project.kincDir, '..', 'Backends');
-				}
-				if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
-					let libdirs = fs.readdirSync(libsdir);
-					for (let libdir of libdirs) {
-						if (fs.statSync(path.join(libsdir, libdir)).isDirectory()
-						&& (
-							libdir.toLowerCase() === options.target.toLowerCase()
-							|| libdir.toLowerCase() === fromPlatform(options.target).toLowerCase()
-							|| libdir.toLowerCase() === fromPlatform(options.target).replace(/ /g, '').toLowerCase()
-						)) {
-							compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform'), 'utf-8').trim();
-						}
-						else if (fs.statSync(path.join(libsdir, libdir)).isDirectory()
-						&& ((libdir.toLowerCase() === 'xbox' && (options.target === Platform.XboxSeries || options.target === Platform.XboxOne)))) {
-							if (options.target === Platform.XboxOne) {
-								compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform-xobxone'), 'utf-8').trim();
-							}
-							else {
-								compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform-xobxseries'), 'utf-8').trim();
-							}
-						}
-					}
+				if (consoleCompilePlatform) {
+					compilePlatform =  consoleCompilePlatform;
 				}
 
 				fs.writeFileSync(path.join(options.to, 'build.bat'), '@call "' + vsvars + '"\n' + '@MSBuild.exe "' + path.resolve(options.to, solutionName + '.vcxproj') + '" /m /clp:ErrorsOnly ' + signing + ' /p:Configuration=' + (options.debug ? 'Debug' : 'Release') + ',Platform=' + compilePlatform);
