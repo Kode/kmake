@@ -59,8 +59,8 @@ function fromPlatform(platform: string): string {
 			return 'Xbox One';
 		case Platform.Switch:
 			return 'Switch';
-		case Platform.XboxScarlett:
-			return 'Xbox Scarlett';
+		case Platform.XboxSeries:
+			return 'Xbox Series X|S';
 		case Platform.PS5:
 			return 'PlayStation 5';
 		case Platform.FreeBSD:
@@ -636,7 +636,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter();
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter();
 	else if (platform === Platform.Tizen) exporter = new TizenExporter();
-	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxScarlett || platform === Platform.PS5) {
+	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxSeries || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
 		if (Project.kincDir && !fs.existsSync(libsdir)) {
 			libsdir = path.join(Project.kincDir, '..', 'Backends');
@@ -649,7 +649,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 					libdir.toLowerCase() === platform.toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).toLowerCase()
 					|| libdir.toLowerCase() === fromPlatform(platform).replace(/ /g, '').toLowerCase()
-					|| (libdir.toLowerCase() === 'xbox' && (platform === Platform.XboxScarlett || platform === Platform.XboxOne))
+					|| (libdir.toLowerCase() === 'xbox' && (platform === Platform.XboxSeries || platform === Platform.XboxOne))
 				)) {
 					let libfiles = fs.readdirSync(path.join(libsdir, libdir));
 					for (let libfile of libfiles) {
@@ -1003,7 +1003,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS4) || options.target === Platform.PS4
 			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS5) || options.target === Platform.PS5
 			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxOne) || options.target === Platform.XboxOne
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxScarlett) || options.target === Platform.XboxScarlett
+			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxSeries) || options.target === Platform.XboxSeries
 			) {
 			let vsvars: string = null;
 			const bits = dothemath ? '64' : '32';
@@ -1053,9 +1053,17 @@ export async function run(options: any, loglog: any): Promise<string> {
 							libdir.toLowerCase() === options.target.toLowerCase()
 							|| libdir.toLowerCase() === fromPlatform(options.target).toLowerCase()
 							|| libdir.toLowerCase() === fromPlatform(options.target).replace(/ /g, '').toLowerCase()
-							|| (libdir.toLowerCase() === 'xbox' && (options.target === Platform.XboxScarlett || options.target === Platform.XboxOne))
 						)) {
 							compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform'), 'utf-8').trim();
+						}
+						else if (fs.statSync(path.join(libsdir, libdir)).isDirectory()
+						&& ((libdir.toLowerCase() === 'xbox' && (options.target === Platform.XboxSeries || options.target === Platform.XboxOne)))) {
+							if (options.target === Platform.XboxOne) {
+								compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform-xobxone'), 'utf-8').trim();
+							}
+							else {
+								compilePlatform = fs.readFileSync(path.join(libsdir, libdir, 'platform-xobxseries'), 'utf-8').trim();
+							}
 						}
 					}
 				}
