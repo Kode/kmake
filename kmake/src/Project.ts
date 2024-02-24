@@ -155,11 +155,16 @@ async function loadProject(directory: string, parent: Project, options: any =  {
 				directory,
 				options,
 				Project.to,
-				parent);
+				parent).catch(
+					(error: any) => {
+						log.error(error);
+						reject();
+					}
+				);
 			}
 		catch (error) {
 			log.error(error);
-			throw error;
+			reject();
 		}
 	});
 }
@@ -815,35 +820,46 @@ export class Project {
 	}
 
 	async addProject(directory: string, options: any = {}, projectFile: string = null) {
-		const project = await loadProject(path.isAbsolute(directory) ? directory : path.join(this.basedir, directory), this, options, projectFile);
-		this.subProjects.push(project);
-		return project;
+		let from = path.isAbsolute(directory) ? directory : path.join(this.basedir, directory);
+		if (fs.existsSync(from) && fs.statSync(from).isDirectory()) {
+			const project = await loadProject(from, this, options, projectFile);
+			this.subProjects.push(project);
+			return project;
+		}
+		else {
+			throw 'Project directory ' + from + ' not found';
+		}
 	}
 
 	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean) {
 		Project.platform = platform;
 		Project.to = path.resolve(to);
-		let project = await loadProject(path.resolve(directory), null, {}, korefile);
-		if (retro && project.kore && !project.kincProcessed) {
-			if (veryretro) {
-				if (Project.koreDir) {
-					await project.addProject(Project.koreDir);
+		try {
+			let project = await loadProject(path.resolve(directory), null, {}, korefile);
+			if (retro && project.kore && !project.kincProcessed) {
+				if (veryretro) {
+					if (Project.koreDir) {
+						await project.addProject(Project.koreDir);
+					}
+					else {
+						log.error('Kore not found, falling back to Kinc, good luck.');
+						await project.addProject(Project.kincDir);
+					}
 				}
 				else {
-					log.error('Kore not found, falling back to Kinc, good luck.');
 					await project.addProject(Project.kincDir);
 				}
+				project.flatten();
 			}
-			else {
-				await project.addProject(Project.kincDir);
+			let defines = getDefines(platform, project.isRotated());
+			for (let define of defines) {
+				project.addDefine(define);
 			}
-			project.flatten();
+			return project;
 		}
-		let defines = getDefines(platform, project.isRotated());
-		for (let define of defines) {
-			project.addDefine(define);
+		catch (err) {
+			throw 'Could not create project ' + directory;
 		}
-		return project;
 	}
 
 	isRotated() {
