@@ -73,6 +73,10 @@ let scriptdir = '.';
 // let lastScriptDir = '.';
 let cppEnabled = false;
 
+function findKinc() {
+	return Project.kincDir;
+}
+
 async function loadProject(directory: string, parent: Project, options: any =  {}, korefile: string = null): Promise<Project> {
 	return new Promise<Project>((resolve, reject) => {
 		projectInProgress += 1;
@@ -134,6 +138,7 @@ async function loadProject(directory: string, parent: Project, options: any =  {
 				'Options',
 				'targetDirectory',
 				'parentProject',
+				'findKinc',
 				file)
 			(
 				log,
@@ -155,7 +160,8 @@ async function loadProject(directory: string, parent: Project, options: any =  {
 				directory,
 				options,
 				Project.to,
-				parent).catch(
+				parent,
+				findKinc).catch(
 					(error: any) => {
 						log.error(error);
 						reject();
