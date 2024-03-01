@@ -564,7 +564,8 @@ export class VisualStudioExporter extends Exporter {
 				return 'stdc17';
 			case 'gnu2x':
 			case 'c2x':
-				throw 'C 2x is not yet supported in Visual Studio';
+				log.info('C 2x is not yet supported in Visual Studio, using stdc17.');
+				return 'stdc17';
 			default:
 				throw 'Unknown C-version'
 		}
@@ -592,7 +593,8 @@ export class VisualStudioExporter extends Exporter {
 			case 'c++2b':
 			case 'gnu++23':
 			case 'c++23':
-				throw 'C++ 23 is not yet supported in Visual Studio';
+				log.info('C++ 23 is not yet supported in Visual Studio, using stdcpplatest.');
+				return 'stdcpplatest';
 			default:
 				throw 'Unknown C++-version'
 		}
