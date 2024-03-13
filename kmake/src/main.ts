@@ -619,17 +619,17 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 
 	let exporter: Exporter = null;
 	if (options.vscode) {
-		exporter = new VSCodeExporter();
+		exporter = new VSCodeExporter(options);
 	}
 	else if (options.json) {
-		exporter = new JsonExporter();
+		exporter = new JsonExporter(options);
 	}
-	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter();
-	else if (platform === Platform.Android) exporter = new AndroidExporter();
-	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter();
-	else if (platform === Platform.Wasm) exporter = new WasmExporter();
-	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter();
-	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter();
+	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter(options);
+	else if (platform === Platform.Android) exporter = new AndroidExporter(options);
+	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter(options);
+	else if (platform === Platform.Wasm) exporter = new WasmExporter(options);
+	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter(options);
+	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter(options);
 	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxSeries || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
 		if (Project.kincDir && !fs.existsSync(libsdir)) {
@@ -660,7 +660,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 			}
 		}
 	}
-	else exporter = new VisualStudioExporter();
+	else exporter = new VisualStudioExporter(options);
 
 	/*let langExporter: Language = null;
 	let trees: idl.IDLRootType[][] = [];
@@ -840,6 +840,10 @@ function is64bit() {
 	return process.arch === 'x64' || process.env.hasOwnProperty('PROCESSOR_ARCHITEW6432');
 }
 
+function isPlatform(options: any, platform: string) {
+	return (options.customTarget && options.customTarget.baseTarget === platform) || options.target === platform;
+}
+
 export async function run(options: any, loglog: any): Promise<string> {
 	log.set(loglog);
 
@@ -969,22 +973,13 @@ export async function run(options: any, loglog: any): Promise<string> {
 		const dothemath = is64bit();
 		let make: child_process.ChildProcess = null;
 
-		if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
+		if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm)) {
 			make = child_process.spawn('ninja', [], { cwd: path.join(options.to, options.buildPath) });
 		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.FreeBSD) || options.target === Platform.FreeBSD) {
-			make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
-		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Pi) || options.target === Platform.Pi) {
+		else if (isPlatform(options, Platform.FreeBSD) || isPlatform(options, Platform.Pi) || isPlatform(options, Platform.Emscripten)) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Emscripten) || options.target === Platform.Emscripten) {
-			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
-		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Wasm) || options.target === Platform.Wasm) {
-			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
-		}
-		else if ((options.customTarget && (options.customTarget.baseTarget === Platform.OSX || options.customTarget.baseTarget === Platform.iOS)) || options.target === Platform.OSX || options.target === Platform.iOS) {
+		else if (isPlatform(options, Platform.OSX) || isPlatform(options, Platform.iOS) || isPlatform(options, Platform.tvOS)) {
 			let xcodeOptions = ['-configuration', options.debug ? 'Debug' : 'Release', '-project', solutionName + '.xcodeproj'];
 			if (options.nosigning) {
 				xcodeOptions.push('CODE_SIGN_IDENTITY=""');
@@ -993,13 +988,13 @@ export async function run(options: any, loglog: any): Promise<string> {
 			}
 			make = child_process.spawn('xcodebuild', xcodeOptions, { cwd: options.to });
 		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Windows) || options.target === Platform.Windows
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.WindowsApp) || options.target === Platform.WindowsApp
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.Switch) || options.target === Platform.Switch
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS4) || options.target === Platform.PS4
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.PS5) || options.target === Platform.PS5
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxOne) || options.target === Platform.XboxOne
-			|| (options.customTarget && options.customTarget.baseTarget === Platform.XboxSeries) || options.target === Platform.XboxSeries
+		else if (isPlatform(options, Platform.Windows)
+			|| isPlatform(options, Platform.WindowsApp)
+			|| isPlatform(options, Platform.Switch)
+			|| isPlatform(options, Platform.PS4)
+			|| isPlatform(options, Platform.PS5)
+			|| isPlatform(options, Platform.XboxOne)
+			|| isPlatform(options, Platform.XboxSeries)
 			) {
 			let vsvars: string = null;
 			const bits = dothemath ? '64' : '32';
@@ -1048,7 +1043,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 				log.error('Visual Studio not found.');
 			}
 		}
-		else if ((options.customTarget && options.customTarget.baseTarget === Platform.Android) || options.target === Platform.Android) {
+		else if (isPlatform(options, Platform.Android)) {
 			let gradlew = (process.platform === 'win32') ? 'gradlew.bat' : 'bash';
 			let args = (process.platform === 'win32') ? [] : ['gradlew'];
 			args.push('assemble' + (options.debug ? 'Debug' : 'Release'));
@@ -1064,7 +1059,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 					throw 'Compile error';
 				}
 				else {
-					if ((options.customTarget && options.customTarget.baseTarget === Platform.Linux) || options.target === Platform.Linux) {
+					if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm) || isPlatform(options, Platform.Pi)) {
 						log.error('Ninja could not be run, falling back to make.');
 						make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
 						try {

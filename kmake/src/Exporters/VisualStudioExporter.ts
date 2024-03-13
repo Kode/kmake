@@ -60,9 +60,9 @@ function getShaderLang() {
 export class VisualStudioExporter extends Exporter {
 	clion: CLionExporter;
 
-	constructor() {
-		super();
-		this.clion = new CLionExporter();
+	constructor(options: any) {
+		super(options);
+		this.clion = new CLionExporter(options);
 		if (this.overrideVisualStudioVersion() !== null) {
 			Options.visualStudioVersion = this.overrideVisualStudioVersion();
 		}

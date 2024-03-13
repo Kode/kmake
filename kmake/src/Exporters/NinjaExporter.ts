@@ -9,13 +9,19 @@ import * as path from 'path';
 export class NinjaExporter extends Exporter {
 	cCompiler: string;
 	cppCompiler: string;
-	linkerParams: string;
+	cFlags: string;
+	cppFlags: string;
+	linkerFlags: string;
+	outputExtension: string;
 
-	constructor(cCompiler: string, cppCompiler: string, linkerParams: string) {
-		super();
+	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string) {
+		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
-		this.linkerParams = linkerParams;
+		this.cFlags = cFlags;
+		this.cppFlags = cppFlags;
+		this.linkerFlags = linkerFlags;
+		this.outputExtension = outputExtension;
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -59,7 +65,7 @@ export class NinjaExporter extends Exporter {
 			incline += '-I' + inc + ' ';
 		}
 
-		let libsline = this.linkerParams;
+		let libsline = this.linkerFlags;
 		for (let lib of project.getLibs()) {
 			libsline += ' -l' + lib;
 		}
@@ -87,7 +93,7 @@ export class NinjaExporter extends Exporter {
 		}
 		else optimization = '-g';
 
-		let cline = this.cCompiler + ' ';
+		let cline = this.cCompiler + ' ' + this.cFlags + ' ';
 		if (project.cStd !== '') {
 			cline += '-std=' + project.cStd + ' ';
 		}
@@ -102,7 +108,7 @@ export class NinjaExporter extends Exporter {
 		cline += defline;
 		this.p('rule cc\n  deps = gcc\n  depfile = $out.d\n  command = ' + cline + '-MD -MF $out.d -c $in -o $out\n');
 
-		let cppline = this.cppCompiler + ' ';
+		let cppline = this.cppCompiler + ' ' + this.cppFlags + ' ';
 		if (project.cppStd !== '') {
 			cppline += '-std=' + project.cppStd + ' ';
 		}
@@ -152,13 +158,7 @@ export class NinjaExporter extends Exporter {
 			executableName = project.getExecutableName();
 		}
 
-		let outputname = executableName;
-		if (options.lib) {
-			outputname = executableName + '.a';
-		}
-		else if (options.dynlib) {
-			outputname = executableName + '.so';
-		}
+		let outputname = executableName + this.outputExtension;
 
 		this.p('build ' + outputname + ': link ' + ofilelist);
 

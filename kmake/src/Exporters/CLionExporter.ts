@@ -8,8 +8,8 @@ import * as child_process from 'child_process';
 import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class CLionExporter extends Exporter {
-	constructor() {
-		super();
+	constructor(options: any) {
+		super(options);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any): Promise<void> {

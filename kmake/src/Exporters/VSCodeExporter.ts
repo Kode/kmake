@@ -8,9 +8,9 @@ import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporte
 export class VSCodeExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
 
-	constructor() {
-		super();
-		this.compileCommands = new CompilerCommandsExporter();
+	constructor(options: any) {
+		super(options);
+		this.compileCommands = new CompilerCommandsExporter(options);
 	}
 
 	configName(platform: string): string {

@@ -9,13 +9,19 @@ import * as path from 'path';
 export class MakeExporter extends Exporter {
 	cCompiler: string;
 	cppCompiler: string;
-	linkerParams: string;
+	cFlags: string;
+	cppFlags: string;
+	linkerFlags: string;
+	outputExtension: string;
 
-	constructor(cCompiler: string, cppCompiler: string, linkerParams: string) {
-		super();
+	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string) {
+		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
-		this.linkerParams = linkerParams;
+		this.cFlags = cFlags;
+		this.cppFlags = cppFlags;
+		this.linkerFlags = linkerFlags;
+		this.outputExtension = outputExtension;
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -79,7 +85,7 @@ export class MakeExporter extends Exporter {
 		}
 		this.p('INC=' + incline);
 
-		let libsline = this.linkerParams;
+		let libsline = this.linkerFlags;
 		for (let lib of project.getLibs()) {
 			libsline += ' -l' + lib;
 		}
@@ -103,7 +109,7 @@ export class MakeExporter extends Exporter {
 		this.p('DEF=' + defline);
 		this.p();
 
-		let cline = '';
+		let cline = this.cFlags;
 		if (project.cStd !== '') {
 			cline = '-std=' + project.cStd + ' ';
 		}
@@ -115,7 +121,7 @@ export class MakeExporter extends Exporter {
 		}
 		this.p('CFLAGS=' + cline);
 
-		let cppline = '';
+		let cppline = this.cppFlags;
 		if (project.cppStd !== '') {
 			cppline = '-std=' + project.cppStd + ' ';
 		}
@@ -138,23 +144,12 @@ export class MakeExporter extends Exporter {
 			executableName = project.getExecutableName();
 		}
 
-		if (options.lib) {
-			this.p(executableName + '.a: ' + gchfilelist + ofilelist);
-		}
-		else if (options.dynlib) {
-			this.p(executableName + '.so: ' + gchfilelist + ofilelist);
-		}
-		else {
-			this.p(executableName + ': ' + gchfilelist + ofilelist);
-		}
+		this.p(executableName + this.outputExtension + ': ' + gchfilelist + ofilelist);
 
 		let cpp = '';
 
-		let output = '-o "' + executableName + '"';
-		if (options.lib) {
-			output = '-o "' + executableName + '.a"';
-		}
-		else if (options.dynlib) {
+		let output = '-o "' + executableName + this.outputExtension + '"';
+		if (options.dynlib) {
 			output = '-shared -o "' + executableName + '.so"';
 		}
 

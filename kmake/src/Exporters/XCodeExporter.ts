@@ -160,8 +160,8 @@ function addDirectory(dirname: string, directories: Directory[]) {
 }
 
 export class XCodeExporter extends Exporter {
-	constructor() {
-		super();
+	constructor(options: any) {
+		super(options);
 	}
 
 	exportWorkspace(to: string, project: Project) {

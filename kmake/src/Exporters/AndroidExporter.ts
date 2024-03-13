@@ -33,9 +33,9 @@ export class AndroidExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
 	safeName: string;
 
-	constructor() {
-		super();
-		this.compileCommands = new CompilerCommandsExporter();
+	constructor(options: any) {
+		super(options);
+		this.compileCommands = new CompilerCommandsExporter(options);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

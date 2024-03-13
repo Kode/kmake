@@ -11,9 +11,9 @@ import { CLionExporter } from 'kmake/Exporters/CLionExporter';
 export class FreeBSDExporter extends Exporter {
 	clion: CLionExporter;
 
-	constructor() {
-		super();
-		this.clion = new CLionExporter();
+	constructor(options: any) {
+		super(options);
+		this.clion = new CLionExporter(options);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

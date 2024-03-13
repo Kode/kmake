@@ -1,217 +1,26 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
 import { Project } from 'kmake/Project';
-import { Options } from 'kmake/Options';
-import { GraphicsApi } from 'kmake/GraphicsApi';
-import * as fs from 'kmake/fsextra';
-import * as path from 'path';
 import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';
+import { MakeExporter } from 'kmake/Exporters/MakeExporter';
+import { NinjaExporter } from 'kmake/Exporters/NinjaExporter';
 
 export class WasmExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
+	make: MakeExporter;
+	ninja: NinjaExporter;
 
-	constructor() {
-		super();
-		this.compileCommands = new CompilerCommandsExporter();
+	constructor(options: any) {
+		super(options);
+		this.compileCommands = new CompilerCommandsExporter(options);
+		const compiler = 'clang';
+		const compilerFlags = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
+		this.make = new MakeExporter(options, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
+		this.ninja = new NinjaExporter(options, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		this.exportMakefile(project, from, to, platform, vrApi, options);
+		this.make.exportSolution(project, from, to, platform, vrApi, options);
+		this.ninja.exportSolution(project, from, to, platform, vrApi, options);
 		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
-	}
-
-	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		const cCompiler = 'clang';
-		const cppCompiler = 'clang';
-
-		let objects: any = {};
-		let ofiles: any = {};
-		let outputPath = path.resolve(to, options.buildPath);
-		fs.ensureDirSync(outputPath);
-
-		let debugDirName = project.getDebugDir();
-		debugDirName = debugDirName.replace(/\\/g, '/');
-		if (debugDirName.endsWith('/')) debugDirName = debugDirName.substr(0, debugDirName.length - 1);
-		if (debugDirName.lastIndexOf('/') >= 0) debugDirName = debugDirName.substr(debugDirName.lastIndexOf('/') + 1);
-
-		fs.copyDirSync(path.resolve(from, debugDirName), path.resolve(outputPath, debugDirName));
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.cpp') || file.endsWith('.c') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				let name = file.toLowerCase();
-				if (name.indexOf('/') >= 0) name = name.substr(name.lastIndexOf('/') + 1);
-				name = name.substr(0, name.lastIndexOf('.'));
-				if (!objects[name]) {
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-				else {
-					while (objects[name]) {
-						name = name + '_';
-					}
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-			}
-		}
-
-		let gchfilelist = '';
-		let precompiledHeaders: string[] = [];
-		for (let file of project.getFiles()) {
-			if (file.options && file.options.pch && precompiledHeaders.indexOf(file.options.pch) < 0) {
-				precompiledHeaders.push(file.options.pch);
-			}
-		}
-		for (let file of project.getFiles()) {
-			let precompiledHeader: string = null;
-			for (let header of precompiledHeaders) {
-				if (file.file.endsWith(header)) {
-					precompiledHeader = header;
-					break;
-				}
-			}
-			if (precompiledHeader !== null) {
-				// let realfile = path.relative(outputPath, path.resolve(from, file.file));
-				gchfilelist += path.basename(file.file) + '.gch ';
-			}
-		}
-
-		let ofilelist = '';
-		for (let o in objects) {
-			ofilelist += o + '.o ';
-		}
-
-		this.writeFile(path.resolve(outputPath, 'makefile'));
-
-		let incline = '-I./ '; // local directory to pick up the precompiled header hxcpp.h.gch
-		for (let inc of project.getIncludeDirs()) {
-			inc = path.relative(outputPath, path.resolve(from, inc));
-			incline += '-I' + inc + ' ';
-		}
-		this.p('INC=' + incline);
-
-		let libsline = '';
-		
-		/*if (project.cmd) {
-			libsline += ' -static';
-		}*/
-		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
-		}
-		this.p('LIB=' + libsline);
-
-		let defline = '';
-
-		if (!options.debug) {
-			defline += '-DNDEBUG ';
-		}
-
-		for (const def of project.getDefines()) {
-			if (def.config && def.config.toLowerCase() === 'debug' && !options.debug) {
-				continue;
-			}
-
-			if (def.config && def.config.toLowerCase() === 'release' && options.debug) {
-				continue;
-			}
-
-			defline += '-D' + def.value.replace(/\"/g, '\\"') + ' ';
-		}
-		defline += '-D KORE_DEBUGDIR="\\"' + debugDirName + '\\""' + ' ';
-		this.p('DEF=' + defline);
-		this.p();
-
-		let cline = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
-		if (options.dynlib) {
-			cline += '-fPIC ';
-		}
-		for (let flag of project.cFlags) {
-			cline += flag + ' ';
-		}
-		this.p('CFLAGS=' + cline);
-
-		let cppline = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
-		if (options.dynlib) {
-			cppline += '-fPIC ';
-		}
-		for (let flag of project.cppFlags) {
-			cppline += flag + ' ';
-		}
-		this.p('CPPFLAGS=' + cppline);
-
-		let optimization = '';
-		if (!options.debug) optimization = '-O2';
-		else optimization = '-g';
-
-		if (options.lib) {
-			this.p(project.getSafeName() + '.a: ' + gchfilelist + ofilelist);
-		}
-		else if (options.dynlib) {
-			this.p(project.getSafeName() + '.so: ' + gchfilelist + ofilelist);
-		}
-		else {
-			this.p(project.getSafeName() + '.wasm' + ': ' + gchfilelist + ofilelist);
-		}
-
-		let cpp = '';
-		// cpp = '-std=c++11';
-
-		let linkerFlags = '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"';
-		/*let linkerFlags = '-s TOTAL_MEMORY=134217728 ';
-		if (Options.graphicsApi === GraphicsApi.WebGPU) {
-			linkerFlags += '-s USE_WEBGPU=1 ';
-		}*/
-
-		let output = ' ' + linkerFlags + ' -o ' + project.getSafeName() + '.wasm ';
-		if (options.lib) {
-			output = '-o "' + project.getSafeName() + '.a"';
-		}
-		else if (options.dynlib) {
-			output = '-shared -o "' + project.getSafeName() + '.so"';
-		}
-		this.p('\t' + (options.lib ? 'ar rcs' : cppCompiler) + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
-
-		for (let file of project.getFiles()) {
-			let precompiledHeader: string = null;
-			for (let header of precompiledHeaders) {
-				if (file.file.endsWith(header)) {
-					precompiledHeader = header;
-					break;
-				}
-			}
-			if (precompiledHeader !== null) {
-				let realfile = path.relative(outputPath, path.resolve(from, file.file));
-				this.p(path.basename(realfile) + '.gch: ' + realfile);
-				this.p('\t' + cppCompiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
-			}
-		}
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				this.p();
-				let name = ofiles[file];
-				let realfile = path.relative(outputPath, path.resolve(from, file));
-				this.p(name + '.o: ' + realfile);
-
-				let compiler = cppCompiler;
-				let flags = '$(CPPFLAGS)';
-				if (file.endsWith('.c')) {
-					compiler = cCompiler;
-					flags = '$(CFLAGS)';
-				}
-				else if (file.endsWith('.s') || file.endsWith('.S')) {
-					compiler = cCompiler;
-					flags = '';
-				}
-
-				this.p('\t' + compiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
-			}
-		}
-
-		// project.getDefines()
-		// project.getIncludeDirs()
-
-		this.closeFile();
 	}
 }

@@ -14,7 +14,7 @@ export abstract class Exporter {
 	outFile: number = 0;
 	outString: string = null;
 
-	constructor() {
+	constructor(options: any) {
 
 	}
 

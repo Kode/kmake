@@ -9,9 +9,9 @@ import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporte
 export class EmscriptenExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
 
-	constructor() {
-		super();
-		this.compileCommands = new CompilerCommandsExporter();
+	constructor(options: any) {
+		super(options);
+		this.compileCommands = new CompilerCommandsExporter(options);
 	}
 
 	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

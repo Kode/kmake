@@ -6,8 +6,8 @@ import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 
 export class JsonExporter extends Exporter {
-	constructor() {
-		super();
+	constructor(options: any) {
+		super(options);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

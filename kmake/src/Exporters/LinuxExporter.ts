@@ -16,16 +16,26 @@ export class LinuxExporter extends Exporter {
 	clion: CLionExporter;
 	compileCommands: CompilerCommandsExporter;
 
-	constructor() {
-		super();
-		let linkerParams = '-static-libgcc -static-libstdc++ -pthread';
+	constructor(options: any) {
+		super(options);
+		
+		let linkerFlags = '-static-libgcc -static-libstdc++ -pthread';
 		if (Options.compiler === Compiler.MuslGcc || this.getOS().includes('Alpine')) {
-			linkerParams += ' -static';
+			linkerFlags += ' -static';
 		}
-		this.ninja = new NinjaExporter(this.getCCompiler(), this.getCPPCompiler(), linkerParams);
-		this.make = new MakeExporter(this.getCCompiler(), this.getCPPCompiler(), linkerParams);
-		this.clion = new CLionExporter();
-		this.compileCommands = new CompilerCommandsExporter();
+
+		let outputExtension = '';
+		if (options.lib) {
+			outputExtension = '.a';
+		}
+		else if (options.dynlib) {
+			outputExtension = '.so';
+		}
+
+		this.ninja = new NinjaExporter(options, this.getCCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
+		this.make = new MakeExporter(options, this.getCCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
+		this.clion = new CLionExporter(options);
+		this.compileCommands = new CompilerCommandsExporter(options);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

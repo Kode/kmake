@@ -8,8 +8,8 @@ import * as child_process from 'child_process';
 import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class CompilerCommandsExporter extends Exporter {
-	constructor() {
-		super();
+	constructor(options: any) {
+		super(options);
 	}
 
 	async exportSolution(project: Project, _from: string, to: string, platform: string, vrApi: any, options: any): Promise<void> {
