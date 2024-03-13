@@ -4,7 +4,7 @@ import { Options } from 'kmake/Options';
 import { GraphicsApi } from 'kmake/GraphicsApi';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { CompilerCommandsExporter } from './CompileCommandsExporter';
+import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';
 
 export class WasmExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;

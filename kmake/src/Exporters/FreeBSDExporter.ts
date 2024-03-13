@@ -6,7 +6,7 @@ import { Project } from 'kmake/Project';
 import { Compiler } from 'kmake/Compiler';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { CLionExporter } from './CLionExporter';
+import { CLionExporter } from 'kmake/Exporters/CLionExporter';
 
 export class FreeBSDExporter extends Exporter {
 	clion: CLionExporter;

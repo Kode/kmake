@@ -11,7 +11,7 @@ import * as log from 'kmake/log';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { CLionExporter } from './CLionExporter';
+import { CLionExporter } from 'kmake/Exporters/CLionExporter';
 
 function isGitPath(aPath: string): boolean {
 	return aPath.indexOf('/.git/') >= 0 || aPath.indexOf('\\.git\\') >= 0 || aPath.endsWith('/.git') || aPath.endsWith('\\.git');

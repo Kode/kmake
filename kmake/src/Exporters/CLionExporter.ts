@@ -5,7 +5,7 @@ import { Platform } from 'kmake/Platform';
 import * as log from 'kmake/log';
 import * as os from 'os';
 import * as child_process from 'child_process';
-import { Exporter } from './Exporter';
+import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class CLionExporter extends Exporter {
 	constructor() {

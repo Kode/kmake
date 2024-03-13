@@ -5,10 +5,10 @@ import { Project } from 'kmake/Project';
 import { Compiler } from 'kmake/Compiler';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { NinjaExporter } from './NinjaExporter';
-import { MakeExporter } from './MakeExporter';
-import { CLionExporter } from './CLionExporter';
-import { CompilerCommandsExporter } from './CompileCommandsExporter';
+import { NinjaExporter } from 'kmake/Exporters/NinjaExporter';
+import { MakeExporter } from 'kmake/Exporters/MakeExporter';
+import { CLionExporter } from 'kmake/Exporters/CLionExporter';
+import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';
 
 export class LinuxExporter extends Exporter {
 	ninja: NinjaExporter;

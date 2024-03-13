@@ -3,7 +3,7 @@ import { Project } from 'kmake/Project';
 import { Platform } from 'kmake/Platform';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { CompilerCommandsExporter } from './CompileCommandsExporter';
+import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';
 
 export class VSCodeExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
