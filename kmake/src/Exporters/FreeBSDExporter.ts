@@ -6,16 +6,20 @@ import { Project } from 'kmake/Project';
 import { Compiler } from 'kmake/Compiler';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import { CLionExporter } from './CLionExporter';
 
 export class FreeBSDExporter extends Exporter {
+	clion: CLionExporter;
+
 	constructor() {
 		super();
+		this.clion = new CLionExporter();
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		this.exportMakefile(project, from, to, platform, vrApi, options);
 		this.exportCodeBlocks(project, from, to, platform, vrApi, options);
-		this.exportCLion(project, from, to, platform, vrApi, options);
+		this.clion.exportSolution(project, from, to, platform, vrApi, options);
 		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 

@@ -5,18 +5,35 @@ import { Project } from 'kmake/Project';
 import { Compiler } from 'kmake/Compiler';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import { NinjaExporter } from './NinjaExporter';
+import { MakeExporter } from './MakeExporter';
+import { CLionExporter } from './CLionExporter';
+import { CompilerCommandsExporter } from './CompileCommandsExporter';
 
 export class LinuxExporter extends Exporter {
+	ninja: NinjaExporter;
+	make: MakeExporter;
+	clion: CLionExporter;
+	compileCommands: CompilerCommandsExporter;
+
 	constructor() {
 		super();
+		let linkerParams = '-static-libgcc -static-libstdc++ -pthread';
+		if (Options.compiler === Compiler.MuslGcc || this.getOS().includes('Alpine')) {
+			linkerParams += ' -static';
+		}
+		this.ninja = new NinjaExporter(this.getCCompiler(), this.getCPPCompiler(), linkerParams);
+		this.make = new MakeExporter(this.getCCompiler(), this.getCPPCompiler(), linkerParams);
+		this.clion = new CLionExporter();
+		this.compileCommands = new CompilerCommandsExporter();
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		this.exportNinjaFile(project, from, to, platform, vrApi, options);
-		this.exportMakefile(project, from, to, platform, vrApi, options);
+		this.ninja.exportSolution(project, from, to, platform, vrApi, options);
+		this.make.exportSolution(project, from, to, platform, vrApi, options);
 		this.exportCodeBlocks(project, from, to, platform, vrApi, options);
-		this.exportCLion(project, from, to, platform, vrApi, options);
-		this.exportCompileCommands(project, from, to, platform, vrApi, options);
+		this.clion.exportSolution(project, from, to, platform, vrApi, options);
+		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 
 	getCCompiler(): string {
@@ -73,362 +90,6 @@ export class LinuxExporter extends Exporter {
 		catch (error) {
 			return 'Unknown';
 		}
-	}
-
-	exportNinjaFile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		const cCompiler = this.getCCompiler();
-		const cppCompiler = this.getCPPCompiler();
-		const os = this.getOS();
-
-		let objects: any = {};
-		let ofiles: any = {};
-		let outputPath = path.resolve(to, options.buildPath);
-		fs.ensureDirSync(outputPath);
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.cpp') || file.endsWith('.c') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				let name = file.toLowerCase();
-				if (name.indexOf('/') >= 0) name = name.substr(name.lastIndexOf('/') + 1);
-				name = name.substr(0, name.lastIndexOf('.'));
-				if (!objects[name]) {
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-				else {
-					while (objects[name]) {
-						name = name + '_';
-					}
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-			}
-		}
-
-		let ofilelist = '';
-		for (let o in objects) {
-			ofilelist += o + '.o ';
-		}
-
-		this.writeFile(path.resolve(outputPath, 'build.ninja'));
-
-		this.p('pool link_pool\n  depth = 1\n');
-
-		let incline = '';
-		for (let inc of project.getIncludeDirs()) {
-			inc = path.relative(outputPath, path.resolve(from, inc));
-			incline += '-I' + inc + ' ';
-		}
-
-		let libsline = '-static-libgcc -static-libstdc++ -pthread';
-		if (Options.compiler === Compiler.MuslGcc || os.includes('Alpine')) {
-			libsline += ' -static';
-		}
-		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
-		}
-		libsline += ' ';
-
-		let defline = '';
-		for (const def of project.getDefines()) {
-			if (def.config && def.config.toLowerCase() === 'debug' && !options.debug) {
-				continue;
-			}
-
-			if (def.config && def.config.toLowerCase() === 'release' && options.debug) {
-				continue;
-			}
-
-			defline += '-D' + def.value.replace(/\"/g, '\\"') + ' ';
-		}
-		if (!options.debug) {
-			defline += '-DNDEBUG ';
-		}
-
-		let optimization = '';
-		if (!options.debug) {
-			optimization = '-O2';
-		}
-		else optimization = '-g';
-
-		let cline = cCompiler + ' ';
-		if (project.cStd !== '') {
-			cline += '-std=' + project.cStd + ' ';
-		}
-		if (options.dynlib) {
-			cline += '-fPIC ';
-		}
-		for (let flag of project.cFlags) {
-			cline += flag + ' ';
-		}
-		cline += optimization + ' ';
-		cline += incline;
-		cline += defline;
-		this.p('rule cc\n  deps = gcc\n  depfile = $out.d\n  command = ' + cline + '-MD -MF $out.d -c $in -o $out\n');
-
-		let cppline = cppCompiler + ' ';
-		if (project.cppStd !== '') {
-			cppline += '-std=' + project.cppStd + ' ';
-		}
-		if (options.dynlib) {
-			cppline += '-fPIC ';
-		}
-		for (let flag of project.cppFlags) {
-			cppline += flag + ' ';
-		}
-		cppline += optimization + ' ';
-		cppline += incline;
-		cppline += defline;
-		this.p('rule cxx\n  deps = gcc\n  depfile = $out.d\n  command = ' + cppline + '-MD -MF $out.d -c $in -o $out\n');
-
-		if (options.dynlib) {
-			this.p('rule link\n  pool = link_pool\n  command = ' + this.getCPPCompiler() + ' -fPIC -shared -o $out ' + optimization + ' $in ' + libsline);
-		}
-		else if (options.lib) {
-			this.p('rule link\n  pool = link_pool\n  command = ar rcs -o $out $in');
-		}
-		else {
-			this.p('rule link\n  pool = link_pool\n  command = ' + this.getCPPCompiler() + ' -o $out ' + optimization + ' $in ' + libsline);
-		}
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				this.p();
-				let name = ofiles[file];
-				let realfile = path.relative(outputPath, path.resolve(from, file));
-
-				let compiler = 'cxx';
-				if (file.endsWith('.c')) {
-					compiler = 'cc';
-				}
-				else if (file.endsWith('.s') || file.endsWith('.S')) {
-					compiler = 'asm';
-				}
-
-				this.p('build ' + name + '.o: ' + compiler + ' ' + realfile);
-			}
-		}
-		this.p();
-
-		let executableName = project.getSafeName();
-		if (project.getExecutableName()) {
-			executableName = project.getExecutableName();
-		}
-
-		let outputname = executableName;
-		if (options.lib) {
-			outputname = executableName + '.a';
-		}
-		else if (options.dynlib) {
-			outputname = executableName + '.so';
-		}
-
-		this.p('build ' + outputname + ': link ' + ofilelist);
-
-		this.closeFile();
-	}
-
-	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		const cCompiler = this.getCCompiler();
-		const cppCompiler = this.getCPPCompiler();
-		const os = this.getOS();
-
-		let objects: any = {};
-		let ofiles: any = {};
-		let outputPath = path.resolve(to, options.buildPath);
-		fs.ensureDirSync(outputPath);
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.cpp') || file.endsWith('.c') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				let name = file.toLowerCase();
-				if (name.indexOf('/') >= 0) name = name.substr(name.lastIndexOf('/') + 1);
-				name = name.substr(0, name.lastIndexOf('.'));
-				if (!objects[name]) {
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-				else {
-					while (objects[name]) {
-						name = name + '_';
-					}
-					objects[name] = true;
-					ofiles[file] = name;
-				}
-			}
-		}
-
-		let gchfilelist = '';
-		let precompiledHeaders: string[] = [];
-		for (let file of project.getFiles()) {
-			if (file.options && file.options.pch && precompiledHeaders.indexOf(file.options.pch) < 0) {
-				precompiledHeaders.push(file.options.pch);
-			}
-		}
-		for (let file of project.getFiles()) {
-			let precompiledHeader: string = null;
-			for (let header of precompiledHeaders) {
-				if (file.file.endsWith(header)) {
-					precompiledHeader = header;
-					break;
-				}
-			}
-			if (precompiledHeader !== null) {
-				// let realfile = path.relative(outputPath, path.resolve(from, file.file));
-				gchfilelist += path.basename(file.file) + '.gch ';
-			}
-		}
-
-		let ofilelist = '';
-		for (let o in objects) {
-			ofilelist += o + '.o ';
-		}
-
-		this.writeFile(path.resolve(outputPath, 'makefile'));
-
-		let incline = '-I./ '; // local directory to pick up the precompiled header hxcpp.h.gch
-		for (let inc of project.getIncludeDirs()) {
-			inc = path.relative(outputPath, path.resolve(from, inc));
-			incline += '-I' + inc + ' ';
-		}
-		this.p('INC=' + incline);
-
-		let libsline = '-static-libgcc -static-libstdc++ -pthread';
-		if (Options.compiler === Compiler.MuslGcc || os.includes('Alpine')) {
-			libsline += ' -static';
-		}
-		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
-		}
-		this.p('LIB=' + libsline);
-
-		let defline = '';
-		for (const def of project.getDefines()) {
-			if (def.config && def.config.toLowerCase() === 'debug' && !options.debug) {
-				continue;
-			}
-
-			if (def.config && def.config.toLowerCase() === 'release' && options.debug) {
-				continue;
-			}
-
-			defline += '-D' + def.value.replace(/\"/g, '\\"') + ' ';
-		}
-		if (!options.debug) {
-			defline += '-DNDEBUG ';
-		}
-		this.p('DEF=' + defline);
-		this.p();
-
-		let cline = '';
-		if (project.cStd !== '') {
-			cline = '-std=' + project.cStd + ' ';
-		}
-		if (options.dynlib) {
-			cline += '-fPIC ';
-		}
-		for (let flag of project.cFlags) {
-			cline += flag + ' ';
-		}
-		this.p('CFLAGS=' + cline);
-
-		let cppline = '';
-		if (project.cppStd !== '') {
-			cppline = '-std=' + project.cppStd + ' ';
-		}
-		if (options.dynlib) {
-			cppline += '-fPIC ';
-		}
-		for (let flag of project.cppFlags) {
-			cppline += flag + ' ';
-		}
-		this.p('CPPFLAGS=' + cppline);
-
-		let optimization = '';
-		if (!options.debug) {
-			optimization = '-O2';
-		}
-		else optimization = '-g';
-
-		let executableName = project.getSafeName();
-		if (project.getExecutableName()) {
-			executableName = project.getExecutableName();
-		}
-
-		if (options.lib) {
-			this.p(executableName + '.a: ' + gchfilelist + ofilelist);
-		}
-		else if (options.dynlib) {
-			this.p(executableName + '.so: ' + gchfilelist + ofilelist);
-		}
-		else {
-			this.p(executableName + ': ' + gchfilelist + ofilelist);
-		}
-
-		let cpp = '';
-
-		let output = '-o "' + executableName + '"';
-		if (options.lib) {
-			output = '-o "' + executableName + '.a"';
-		}
-		else if (options.dynlib) {
-			output = '-shared -o "' + executableName + '.so"';
-		}
-
-		if (options.lib) {
-			this.p('\t' + 'ar rcs ' + output + ' ' + ofilelist);
-		}
-		else {
-			this.p('\t' + cppCompiler + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
-		}
-
-		for (let file of project.getFiles()) {
-			let precompiledHeader: string = null;
-			for (let header of precompiledHeaders) {
-				if (file.file.endsWith(header)) {
-					precompiledHeader = header;
-					break;
-				}
-			}
-			if (precompiledHeader !== null) {
-				let realfile = path.relative(outputPath, path.resolve(from, file.file));
-				this.p('-include ' + path.basename(file.file) + '.d');
-				this.p(path.basename(realfile) + '.gch: ' + realfile);
-				this.p('\t' + cppCompiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
-			}
-		}
-
-		for (let fileobject of project.getFiles()) {
-			let file = fileobject.file;
-			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
-				this.p();
-				let name = ofiles[file];
-				let realfile = path.relative(outputPath, path.resolve(from, file));
-
-				this.p('-include ' + name + '.d');
-
-				this.p(name + '.o: ' + realfile);
-
-				let compiler = cppCompiler;
-				let flags = '$(CPPFLAGS)';
-				if (file.endsWith('.c')) {
-					compiler = cCompiler;
-					flags = '$(CFLAGS)';
-				}
-				else if (file.endsWith('.s') || file.endsWith('.S')) {
-					compiler = cCompiler;
-					flags = '';
-				}
-
-				this.p('\t' + compiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
-			}
-		}
-
-		// project.getDefines()
-		// project.getIncludeDirs()
-
-		this.closeFile();
 	}
 
 	exportCodeBlocks(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

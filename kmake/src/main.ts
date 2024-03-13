@@ -14,7 +14,6 @@ import { AndroidExporter } from 'kmake/Exporters/AndroidExporter';
 import { LinuxExporter } from 'kmake/Exporters/LinuxExporter';
 import { EmscriptenExporter } from 'kmake/Exporters/EmscriptenExporter';
 import { WasmExporter } from 'kmake/Exporters/WasmExporter';
-import { TizenExporter } from 'kmake/Exporters/TizenExporter';
 import { VisualStudioExporter } from 'kmake/Exporters/VisualStudioExporter';
 import { XCodeExporter } from 'kmake/Exporters/XCodeExporter';
 import { VSCodeExporter } from 'kmake/Exporters/VSCodeExporter';
@@ -47,8 +46,6 @@ function fromPlatform(platform: string): string {
 			return 'Linux';
 		case Platform.Emscripten:
 			return 'Emscripten';
-		case Platform.Tizen:
-			return 'Tizen';
 		case Platform.Pi:
 			return 'Pi';
 		case Platform.tvOS:
@@ -143,8 +140,6 @@ function shaderLang(platform: string): string {
 				default:
 					throw new Error('Unsupported shader language.');
 			}
-		case Platform.Tizen:
-			return 'essl';
 		case Platform.Pi:
 			return 'essl';
 		case Platform.FreeBSD:
@@ -213,8 +208,6 @@ function graphicsApi(platform: string): string {
 				default:
 					return Options.graphicsApi;
 			}
-		case Platform.Tizen:
-			return GraphicsApi.OpenGL;
 		case Platform.Pi:
 			return GraphicsApi.OpenGL;
 		case Platform.FreeBSD:
@@ -637,7 +630,6 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.Wasm) exporter = new WasmExporter();
 	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter();
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter();
-	else if (platform === Platform.Tizen) exporter = new TizenExporter();
 	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxSeries || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
 		if (Project.kincDir && !fs.existsSync(libsdir)) {

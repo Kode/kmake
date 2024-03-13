@@ -11,6 +11,7 @@ import * as log from 'kmake/log';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { CLionExporter } from './CLionExporter';
 
 function isGitPath(aPath: string): boolean {
 	return aPath.indexOf('/.git/') >= 0 || aPath.indexOf('\\.git\\') >= 0 || aPath.endsWith('/.git') || aPath.endsWith('\\.git');
@@ -57,8 +58,11 @@ function getShaderLang() {
 }
 
 export class VisualStudioExporter extends Exporter {
+	clion: CLionExporter;
+
 	constructor() {
 		super();
+		this.clion = new CLionExporter();
 		if (this.overrideVisualStudioVersion() !== null) {
 			Options.visualStudioVersion = this.overrideVisualStudioVersion();
 		}
@@ -181,7 +185,7 @@ export class VisualStudioExporter extends Exporter {
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		this.exportCLion(project, from, to, platform, vrApi, options);
+		this.clion.exportSolution(project, from, to, platform, vrApi, options);
 
 		this.writeFile(path.resolve(to, project.getSafeName() + '.sln'));
 

@@ -72,7 +72,6 @@ export class ShaderCompiler {
 			}
 		case Platform.Emscripten:
 		case Platform.Wasm:
-		case Platform.Tizen:
 		case Platform.Pi:
 			return 'essl';
 		case Platform.tvOS:

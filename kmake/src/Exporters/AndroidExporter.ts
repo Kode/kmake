@@ -8,6 +8,7 @@ import * as fs from 'kmake/fsextra';
 import { execSync } from 'child_process';
 import * as os from 'os';
 import * as path from 'path';
+import { CompilerCommandsExporter } from './CompileCommandsExporter';
 
 interface TargetOptions {
 	package: string;
@@ -29,10 +30,12 @@ interface TargetOptions {
 }
 
 export class AndroidExporter extends Exporter {
+	compileCommands: CompilerCommandsExporter;
 	safeName: string;
 
 	constructor() {
 		super();
+		this.compileCommands = new CompilerCommandsExporter();
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -150,7 +153,7 @@ export class AndroidExporter extends Exporter {
 		}
 
 		if (project.getDebugDir().length > 0) fs.copyDirSync(path.resolve(from, project.getDebugDir()), path.resolve(to, this.safeName, 'app', 'src', 'main', 'assets'));
-		this.exportCompileCommands(project, from, to, platform, vrApi, options);
+		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 
 	writeAppGradle(project: Project, outdir: string, from: string, targetOptions: TargetOptions, textData: any) {

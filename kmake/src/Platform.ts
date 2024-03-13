@@ -6,7 +6,6 @@ export interface PlatformType {
 	Android: string;
 	Linux: string;
 	Emscripten: string;
-	Tizen: string;
 	Pi: string;
 	tvOS: string;
 	PS4: string;
@@ -26,7 +25,6 @@ export let Platform: PlatformType = {
 	Android: 'android',
 	Linux: 'linux',
 	Emscripten: 'emscripten',
-	Tizen: 'tizen',
 	Pi: 'pi',
 	tvOS: 'tvos',
 	PS4: 'ps4',

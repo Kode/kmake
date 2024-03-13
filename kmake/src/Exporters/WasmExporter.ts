@@ -4,10 +4,19 @@ import { Options } from 'kmake/Options';
 import { GraphicsApi } from 'kmake/GraphicsApi';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import { CompilerCommandsExporter } from './CompileCommandsExporter';
 
 export class WasmExporter extends Exporter {
+	compileCommands: CompilerCommandsExporter;
+
 	constructor() {
 		super();
+		this.compileCommands = new CompilerCommandsExporter();
+	}
+
+	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
+		this.exportMakefile(project, from, to, platform, vrApi, options);
+		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 
 	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -204,10 +213,5 @@ export class WasmExporter extends Exporter {
 		// project.getIncludeDirs()
 
 		this.closeFile();
-	}
-
-	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
-		this.exportMakefile(project, from, to, platform, vrApi, options);
-		this.exportCompileCommands(project, from, to, platform, vrApi, options);
 	}
 }

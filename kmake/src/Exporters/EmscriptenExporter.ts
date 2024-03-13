@@ -4,10 +4,14 @@ import { Options } from 'kmake/Options';
 import { GraphicsApi } from 'kmake/GraphicsApi';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import { CompilerCommandsExporter } from './CompileCommandsExporter';
 
 export class EmscriptenExporter extends Exporter {
+	compileCommands: CompilerCommandsExporter;
+
 	constructor() {
 		super();
+		this.compileCommands = new CompilerCommandsExporter();
 	}
 
 	exportMakefile(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -220,6 +224,6 @@ export class EmscriptenExporter extends Exporter {
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
 		this.exportMakefile(project, from, to, platform, vrApi, options);
-		this.exportCompileCommands(project, from, to, platform, vrApi, options);
+		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 }

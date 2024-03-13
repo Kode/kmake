@@ -3,10 +3,14 @@ import { Project } from 'kmake/Project';
 import { Platform } from 'kmake/Platform';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import { CompilerCommandsExporter } from './CompileCommandsExporter';
 
 export class VSCodeExporter extends Exporter {
+	compileCommands: CompilerCommandsExporter;
+
 	constructor() {
 		super();
+		this.compileCommands = new CompilerCommandsExporter();
 	}
 
 	configName(platform: string): string {
@@ -135,7 +139,7 @@ export class VSCodeExporter extends Exporter {
 
 		this.p(JSON.stringify(data, null, '\t'));
 		this.closeFile();
-		this.exportCompileCommands(project, from, to, platform, vrApi, options);
+		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 
 	program(project: Project, platform: string) {
