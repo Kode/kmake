@@ -87,6 +87,7 @@ export class EmscriptenExporter extends Exporter {
 		fs.copyDirSync(path.resolve(from, this.debugDirName(project)), path.resolve(outputPath, this.debugDirName(project)));
 
 		this.make.exportSolution(project, from, to, platform, vrApi, options);
+		this.ninja.exportSolution(project, from, to, platform, vrApi, options);
 		this.compileCommands.exportSolution(project, from, to, platform, vrApi, options);
 	}
 }
