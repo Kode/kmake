@@ -6,10 +6,12 @@ import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';
 import { MakeExporter } from 'kmake/Exporters/MakeExporter';
+import { NinjaExporter } from 'kmake/Exporters/NinjaExporter';
 
 export class EmscriptenExporter extends Exporter {
 	compileCommands: CompilerCommandsExporter;
 	make: MakeExporter;
+	ninja: NinjaExporter;
 
 	constructor(project: Project, options: any) {
 		super(options);
@@ -36,10 +38,24 @@ export class EmscriptenExporter extends Exporter {
 
 		linkerFlags += ' -o ' + executableName + '.html --preload-file ' + this.debugDirName(project);
 
-		this.make = new MakeExporter(options, 'emcc', 'emcc', '', '', '', '.html', this.libsMakeLine);
+		this.make = new MakeExporter(options, 'emcc', 'emcc', '', '', '', '.html', this.libsLine);
+		this.ninja = new NinjaExporter(options, 'emcc', 'emcc', '', '', '', '.html', this.libsLine);
 	}
 
-	libsMakeLine(project: Project): string {
+	libsLine(project: Project): string {
+		let libs = '';
+		for (let lib of project.getLibs()) {
+			if (lib.startsWith('USE_')) {
+				libs += ' -s' + lib;
+			}
+			else {
+				libs += ' -l' + lib;
+			}
+		}
+		return libs;
+	}
+
+	libsNinjaLine(project: Project): string {
 		let libs = '';
 		for (let lib of project.getLibs()) {
 			if (lib.startsWith('USE_')) {

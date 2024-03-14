@@ -14,7 +14,7 @@ export class NinjaExporter extends Exporter {
 	linkerFlags: string;
 	outputExtension: string;
 
-	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string) {
+	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
 		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
@@ -22,6 +22,17 @@ export class NinjaExporter extends Exporter {
 		this.cppFlags = cppFlags;
 		this.linkerFlags = linkerFlags;
 		this.outputExtension = outputExtension;
+		if (libsLine != null) {
+			this.libsLine = libsLine;
+		}
+	}
+
+	libsLine(project: Project): string {
+		let libs = '';
+		for (let lib of project.getLibs()) {
+			libs += ' -l' + lib;
+		}
+		return libs;
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -66,9 +77,7 @@ export class NinjaExporter extends Exporter {
 		}
 
 		let libsline = this.linkerFlags;
-		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
-		}
+		libsline += this.libsLine(project);
 		libsline += ' ';
 
 		let defline = '';
