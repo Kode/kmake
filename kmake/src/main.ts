@@ -973,10 +973,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 		const dothemath = is64bit();
 		let make: child_process.ChildProcess = null;
 
-		if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm)) {
+		if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm) || isPlatform(options, Platform.Pi) || isPlatform(options, Platform.Emscripten)) {
 			make = child_process.spawn('ninja', [], { cwd: path.join(options.to, options.buildPath) });
 		}
-		else if (isPlatform(options, Platform.FreeBSD) || isPlatform(options, Platform.Pi) || isPlatform(options, Platform.Emscripten)) {
+		else if (isPlatform(options, Platform.FreeBSD)) {
 			make = child_process.spawn('make', [], { cwd: path.join(options.to, options.buildPath) });
 		}
 		else if (isPlatform(options, Platform.OSX) || isPlatform(options, Platform.iOS) || isPlatform(options, Platform.tvOS)) {
@@ -1059,7 +1059,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 					throw 'Compile error';
 				}
 				else {
-					if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm) || isPlatform(options, Platform.Pi)) {
+					if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm) || isPlatform(options, Platform.Pi) || isPlatform(options, Platform.Emscripten)) {
 						log.error('Ninja could not be run, falling back to make.');
 						make = child_process.spawn('make', ['-j', Options.cores.toString()], { cwd: path.join(options.to, options.buildPath) });
 						try {
