@@ -626,7 +626,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	}
 	else if (platform === Platform.iOS || platform === Platform.OSX || platform === Platform.tvOS) exporter = new XCodeExporter(options);
 	else if (platform === Platform.Android) exporter = new AndroidExporter(options);
-	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter(options);
+	else if (platform === Platform.Emscripten) exporter = new EmscriptenExporter(project, options);
 	else if (platform === Platform.Wasm) exporter = new WasmExporter(options);
 	else if (platform === Platform.Linux || platform === Platform.Pi) exporter = new LinuxExporter(options);
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter(options);

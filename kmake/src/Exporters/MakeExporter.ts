@@ -14,7 +14,7 @@ export class MakeExporter extends Exporter {
 	linkerFlags: string;
 	outputExtension: string;
 
-	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string) {
+	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
 		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
@@ -22,6 +22,17 @@ export class MakeExporter extends Exporter {
 		this.cppFlags = cppFlags;
 		this.linkerFlags = linkerFlags;
 		this.outputExtension = outputExtension;
+		if (libsLine != null) {
+			this.libsLine = libsLine;
+		}
+	}
+
+	libsLine(project: Project): string {
+		let libs = '';
+		for (let lib of project.getLibs()) {
+			libs += ' -l' + lib;
+		}
+		return libs;
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
@@ -78,18 +89,14 @@ export class MakeExporter extends Exporter {
 
 		this.writeFile(path.resolve(outputPath, 'makefile'));
 
-		let incline = '-I./ '; // local directory to pick up the precompiled header hxcpp.h.gch
+		let incline = '-I./ '; // local directory to pick up the precompiled headers
 		for (let inc of project.getIncludeDirs()) {
 			inc = path.relative(outputPath, path.resolve(from, inc));
 			incline += '-I' + inc + ' ';
 		}
 		this.p('INC=' + incline);
 
-		let libsline = this.linkerFlags;
-		for (let lib of project.getLibs()) {
-			libsline += ' -l' + lib;
-		}
-		this.p('LIB=' + libsline);
+		this.p('LIB=' + this.linkerFlags + this.libsLine(project));
 
 		let defline = '';
 		for (const def of project.getDefines()) {
@@ -146,8 +153,6 @@ export class MakeExporter extends Exporter {
 
 		this.p(executableName + this.outputExtension + ': ' + gchfilelist + ofilelist);
 
-		let cpp = '';
-
 		let output = '-o "' + executableName + this.outputExtension + '"';
 		if (options.dynlib) {
 			output = '-shared -o "' + executableName + '.so"';
@@ -157,7 +162,7 @@ export class MakeExporter extends Exporter {
 			this.p('\t' + 'ar rcs ' + output + ' ' + ofilelist);
 		}
 		else {
-			this.p('\t' + this.cppCompiler + ' ' + output + ' ' + cpp + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
+			this.p('\t' + this.cppCompiler + ' ' + output + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
 		}
 
 		for (let file of project.getFiles()) {
@@ -172,7 +177,7 @@ export class MakeExporter extends Exporter {
 				let realfile = path.relative(outputPath, path.resolve(from, file.file));
 				this.p('-include ' + path.basename(file.file) + '.d');
 				this.p(path.basename(realfile) + '.gch: ' + realfile);
-				this.p('\t' + this.cppCompiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
+				this.p('\t' + this.cppCompiler + ' ' + optimization + ' $(INC) $(DEF) -MD -c ' + realfile + ' -o ' + path.basename(file.file) + '.gch');
 			}
 		}
 
@@ -198,12 +203,9 @@ export class MakeExporter extends Exporter {
 					flags = '';
 				}
 
-				this.p('\t' + compiler + ' ' + cpp + ' ' + optimization + ' $(INC) $(DEF) -MD ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
+				this.p('\t' + compiler + ' ' + optimization + ' $(INC) $(DEF) -MD ' + flags + ' -c ' + realfile + ' -o ' + name + '.o');
 			}
 		}
-
-		// project.getDefines()
-		// project.getIncludeDirs()
 
 		this.closeFile();
 	}
