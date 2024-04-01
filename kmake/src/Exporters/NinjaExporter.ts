@@ -1,8 +1,5 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
-import { Options } from 'kmake/Options';
-import { Platform } from 'kmake/Platform';
 import { Project } from 'kmake/Project';
-import { Compiler } from 'kmake/Compiler';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 

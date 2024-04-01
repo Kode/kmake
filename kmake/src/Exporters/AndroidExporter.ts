@@ -5,7 +5,6 @@ import { Architecture } from 'kmake/Architecture';
 import { Options } from 'kmake/Options';
 import * as Icon from 'kmake/Icon';
 import * as fs from 'kmake/fsextra';
-import { execSync } from 'child_process';
 import * as os from 'os';
 import * as path from 'path';
 import { CompilerCommandsExporter } from 'kmake/Exporters/CompileCommandsExporter';

@@ -1,8 +1,5 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
 import { Project } from 'kmake/Project';
-import { Options } from 'kmake/Options';
-import { GraphicsApi } from 'kmake/GraphicsApi';
-import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 
 export class JsonExporter extends Exporter {

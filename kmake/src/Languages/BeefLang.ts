@@ -1,6 +1,6 @@
 // import * as idl from 'webidl2'; // TODO
 import { Language } from './Language';
-import * as path from 'path';
+//import * as path from 'path';
 
 export class BeefLang extends Language {
 	constructor() {

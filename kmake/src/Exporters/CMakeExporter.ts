@@ -1,10 +1,5 @@
 import { Project } from 'kmake/Project';
-import * as fs from 'kmake/fsextra';
 import * as path from 'path';
-import { Platform } from 'kmake/Platform';
-import * as log from 'kmake/log';
-import * as os from 'os';
-import * as child_process from 'child_process';
 import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class CMakeExporter extends Exporter {

@@ -2,7 +2,6 @@ import * as fs from 'kmake/fsextra';
 import * as path from 'path';
 import * as log from 'kmake/log';
 import * as crypto from 'crypto';
-import { Options } from 'kmake/Options';
 import { Exporter } from 'kmake/Exporters/Exporter';
 
 export class AssetConverter {

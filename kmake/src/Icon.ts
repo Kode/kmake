@@ -2,9 +2,7 @@ import * as log from 'kmake/log';
 import * as exec from 'kmake/exec';
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
-import { Project } from 'kmake/Project';
 
 function run(from: string, to: string, width: number, height: number, format: string, background: number, callback: any) {
 	const exe = path.resolve(__dirname, 'kraffiti' + exec.sys());

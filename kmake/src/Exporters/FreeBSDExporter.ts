@@ -1,5 +1,4 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
-import { GraphicsApi } from 'kmake/GraphicsApi';
 import { Options } from 'kmake/Options';
 import { Platform } from 'kmake/Platform';
 import { Project } from 'kmake/Project';

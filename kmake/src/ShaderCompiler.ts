@@ -1,11 +1,9 @@
 import * as child_process from 'child_process';
 import * as fs from 'kmake/fsextra';
-import * as os from 'os';
 import * as path from 'path';
 import {GraphicsApi} from 'kmake/GraphicsApi';
 import {Options} from 'kmake/Options';
 import {Platform} from 'kmake/Platform';
-import {AssetConverter} from 'kmake/AssetConverter';
 import * as log from 'kmake/log';
 
 export interface Variable {

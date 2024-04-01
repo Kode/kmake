@@ -1,8 +1,6 @@
 import { Exporter } from 'kmake/Exporters/Exporter';
-import { GraphicsApi } from 'kmake/GraphicsApi';
 import * as Icon from 'kmake/Icon';
 import { Platform } from 'kmake/Platform';
-import { Options } from 'kmake/Options';
 import { Project } from 'kmake/Project';
 import * as Proj from 'kmake/Project';
 import * as fs from 'kmake/fsextra';

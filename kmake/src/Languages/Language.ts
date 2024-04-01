@@ -1,5 +1,5 @@
 import * as fs from '../fsextra';
-import * as path from 'path';
+//import * as path from 'path';
 // import * as idl from 'webidl2'; // TODO
 
 export abstract class Language {
