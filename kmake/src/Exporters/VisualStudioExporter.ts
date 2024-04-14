@@ -186,7 +186,7 @@ export class VisualStudioExporter extends Exporter {
 	}
 
 	open(project: Project, to: string) {
-		child_process.spawn('start', [path.resolve(to, project.getSafeName() + '.sln')]);
+		child_process.spawn('start', [path.resolve(to, project.getSafeName() + '.sln')], {detached: true, shell: true});
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
