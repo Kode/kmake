@@ -10,6 +10,7 @@ import { VrApi } from 'kmake/VrApi';
 import * as log from 'kmake/log';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import * as child_process from 'child_process';
 import * as crypto from 'crypto';
 import { CLionExporter } from 'kmake/Exporters/CLionExporter';
 
@@ -182,6 +183,10 @@ export class VisualStudioExporter extends Exporter {
 		else {
 			return 'Application';
 		}
+	}
+
+	open(project: Project, to: string) {
+		child_process.spawn('start', [path.resolve(to, project.getSafeName() + '.sln')]);
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {

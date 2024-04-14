@@ -74,4 +74,6 @@ export abstract class Exporter {
 			reject('Called an abstract function');
 		});
 	}
+
+	open(project: Project, to: string) {}
 }

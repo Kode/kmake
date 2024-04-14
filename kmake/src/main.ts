@@ -497,7 +497,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 
 let consoleCompilePlatform: string = null;
 
-async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, options: any) {
+async function exportKoremakeProject(from: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, options: any): Promise<[Project, Exporter]> {
 	log.info('kfile found.');
 	if (options.onlyshaders) {
 		log.info('Only compiling shaders.');
@@ -605,7 +605,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	}
 
 	if (options.onlyshaders) {
-		return project;
+		return [project, null];
 	}
 
 	// Run again to find new shader files for Metal
@@ -679,14 +679,14 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 		});
 	}*/
 
-	return project;
+	return [project, exporter]
 }
 
 function isKoremakeProject(directory: string, korefile: string): boolean {
 	return fs.existsSync(path.resolve(directory, korefile));
 }
 
-async function exportProject(from: string, to: string, platform: string, korefile: string, options: any): Promise<Project> {
+async function exportProject(from: string, to: string, platform: string, korefile: string, options: any): Promise<[Project, Exporter]> {
 	if (isKoremakeProject(from, korefile)) {
 		return exportKoremakeProject(from, to, platform, korefile, false, false, options);
 	}
@@ -950,8 +950,11 @@ export async function run(options: any, loglog: any): Promise<string> {
 	options.buildPath = options.debug ? 'Debug' : 'Release';
 
 	let project: Project = null;
+	let exporter: Exporter = null;
 	try {
-		project = await exportProject(options.from, options.to, options.target, options.kfile, options);
+		const value = await exportProject(options.from, options.to, options.target, options.kfile, options);
+		project = value[0];
+		exporter = value[1];
 	}
 	catch (error) {
 		throw error;
@@ -1081,5 +1084,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 			process.exit(1);
 		}
 	}
+
+	if (options.open) {
+		exporter.open(project, options.to);
+	}
+
 	return solutionName;
 }
