@@ -5,6 +5,7 @@ import { Project } from 'kmake/Project';
 import * as Proj from 'kmake/Project';
 import * as fs from 'kmake/fsextra';
 import * as path from 'path';
+import * as child_process from 'child_process';
 import * as crypto from 'crypto';
 
 function uuidv4(): string {
@@ -177,6 +178,10 @@ export class XCodeExporter extends Exporter {
 		this.p('</Workspace>');
 
 		this.closeFile();
+	}
+
+	open(project: Project, to: string) {
+		child_process.spawn('open', [path.resolve(to, project.getSafeName() + '.xcodeproj')], {detached: true, shell: true});
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
