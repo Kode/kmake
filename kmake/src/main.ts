@@ -241,7 +241,7 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 			for (let ld in libdirs) {
 				let libdir = path.join(libsdir, libdirs[ld]);
 				if (fs.statSync(libdir).isDirectory()) {
-					let exe = path.join(libdir, 'krafix', 'krafix-' + platform + '.exe');
+					let exe = path.join(libdir, 'Tools', 'krafix-' + platform + '.exe');
 					if (fs.existsSync(exe)) {
 						compilerPath = exe;
 					}
@@ -404,7 +404,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			for (let ld in libdirs) {
 				let libdir = path.join(libsdir, libdirs[ld]);
 				if (fs.statSync(libdir).isDirectory()) {
-					let exe = path.join(libdir, 'kong', 'kong-' + platform + '.exe');
+					let exe = path.join(libdir, 'Tools', 'kong-' + platform + '.exe');
 					if (fs.existsSync(exe)) {
 						compilerPath = exe;
 					}
