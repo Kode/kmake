@@ -25,6 +25,7 @@ jobs:
         packages: >
           build-base
           python3
+          py3-setuptools
           wget
           linux-headers
           git
@@ -83,6 +84,7 @@ jobs:
         packages: >
           build-base
           python3
+          py3-setuptools
           wget
           linux-headers
           git
@@ -147,6 +149,7 @@ jobs:
         packages: >
           build-base
           python3
+          py3-setuptools
           wget
           linux-headers
           git
