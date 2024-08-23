@@ -1001,7 +1001,6 @@ export class VisualStudioExporter extends Exporter {
 			}
 			
 		}
-		for (let proj of project.getSubProjects()) releaselibs += 'Release\\' + proj.getSafeName() + '.lib;';
 		for (let lib of project.getLibs()) {
 			if (fs.existsSync(path.resolve(from, lib + '.lib'))) {
 				releaselibs += path.relative(to, path.resolve(from, lib)) + '.lib;';
