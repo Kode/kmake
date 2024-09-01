@@ -1159,7 +1159,14 @@ export class VisualStudioExporter extends Exporter {
 							this.p('</ClCompile>', 2);
 						}
 						else {
-							this.p('<ClCompile Include="' + filepath + '" />', 2);
+							if (fileobject.options && fileobject.options.nocompile) {
+								this.p('<ClCompile Include="' + filepath + '">', 2);
+								this.p('<ExcludedFromBuild>true</ExcludedFromBuild>', 3);
+								this.p('</ClCompile>', 2);
+							}
+							else {
+								this.p('<ClCompile Include="' + filepath + '" />', 2);
+							}
 						}
 					}
 					objects[name] = true;
@@ -1172,6 +1179,9 @@ export class VisualStudioExporter extends Exporter {
 					this.p('<ObjectFileName>$(IntDir)\\' + name + '.obj</ObjectFileName>', 3);
 					if ((platform === Platform.WindowsApp || platform === Platform.XboxOne) && !file.endsWith('.winrt.cpp')) {
 						this.p('<CompileAsWinRT>false</CompileAsWinRT>', 3);
+					}
+					if (fileobject.options && fileobject.options.nocompile) {
+						this.p('<ExcludedFromBuild>true</ExcludedFromBuild>', 3);
 					}
 					this.p('</ClCompile>', 2);
 					objects[name] = true;
