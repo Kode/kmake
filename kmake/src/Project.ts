@@ -320,7 +320,13 @@ export class Project {
 		let kinc = this.findKincProject();
 
 		for (const backend of additionalBackends) {
-			kinc.addFile('Backends/' + backend + '/Sources/**', null);
+			kinc.addFile('Backends/' + backend + '/Sources/kinc/**', null);
+			kinc.addFile('Backends/' + backend + '/Sources/GL/**', null);
+			kinc.addFile('Backends/' + backend + '/Sources/Android/**', null);
+			//if (Options.kope) {
+			//	kinc.addFile('Backends/' + backend + '/Sources/kope/**', {nocompile: true});
+			//	kinc.addFile('Backends/' + backend + '/Sources/kope/**/*unit.c*', null);
+			//}
 			kinc.addIncludeDir('Backends/' + backend + '/Sources');
 		}
 	}
