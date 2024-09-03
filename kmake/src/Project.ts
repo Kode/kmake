@@ -236,6 +236,7 @@ export class Project {
 	parent: Project;
 	shaderVersion: number;
 	kongDirs: string[];
+	kope: boolean = false;
 	executableName: string;
 
 	constructor(name: string) {
@@ -351,6 +352,9 @@ export class Project {
 				out.push(sub);
 			}
 			else {
+				if (sub.kope) {
+					this.kope = true;
+				}
 				if (sub.cppStd !== '') {
 					this.cppStd = sub.cppStd;
 				}
@@ -835,6 +839,9 @@ export class Project {
 		let from = path.isAbsolute(directory) ? directory : path.join(this.basedir, directory);
 		if (fs.existsSync(from) && fs.statSync(from).isDirectory()) {
 			const project = await loadProject(from, this, options, projectFile);
+			if (options.kope) {
+				project.kope = true;
+			}
 			this.subProjects.push(project);
 			return project;
 		}
