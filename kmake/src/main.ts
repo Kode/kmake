@@ -785,15 +785,20 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 						});
 					}
 					else if ((options.customTarget && (options.customTarget.baseTarget === Platform.Linux || options.customTarget.baseTarget === Platform.Windows)) || options.target === Platform.Linux || options.target === Platform.Windows) {
-						const spawned = child_process.spawn(path.resolve(options.from.toString(), project.getDebugDir(), executableName), [], {stdio: 'inherit', cwd: path.resolve(options.from.toString(), project.getDebugDir())});
-						spawned.on('close', (code: number) => {
-							if (code === 0) {
-								resolve();
-							}
-							else {
-								reject(new RunError(code));
-							}
-						});
+						if (process.platform === 'win32') {
+							require('os').runProcess(path.resolve(options.from.toString(), project.getDebugDir(), executableName), path.resolve(options.from.toString(), project.getDebugDir()));
+						}
+						else {
+							const spawned = child_process.spawn(path.resolve(options.from.toString(), project.getDebugDir(), executableName), [], {stdio: 'inherit', cwd: path.resolve(options.from.toString(), project.getDebugDir())});
+							spawned.on('close', (code: number) => {
+								if (code === 0) {
+									resolve();
+								}
+								else {
+									reject(new RunError(code));
+								}
+							});
+						}
 					}
 					else {
 						log.info('--run not yet implemented for this platform');

@@ -278,6 +278,100 @@ static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
 }
 
 
+static 	PROCESS_INFORMATION processInfo = {};
+
+static struct ods_buffer_type
+{
+	DWORD process_id;
+	char  data[4096 - sizeof(DWORD)];
+}*ods_buffer;
+
+static HANDLE ods_data_ready;
+static HANDLE ods_buffer_ready;
+
+static DWORD WINAPI ods_proc(LPVOID arg)
+{
+	DWORD ret = 0;
+
+	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+	assert(output != NULL);
+
+	for (;;)
+	{
+		SetEvent(ods_buffer_ready);
+
+		DWORD wait = WaitForSingleObject(ods_data_ready, INFINITE);
+		assert(wait == WAIT_OBJECT_0);
+
+		if (processInfo.dwProcessId != 0 && processInfo.dwProcessId == ods_buffer->process_id) {
+
+			DWORD length = 0;
+			while (length < sizeof(ods_buffer->data) && ods_buffer->data[length] != 0)
+			{
+				length++;
+			}
+
+			if (length != 0)
+			{
+				DWORD written;
+				WriteFile(output, ods_buffer->data, length, &written, NULL);
+			}
+		}
+	}
+}
+
+void ods_capture()
+{
+	if (IsDebuggerPresent())
+	{
+		return;
+	}
+
+	HANDLE file = CreateFileMappingA(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(*ods_buffer), "DBWIN_BUFFER");
+	assert(file != INVALID_HANDLE_VALUE);
+
+	ods_buffer = (ods_buffer_type*)MapViewOfFile(file, SECTION_MAP_READ, 0, 0, 0);
+	assert(ods_buffer != NULL);
+
+	ods_buffer_ready = CreateEventA(NULL, FALSE, FALSE, "DBWIN_BUFFER_READY");
+	assert(ods_buffer_ready);
+
+	ods_data_ready = CreateEventA(NULL, FALSE, FALSE, "DBWIN_DATA_READY");
+	assert(ods_data_ready);
+
+	HANDLE thread = CreateThread(NULL, 0, ods_proc, NULL, 0, NULL);
+	assert(thread != NULL);
+}
+
+void execute_sync(const char* command, const char* directory) {
+	STARTUPINFOA startupInfo;
+	memset(&startupInfo, 0, sizeof(startupInfo));
+	memset(&processInfo, 0, sizeof(processInfo));
+	startupInfo.cb = sizeof(startupInfo);
+	CreateProcessA(NULL, (char*)command, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, directory, &startupInfo, &processInfo);
+}
+
+void RunProcess(const FunctionCallbackInfo<Value>& args)
+{
+  CHECK_EQ(args.Length(), 2);
+  CHECK(args[0]->IsString());
+  CHECK(args[1]->IsString());
+
+  Environment* env = Environment::GetCurrent(args);
+  
+  node::Utf8Value path(env->isolate(), args[0]);
+  node::Utf8Value dir(env->isolate(), args[1]);
+
+	ods_capture();
+
+	execute_sync(*path, *dir);
+
+	WaitForSingleObject(processInfo.hProcess, INFINITE);
+	CloseHandle(processInfo.hProcess);
+	CloseHandle(processInfo.hThread);
+}
+
+
 static void GetFreeMemory(const FunctionCallbackInfo<Value>& args) {
   double amount = static_cast<double>(uv_get_free_memory());
   args.GetReturnValue().Set(amount);
@@ -532,6 +626,7 @@ void Initialize(Local<Object> target,
   env->SetMethod(target, "getCPUs", GetCPUInfo);
   env->SetMethod(target, "getProperCPUCount", GetProperCPUCount);
   env->SetMethod(target, "getWindowsSDKs", GetWindowsSDKs);
+  env->SetMethod(target, "_runProcess", RunProcess);
   env->SetMethod(target, "getInterfaceAddresses", GetInterfaceAddresses);
   env->SetMethod(target, "getHomeDirectory", GetHomeDirectory);
   env->SetMethod(target, "getUserInfo", GetUserInfo);
