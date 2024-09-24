@@ -767,15 +767,29 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 				if (options.run) {
 					if ((options.customTarget && options.customTarget.baseTarget === Platform.OSX) || options.target === Platform.OSX) {
 						const spawned = child_process.spawn('build/' + (options.debug ? 'Debug' : 'Release') + '/' + project.name + '.app/Contents/MacOS/' + project.name, {stdio: 'inherit', cwd: options.to});
-						spawned.on('close', () => { resolve(); });
+						spawned.on('close', (code: number) => {
+							if (code === 0) {
+								resolve();
+							}
+							else {
+								reject(code);
+							}
+						});
 					}
 					else if ((options.customTarget && (options.customTarget.baseTarget === Platform.Linux || options.customTarget.baseTarget === Platform.Windows)) || options.target === Platform.Linux || options.target === Platform.Windows) {
 						const spawned = child_process.spawn(path.resolve(options.from.toString(), project.getDebugDir(), executableName), [], {stdio: 'inherit', cwd: path.resolve(options.from.toString(), project.getDebugDir())});
-						spawned.on('close', () => { resolve(); });
+						spawned.on('close', (code: number) => {
+							if (code === 0) {
+								resolve();
+							}
+							else {
+								reject(code);
+							}
+						});
 					}
 					else {
 						log.info('--run not yet implemented for this platform');
-						resolve();
+						reject(1);
 					}
 				}
 				else {
