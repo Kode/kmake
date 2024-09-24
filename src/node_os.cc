@@ -277,7 +277,7 @@ static void GetWindowsSDKs(const FunctionCallbackInfo<Value>& args) {
 #endif
 }
 
-
+#ifdef _WIN32
 static 	PROCESS_INFORMATION processInfo = {};
 
 static struct ods_buffer_type
@@ -350,9 +350,11 @@ void execute_sync(const char* command, const char* directory) {
 	startupInfo.cb = sizeof(startupInfo);
 	CreateProcessA(NULL, (char*)command, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, directory, &startupInfo, &processInfo);
 }
+#endif
 
 void RunProcess(const FunctionCallbackInfo<Value>& args)
 {
+#ifdef _WIN32
   CHECK_EQ(args.Length(), 2);
   CHECK(args[0]->IsString());
   CHECK(args[1]->IsString());
@@ -369,6 +371,7 @@ void RunProcess(const FunctionCallbackInfo<Value>& args)
 	WaitForSingleObject(processInfo.hProcess, INFINITE);
 	CloseHandle(processInfo.hProcess);
 	CloseHandle(processInfo.hThread);
+#endif
 }
 
 
