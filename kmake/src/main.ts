@@ -708,6 +708,14 @@ async function exportProject(from: string, to: string, platform: string, korefil
 	}
 }
 
+class RunError {
+	code: number;
+
+	constructor(code: number) {
+		this.code = code;
+	}
+}
+
 function compileProject(make: child_process.ChildProcess, project: Project, solutionName: string, options: any, dothemath: boolean): Promise<void> {
 	const startDate = new Date();
 	return new Promise<void>((resolve, reject) => {
@@ -772,7 +780,7 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 								resolve();
 							}
 							else {
-								reject(code);
+								reject(new RunError(code));
 							}
 						});
 					}
@@ -783,13 +791,13 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 								resolve();
 							}
 							else {
-								reject(code);
+								reject(new RunError(code));
 							}
 						});
 					}
 					else {
 						log.info('--run not yet implemented for this platform');
-						reject(1);
+						reject(new RunError(1));
 					}
 				}
 				else {
@@ -1083,7 +1091,10 @@ export async function run(options: any, loglog: any): Promise<string> {
 						}
 						catch (err) {
 							if (typeof(err) === 'number') {
-								throw 'Compile error';
+								throw 'Compile error (code ' + err + ')';
+							}
+							else if (err instanceof RunError) {
+								throw 'Run Error (code ' + err.code + ')';
 							}
 							else {
 								throw 'Compiler not found';
