@@ -1082,6 +1082,9 @@ export async function run(options: any, loglog: any): Promise<string> {
 				if (typeof(err) === 'number') {
 					throw 'Compile error';
 				}
+				else if (err instanceof RunError) {
+					throw 'Run Error (code ' + err.code + ')';
+				}
 				else {
 					if (isPlatform(options, Platform.Linux) || isPlatform(options, Platform.Wasm) || isPlatform(options, Platform.Pi) || isPlatform(options, Platform.Emscripten)) {
 						log.error('Ninja could not be run, falling back to make.');
