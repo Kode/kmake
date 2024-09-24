@@ -850,11 +850,15 @@ export class Project {
 		}
 	}
 
-	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean) {
+	static async create(directory: string, to: string, platform: string, korefile: string, retro: boolean, veryretro: boolean, parameter: string) {
 		Project.platform = platform;
 		Project.to = path.resolve(to);
 		try {
-			let project = await loadProject(path.resolve(directory), null, {}, korefile);
+			let options: any = {};
+			if (parameter) {
+				options[parameter] = true;
+			}
+			let project = await loadProject(path.resolve(directory), null, options, korefile);
 			if (retro && project.kore && !project.kincProcessed) {
 				if (veryretro) {
 					if (Project.koreDir) {

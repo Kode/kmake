@@ -516,7 +516,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	Project.root = path.resolve(from);
 	let project: Project;
 	try {
-		project = await Project.create(from, to, platform, korefile, retro, veryretro);
+		project = await Project.create(from, to, platform, korefile, retro, veryretro, options.parameter);
 		if (shaderLang(platform) === 'metal') {
 			project.addFile(path.join(to, 'Sources', '*'), {});
 		}
