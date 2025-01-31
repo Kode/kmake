@@ -811,6 +811,18 @@ export class XCodeExporter extends Exporter {
 		if (platform === Platform.OSX && (!options.lib && !options.dynlib)) {
 			this.p('COMBINE_HIDPI_IMAGES = YES;', 4);
 		}
+		
+		this.p('"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = (', 4);
+		for (let fileobject of project.getFiles()) {
+			let file = fileobject.file;
+			if (file.endsWith('.cpp') || file.endsWith('.c') || file.endsWith('.cc') || file.endsWith('.cxx') || file.endsWith('.m') || file.endsWith('.mm')) {
+				if (fileobject.options && fileobject.options.nocompile) {
+					this.p('"' + file + '",', 5);
+				}
+			}
+		}
+		this.p(');', 4);
+
 		this.p('FRAMEWORK_SEARCH_PATHS = (', 4);
 		this.p('"$(inherited)",', 5);
 		// Search paths to local frameworks
@@ -906,6 +918,18 @@ export class XCodeExporter extends Exporter {
 		if (platform === Platform.OSX && (!options.lib && !options.dynlib)) {
 			this.p('COMBINE_HIDPI_IMAGES = YES;', 4);
 		}
+
+		this.p('"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = (', 4);
+		for (let fileobject of project.getFiles()) {
+			let file = fileobject.file;
+			if (file.endsWith('.cpp') || file.endsWith('.c') || file.endsWith('.cc') || file.endsWith('.cxx') || file.endsWith('.m') || file.endsWith('.mm')) {
+				if (fileobject.options && fileobject.options.nocompile) {
+					this.p('"' + file + '",', 5);
+				}
+			}
+		}
+		this.p(');', 4);
+
 		this.p('FRAMEWORK_SEARCH_PATHS = (', 4);
 		this.p('"$(inherited)",', 5);
 		// Search paths to local frameworks
