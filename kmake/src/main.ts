@@ -426,10 +426,6 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			params.push(platform);
 			params.push('-a');
 			params.push(api);
-			if (project.kope) {
-				params.push('-n');
-				params.push('kope');
-			}
 			for (const dir of dirs) {
 				params.push('-i');
 				params.push(dir);
