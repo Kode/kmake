@@ -428,7 +428,7 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 			params.push(api);
 			for (const dir of dirs) {
 				params.push('-i');
-				params.push(dir);
+				params.push(path.resolve(from, dir));
 			}
 			params.push('-o');
 			params.push(to);
