@@ -1,8 +1,8 @@
 {
   "name": "kmake",
   "version": "1.0.0",
-  "description": "Kinc build tool",
-  "main": "koremake.js",
+  "description": "Kore build tool",
+  "main": "kmake.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

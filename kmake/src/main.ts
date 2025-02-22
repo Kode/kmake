@@ -228,13 +228,13 @@ async function compileShader(projectDir: string, type: string, from: string, to:
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
-		if (Project.kincDir !== '') {
+		if (Project.koreDir !== '') {
 			compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 		}
 
 		let libsdir = path.join(projectDir, 'Backends');
-		if (Project.kincDir && !fs.existsSync(libsdir)) {
-			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		if (Project.koreDir && !fs.existsSync(libsdir)) {
+			libsdir = path.join(Project.koreDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
 			let libdirs = fs.readdirSync(path.join(libsdir));
@@ -391,13 +391,13 @@ function compileKong(project: Project, from: string, to: string, platform: strin
 	return new Promise<void>((resolve, reject) => {
 		let compilerPath = '';
 
-		if (Project.kincDir !== '') {
+		if (Project.koreDir !== '') {
 			compilerPath = path.resolve(__dirname, 'kongruent' + exec.sys());
 		}
 
 		let libsdir = path.join(from, 'Backends');
-		if (Project.kincDir && !fs.existsSync(libsdir)) {
-			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		if (Project.koreDir && !fs.existsSync(libsdir)) {
+			libsdir = path.join(Project.koreDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
 			let libdirs = fs.readdirSync(path.join(libsdir));
@@ -524,12 +524,12 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 		project.searchFiles(undefined);
 		project.internalFlatten();
 		if (options.lib) {
-			project.addDefine('KINC_NO_MAIN');
+			project.addDefine('KORE_NO_MAIN');
 			project.isStaticLib = true;
 		}
 		else if (options.dynlib) {
-			project.addDefine('KINC_NO_MAIN');
-			project.addDefine('KINC_DYNAMIC_COMPILE');
+			project.addDefine('KORE_NO_MAIN');
+			project.addDefine('KORE_DYNAMIC_COMPILE');
 			project.isDynamicLib = true;
 		}
 	}
@@ -548,7 +548,7 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 		}
 		else {
 			/*let compilerPath = '';
-			if (Project.kincDir !== '') {
+			if (Project.koreDir !== '') {
 				compilerPath = path.resolve(__dirname, 'krafix' + exec.sys());
 			}
 
@@ -631,8 +631,8 @@ async function exportKoremakeProject(from: string, to: string, platform: string,
 	else if (platform === Platform.FreeBSD) exporter = new FreeBSDExporter(options);
 	else if (platform === Platform.PS4 || platform === Platform.XboxOne || platform === Platform.Switch || platform === Platform.XboxSeries || platform === Platform.PS5) {
 		let libsdir = path.join(from.toString(), 'Backends');
-		if (Project.kincDir && !fs.existsSync(libsdir)) {
-			libsdir = path.join(Project.kincDir, '..', 'Backends');
+		if (Project.koreDir && !fs.existsSync(libsdir)) {
+			libsdir = path.join(Project.koreDir, '..', 'Backends');
 		}
 		if (fs.existsSync(libsdir) && fs.statSync(libsdir).isDirectory()) {
 			let libdirs = fs.readdirSync(libsdir);
@@ -819,7 +819,7 @@ function compileProject(make: child_process.ChildProcess, project: Project, solu
 
 export let api = 2;
 
-function findKincVersion(dir: string): string {
+function findKoreVersion(dir: string): string {
 	if (fs.existsSync(path.join(dir, '.git'))) {
 		let gitVersion = 'git-error';
 		try {
@@ -946,28 +946,22 @@ export async function run(options: any, loglog: any): Promise<string> {
 
 	Options.debug = options.debug;
 
-	if (!options.kinc) {
+	if (!options.kore) {
 		let p = path.join(__dirname, '..', '..');
 		if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
-			options.kinc = p;
+			options.kore = p;
 		}
 	}
 	else {
-		options.kinc = path.resolve(options.kinc);
+		options.kore = path.resolve(options.kore);
 	}
 
-	Project.kincDir = options.kinc;
-	Project.koreDir = null;
-	const up = path.join(Project.kincDir, '..');
-	const koreSources = path.join(up, 'Sources', 'Kore');
-	if (fs.existsSync(koreSources) && fs.statSync(koreSources).isDirectory()) {
-		Project.koreDir = up;
-	}
+	Project.koreDir = options.kore;
 
 	options.from = path.resolve(options.from);
 	options.to = path.resolve(options.to);
 
-	log.info('Using Kinc (' + findKincVersion(options.kinc) + ') from ' + options.kinc);
+	log.info('Using Kore (' + findKoreVersion(options.kore) + ') from ' + options.kore);
 
 	if ((options.customTarget && options.customTarget.baseTarget === Platform.Wasm) || options.target === Platform.Wasm) {
 		log.info('Please not that the Wasm-target is still in early development. Please use the Emscripten-target in the meantime - the Wasm-target will eventually be a more elegant but harder to use alternative.');

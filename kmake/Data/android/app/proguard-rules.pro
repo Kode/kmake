@@ -20,13 +20,13 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep public class tech.kinc.KincActivity {
+-keep public class tech.kore.KoreActivity {
     public <methods>;
 }
--keep public class tech.kinc.KincMoviePlayer {
+-keep public class tech.kore.KoreMoviePlayer {
     public <methods>;
 }
--keep public class tech.kinc.KincMovieTexture {
+-keep public class tech.kore.KoreMovieTexture {
     public <methods>;
 }
 -keepclasseswithmembernames,includedescriptorclasses class * {

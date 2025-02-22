@@ -38,37 +38,37 @@ jobs:
         make -j$(nproc)
       shell: alpine.sh --root {0}
 
-    - name: Get KincTools_linux_x64
-      run: git clone https://github.com/Kode/KincTools_linux_x64.git
+    - name: Get KoreTools_linux_x64
+      run: git clone https://github.com/Kode/KoreTools_linux_x64.git
     - name: Copy binary
-      run: cp /home/runner/work/kmake/kmake/out/Release/node KincTools_linux_x64/kmake
+      run: cp /home/runner/work/kmake/kmake/out/Release/node KoreTools_linux_x64/kmake
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
       run: git config --global user.email "robbot2019@robdangero.us"
     - name: Add binary
-      run: git -C KincTools_linux_x64 add .
+      run: git -C KoreTools_linux_x64 add .
     - name: Commit binary
       id: commit
       continue-on-error: true
-      run: git -C KincTools_linux_x64 commit -a -m "Update kmake binary to $GITHUB_SHA."
+      run: git -C KoreTools_linux_x64 commit -a -m "Update kmake binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C KincTools_linux_x64 tag kmake_$GITHUB_SHA
+      run: git -C KoreTools_linux_x64 tag kmake_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_x64.git main --tags
+      run: git -C KoreTools_linux_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_x64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Pull
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
-      run: git -C KincTools_linux_x64 pull --no-rebase
+      run: git -C KoreTools_linux_x64 pull --no-rebase
     - name: Push binary again
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_x64.git main --tags
+      run: git -C KoreTools_linux_x64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_x64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
@@ -102,10 +102,10 @@ jobs:
         make -j$(nproc)
       shell: alpine.sh --root {0}
 
-    - name: Get KincTools_linux_arm64
-      run: git clone https://github.com/Kode/KincTools_linux_arm64.git
+    - name: Get KoreTools_linux_arm64
+      run: git clone https://github.com/Kode/KoreTools_linux_arm64.git
     - name: Copy binary
-      run: cp /home/runner/work/kmake/kmake/out/Release/node KincTools_linux_arm64/kmake
+      run: cp /home/runner/work/kmake/kmake/out/Release/node KoreTools_linux_arm64/kmake
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
@@ -114,25 +114,25 @@ jobs:
       id: commit
       continue-on-error: true
       run: |
-        git -C KincTools_linux_arm64 add .
-        git -C KincTools_linux_arm64 commit -a -m "Update kmake binary to $GITHUB_SHA."
+        git -C KoreTools_linux_arm64 add .
+        git -C KoreTools_linux_arm64 commit -a -m "Update kmake binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C KincTools_linux_arm64 tag linuxaarch64_$GITHUB_SHA
+      run: git -C KoreTools_linux_arm64 tag linuxaarch64_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_arm64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_arm64.git main --tags
+      run: git -C KoreTools_linux_arm64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_arm64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Pull
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
-      run: git -C KincTools_linux_arm64 pull --no-rebase
+      run: git -C KoreTools_linux_arm64 pull --no-rebase
     - name: Push binary again
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_arm64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_arm64.git main --tags
+      run: git -C KoreTools_linux_arm64 push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_arm64.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
 
@@ -167,10 +167,10 @@ jobs:
         make -j$(nproc) ASFLAGS="-mcpu=cortex-a53 -mfpu=neon-vfpv3 -mfloat-abi=hard" CFLAGS="-mcpu=cortex-a53 -mfpu=neon-vfpv3 -mfloat-abi=hard" CXXFLAGS="-mcpu=cortex-a53 -mfpu=neon-vfpv3 -mfloat-abi=hard"
       shell: alpine.sh --root {0}
 
-    - name: Get KincTools_linux_arm
-      run: git clone https://github.com/Kode/KincTools_linux_arm.git
+    - name: Get KoreTools_linux_arm
+      run: git clone https://github.com/Kode/KoreTools_linux_arm.git
     - name: Copy binary
-      run: cp /home/runner/work/kmake/kmake/out/Release/node KincTools_linux_arm/kmake
+      run: cp /home/runner/work/kmake/kmake/out/Release/node KoreTools_linux_arm/kmake
     - name: Set name
       run: git config --global user.name "Robbot"
     - name: Set email
@@ -179,24 +179,24 @@ jobs:
       id: commit
       continue-on-error: true
       run: |
-        git -C KincTools_linux_arm add .
-        git -C KincTools_linux_arm commit -a -m "Update kmake binary to $GITHUB_SHA."
+        git -C KoreTools_linux_arm add .
+        git -C KoreTools_linux_arm commit -a -m "Update kmake binary to $GITHUB_SHA."
     - name: Tag binary
       if: steps.commit.outcome == 'success'
-      run: git -C KincTools_linux_arm tag kmake_$GITHUB_SHA
+      run: git -C KoreTools_linux_arm tag kmake_$GITHUB_SHA
     - name: Push binary
       id: push1
       if: steps.commit.outcome == 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_arm push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_arm.git main --tags
+      run: git -C KoreTools_linux_arm push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_arm.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}
     - name: Pull
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
-      run: git -C KincTools_linux_arm pull --no-rebase
+      run: git -C KoreTools_linux_arm pull --no-rebase
     - name: Push binary again
       if: steps.commit.outcome == 'success' && steps.push1.outcome != 'success'
       continue-on-error: true
-      run: git -C KincTools_linux_arm push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KincTools_linux_arm.git main --tags
+      run: git -C KoreTools_linux_arm push https://Kode-Robbot:$ROBBOT_PASS@github.com/Kode/KoreTools_linux_arm.git main --tags
       env:
         ROBBOT_PASS: ${{ secrets.ROBBOT_PASS }}

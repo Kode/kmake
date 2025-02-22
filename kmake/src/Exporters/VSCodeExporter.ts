@@ -106,35 +106,35 @@ export class VSCodeExporter extends Exporter {
 
 		const configurations = [];
 		for (let config of data.configurations) {
-			if (!config.name.startsWith('Kinc:')) {
+			if (!config.name.startsWith('Kore:')) {
 				configurations.push(config);
 			}
 		}
 
 		this.writeFile(launchJsonPath);
-		const kincConfig: any = {
-			name: 'Kinc: Launch',
+		const koreConfig: any = {
+			name: 'Kore: Launch',
 			type: platform === Platform.Windows ? 'cppvsdbg' : 'cppdbg',
 			request: 'launch',
 			program: this.program(project, platform),
 			cwd: project.getDebugDir(),
-			preLaunchTask: 'Kinc: Debug Build for ' + this.preLaunchTask(platform)
+			preLaunchTask: 'Kore: Debug Build for ' + this.preLaunchTask(platform)
 		};
 
 		if (platform === Platform.Windows) {
-			// kincConfig.symbolSearchPath = 'C:\\Symbols;C:\\SymbolDir2';
-			kincConfig.externalConsole = true;
-			kincConfig.logging = {
+			// koreConfig.symbolSearchPath = 'C:\\Symbols;C:\\SymbolDir2';
+			koreConfig.externalConsole = true;
+			koreConfig.logging = {
 				moduleLoad: false,
 				trace: true
 			};
-			// kincConfig.visualizerFile = '${workspaceFolder}/my.natvis';
+			// koreConfig.visualizerFile = '${workspaceFolder}/my.natvis';
 		}
 		else if (platform === Platform.OSX) {
-			kincConfig.MIMode = 'lldb';
+			koreConfig.MIMode = 'lldb';
 		}
 
-		configurations.push(kincConfig);
+		configurations.push(koreConfig);
 		data.configurations = configurations;
 
 		this.p(JSON.stringify(data, null, '\t'));

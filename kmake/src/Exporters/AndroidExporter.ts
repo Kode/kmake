@@ -44,7 +44,7 @@ export class AndroidExporter extends Exporter {
 		fs.ensureDirSync(outdir);
 
 		const targetOptions: TargetOptions = {
-			package: 'tech.kinc',
+			package: 'tech.kore',
 			installLocation: 'internalOnly',
 			versionCode: 1,
 			versionName: '1.0',
@@ -214,7 +214,7 @@ export class AndroidExporter extends Exporter {
 		for (let dir of project.getJavaDirs()) {
 			javasources += '"' + path.relative(path.join(outdir, 'app'), path.resolve(from, dir)).replace(/\\/g, '/') + '", ';
 		}
-		javasources += '"' + path.relative(path.join(outdir, 'app'), path.join(Project.kincDir.toString(), 'Backends', 'System', 'Android', 'Java-Sources')).replace(/\\/g, '/') + '"';
+		javasources += '"' + path.relative(path.join(outdir, 'app'), path.join(Project.koreDir.toString(), 'Backends', 'System', 'Android', 'Java-Sources')).replace(/\\/g, '/') + '"';
 		gradle = gradle.replace(/{javasources}/g, javasources);
 
 		fs.writeFileSync(path.join(outdir, 'app', 'build.gradle.kts'), gradle);

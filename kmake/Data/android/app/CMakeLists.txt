@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-project("Kinc")
+project("Kore")
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}{debug_defines}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}{debug_defines}")
@@ -11,11 +11,11 @@ include_directories(
 {includes})
 
 add_library(
-  kinc
+  kore
   SHARED
 {files})
 
 {libraries1}
 target_link_libraries(
-  kinc
+  kore
 {libraries2})

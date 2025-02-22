@@ -954,7 +954,7 @@ export class VisualStudioExporter extends Exporter {
 			else {
 				liveppPath = path.resolve(from, project.livePP, 'LivePP');
 			}
-			debugDefines += 'KINC_LIVEPP;KINC_LIVEPP_PATH=L"' + liveppPath.replace(/\\/g, '\\\\') + '";';
+			debugDefines += 'KORE_LIVEPP;KORE_LIVEPP_PATH=L"' + liveppPath.replace(/\\/g, '\\\\') + '";';
 		}
 
 		let incstring = '';
@@ -1201,7 +1201,7 @@ export class VisualStudioExporter extends Exporter {
 		if (platform === Platform.Windows) {
 			this.p('<ItemGroup>', 1);
 			for (let file of project.getFiles()) {
-				if (Project.kincDir && Project.kincDir.toString() !== '' && !noshaders && file.file.endsWith('.glsl')) {
+				if (Project.koreDir && Project.koreDir.toString() !== '' && !noshaders && file.file.endsWith('.glsl')) {
 					this.p('<CustomBuild Include="' + this.nicePath(from, to, file.file) + '">', 2);
 					this.p('<FileType>Document</FileType>', 2);
 					

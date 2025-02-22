@@ -73,8 +73,8 @@ let scriptdir = '.';
 // let lastScriptDir = '.';
 let cppEnabled = false;
 
-function findKinc() {
-	return Project.kincDir;
+function findKore() {
+	return Project.koreDir;
 }
 
 async function loadProject(directory: string, parent: Project, options: any =  {}, korefile: string = null): Promise<Project> {
@@ -138,6 +138,7 @@ async function loadProject(directory: string, parent: Project, options: any =  {
 				'Options',
 				'targetDirectory',
 				'parentProject',
+				'findKore',
 				'findKinc',
 				file)
 			(
@@ -161,7 +162,8 @@ async function loadProject(directory: string, parent: Project, options: any =  {
 				options,
 				Project.to,
 				parent,
-				findKinc).catch(
+				findKore,
+				findKore).catch(
 					(error: any) => {
 						log.error(error);
 						reject();
@@ -189,7 +191,6 @@ export class Define {
 
 export class Project {
 	static platform: string;
-	static kincDir: string;
 	static koreDir: string;
 	static root: string;
 	static to: string;
@@ -215,7 +216,7 @@ export class Project {
 	cppStd: string = '';
 	cStd: string = '';
 	kore: boolean;
-	kincProcessed: boolean;
+	koreProcessed: boolean;
 	targetOptions: any;
 	rotated: boolean;
 	cmd: boolean;
@@ -276,7 +277,7 @@ export class Project {
 		this.rotated = false;
 		this.cmd = false;
 		this.stackSize = 0;
-		this.kincProcessed = false;
+		this.koreProcessed = false;
 		this.executableName = null;
 	}
 
@@ -301,14 +302,17 @@ export class Project {
 		}
 	}
 
-	findKincProject(): Project {
+	findKoreProject(): Project {
+		if (this.name === 'Kore') {
+			return this;
+		}
 		if (this.name === 'Kinc') {
 			return this;
 		}
 		for (let sub of this.subProjects) {
-			let kinc = sub.findKincProject();
-			if (kinc != null) {
-				return kinc;
+			let kore = sub.findKoreProject();
+			if (kore != null) {
+				return kore;
 			}
 		}
 		return null;
@@ -318,17 +322,18 @@ export class Project {
 		let additionalBackends: string[] = [];
 		this.findAdditionalBackends(additionalBackends);
 
-		let kinc = this.findKincProject();
+		let kore = this.findKoreProject();
 
 		for (const backend of additionalBackends) {
-			kinc.addFile('Backends/' + backend + '/Sources/kinc/**', null);
-			kinc.addFile('Backends/' + backend + '/Sources/GL/**', null);
-			kinc.addFile('Backends/' + backend + '/Sources/Android/**', null);
+			kore.addFile('Backends/' + backend + '/Sources/k3/**', null);
+			kore.addFile('Backends/' + backend + '/Sources/kinc/**', null);
+			kore.addFile('Backends/' + backend + '/Sources/GL/**', null);
+			kore.addFile('Backends/' + backend + '/Sources/Android/**', null);
 			//if (Options.kope) {
-			//	kinc.addFile('Backends/' + backend + '/Sources/kope/**', {nocompile: true});
-			//	kinc.addFile('Backends/' + backend + '/Sources/kope/**/*unit.c*', null);
+			//	kore.addFile('Backends/' + backend + '/Sources/kope/**', {nocompile: true});
+			//	kore.addFile('Backends/' + backend + '/Sources/kope/**/*unit.c*', null);
 			//}
-			kinc.addIncludeDir('Backends/' + backend + '/Sources');
+			kore.addIncludeDir('Backends/' + backend + '/Sources');
 		}
 	}
 
@@ -747,7 +752,7 @@ export class Project {
 
 	addKongDir(dir: string) {
 		this.kongDirs.push(dir);
-		this.addDefine('KINC_KONG');
+		this.addDefine('KORE_KONG');
 	}
 
 	addKongDirs() {
@@ -859,18 +864,14 @@ export class Project {
 				options[option] = true;
 			}
 			let project = await loadProject(path.resolve(directory), null, options, korefile);
-			if (retro && project.kore && !project.kincProcessed) {
+			if (retro && project.kore && !project.koreProcessed) {
 				if (veryretro) {
 					if (Project.koreDir) {
 						await project.addProject(Project.koreDir);
 					}
-					else {
-						log.error('Kore not found, falling back to Kinc, good luck.');
-						await project.addProject(Project.kincDir);
-					}
 				}
 				else {
-					await project.addProject(Project.kincDir);
+					await project.addProject(Project.koreDir);
 				}
 				project.flatten();
 			}
