@@ -1140,35 +1140,28 @@ export class VisualStudioExporter extends Exporter {
 						}
 					}
 
+					this.p('<ClCompile Include="' + filepath + '">', 2);
+
 					if (headerfile !== null && platform === Platform.Windows) {
-						this.p('<ClCompile Include="' + path.resolve(from, file) + '">', 2);
-							this.p('<PrecompiledHeader>Create</PrecompiledHeader>', 3);
-							this.p('<PrecompiledHeaderFile>' + headerfile + '</PrecompiledHeaderFile>', 3);
-						this.p('</ClCompile>', 2);
+						this.p('<PrecompiledHeader>Create</PrecompiledHeader>', 3);
+						this.p('<PrecompiledHeaderFile>' + headerfile + '</PrecompiledHeaderFile>', 3);
 					}
 					else if ((platform === Platform.WindowsApp || platform === Platform.XboxOne) && !file.endsWith('.winrt.cpp')) {
-						this.p('<ClCompile Include="' + filepath + '">', 2);
 						this.p('<CompileAsWinRT>false</CompileAsWinRT>', 3);
-						this.p('</ClCompile>', 2);
 					}
 					else {
 						if (fileobject.options && fileobject.options.pch && platform === Platform.Windows) {
-							this.p('<ClCompile Include="' + filepath + '">', 2);
-								this.p('<PrecompiledHeader>Use</PrecompiledHeader>', 3);
-								this.p('<PrecompiledHeaderFile>' + fileobject.options.pch + '</PrecompiledHeaderFile>', 3);
-							this.p('</ClCompile>', 2);
-						}
-						else {
-							if (fileobject.options && fileobject.options.nocompile) {
-								this.p('<ClCompile Include="' + filepath + '">', 2);
-								this.p('<ExcludedFromBuild>true</ExcludedFromBuild>', 3);
-								this.p('</ClCompile>', 2);
-							}
-							else {
-								this.p('<ClCompile Include="' + filepath + '" />', 2);
-							}
+							this.p('<PrecompiledHeader>Use</PrecompiledHeader>', 3);
+							this.p('<PrecompiledHeaderFile>' + fileobject.options.pch + '</PrecompiledHeaderFile>', 3);
 						}
 					}
+
+					if (fileobject.options && fileobject.options.nocompile) {
+						this.p('<ExcludedFromBuild>true</ExcludedFromBuild>', 3);
+					}
+					
+					this.p('</ClCompile>', 2);
+
 					objects[name] = true;
 				}
 				else {
