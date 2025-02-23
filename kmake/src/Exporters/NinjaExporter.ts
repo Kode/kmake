@@ -142,6 +142,10 @@ export class NinjaExporter extends Exporter {
 		for (let fileobject of project.getFiles()) {
 			let file = fileobject.file;
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc') || file.endsWith('.s') || file.endsWith('.S')) {
+				if (fileobject.options && fileobject.options.nocompile) {
+					continue;
+				}
+
 				this.p();
 				let name = ofiles[file];
 				let realfile = path.relative(outputPath, path.resolve(from, file));

@@ -207,7 +207,9 @@ export class LinuxExporter extends Exporter {
 
 			if (file.file.endsWith('.c') || file.file.endsWith('.cc') || file.file.endsWith('.cpp')) {
 				this.p('<Unit filename="' + path.resolve(from, file.file) + '">', 2);
-				this.p('<Option compilerVar="CC" />', 3);
+				if (!file.options || !file.options.nocompile) {
+					this.p('<Option compilerVar="CC" />', 3);
+				}
 				this.p('</Unit>', 2);
 			}
 			else if (file.file.endsWith('.h')) {

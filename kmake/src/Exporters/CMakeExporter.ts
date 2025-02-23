@@ -158,6 +158,10 @@ export class CMakeExporter extends Exporter {
 		let files = '';
 		for (let file of project.getFiles()) {
 			if (file.file.endsWith('.c') || file.file.endsWith('.cc') || file.file.endsWith('.cpp') || file.file.endsWith('.h')) {
+				if (file.options && file.options.nocompile) {
+					continue;
+				}
+
 				files += '  "' + path.resolve(file.file).replace(/\\/g, '/') + '"\n';
 			}
 		}
