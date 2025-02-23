@@ -249,6 +249,10 @@ export class AndroidExporter extends Exporter {
 		for (let file of project.getFiles()) {
 			if (file.file.endsWith('.c') || file.file.endsWith('.cc')
 					|| file.file.endsWith('.cpp') || file.file.endsWith('.h')) {
+				if (file.options && file.options.nocompile) {
+					continue;
+				}
+
 				if (path.isAbsolute(file.file)) {
 					files += '  "' + path.resolve(file.file).replace(/\\/g, '/') + '"\n';
 				}
