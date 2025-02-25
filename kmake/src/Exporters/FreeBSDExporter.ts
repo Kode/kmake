@@ -370,7 +370,7 @@ export class FreeBSDExporter extends Exporter {
 		for (let fileobject of project.getFiles()) {
 			let file = fileobject.file;
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc')) {
-				let args = [file.endsWith('.c') ? '/usr/bin/clang' : '/usr/bin/clang++', optimization, '-c', '-o', (options.debug ? 'Debug' : 'Release') + ofiles[file] + '.o'];
+				let args = [file.endsWith('.c') ? '/usr/bin/clang' : '/usr/bin/clang++', optimization, '-c', '-o', (options.debug ? 'debug' : 'release') + ofiles[file] + '.o'];
 				if (file.endsWith('.c')) {
 					args.push('-std=' + (project.cStd !== '' ? project.cStd : 'c99'));
 				}

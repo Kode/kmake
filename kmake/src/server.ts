@@ -9,9 +9,9 @@ export async function run(options: any, loglog: any): Promise<void> {
 	log.info('Running server on ' + options.port + '...');
   
 	const server = http.createServer((request, response) => {
-		let baseDir = 'build/Release';
+		let baseDir = 'build/release';
 		if (options.debug) {
-			baseDir = 'build/Debug';
+			baseDir = 'build/debug';
 		}
 
 		let filePath = baseDir + request.url;

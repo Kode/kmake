@@ -968,7 +968,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 	if (options.vr !== undefined) {
 		Options.vrApi = options.vr;
 	}
-	options.buildPath = options.debug ? 'Debug' : 'Release';
+	options.buildPath = options.debug ? 'debug' : 'release';
 
 	let project: Project = null;
 	let exporter: Exporter = null;

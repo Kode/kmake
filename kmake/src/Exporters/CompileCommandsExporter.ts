@@ -135,7 +135,7 @@ export class CompilerCommandsExporter extends Exporter {
 		for (let fileobject of project.getFiles()) {
 			let file = fileobject.file;
 			if (file.endsWith('.c') || file.endsWith('.cpp') || file.endsWith('.cc')) {
-				let args = ['/usr/bin/clang', '-c', '-o', (options.debug ? 'Debug' : 'Release') + ofiles[file] + '.o'];
+				let args = ['/usr/bin/clang', '-c', '-o', (options.debug ? 'debug' : 'release') + ofiles[file] + '.o'];
 				if (file.endsWith('.c')) {
 					args.push('-std=c99');
 				}
