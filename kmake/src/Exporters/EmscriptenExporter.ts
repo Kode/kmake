@@ -31,12 +31,7 @@ export class EmscriptenExporter extends Exporter {
 			linkerFlags += '-s USE_WEBGPU=1 ';
 		}
 
-		let executableName = project.getSafeName();
-		if (project.getExecutableName()) {
-			executableName = project.getExecutableName();
-		}
-
-		linkerFlags += ' -o ' + executableName + '.html --preload-file ' + this.debugDirName(project);
+		linkerFlags += ' -o index.html --preload-file ' + this.debugDirName(project);
 
 		this.make = new MakeExporter(options, 'emcc', 'emcc', '', '', linkerFlags, '.html', this.libsLine);
 		this.ninja = new NinjaExporter(options, 'emcc', 'emcc', '', '', linkerFlags, '.html', this.libsLine);
