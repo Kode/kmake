@@ -27,11 +27,11 @@ jobs:
         iwr -useb https://github.com/mozilla/sccache/releases/download/v0.10.0/sccache-v0.10.0-x86_64-pc-windows-msvc.zip -OutFile sccache.zip
         Expand-Archive sccache.zip -DestinationPath C:\sccache
         New-Item -ItemType Directory -Path C:\vs-clang
-        Copy-Item -Path "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin\*" C:\vs-clang
-        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin\clang.exe"
-        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin\clang++.exe"
-        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin\clang-cl.exe"
-        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\Llvm\x64\bin\clang-cpp.exe"
+        Copy-Item -Path "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin\*" C:\vs-clang
+        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin\clang.exe"
+        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin\clang++.exe"
+        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin\clang-cl.exe"
+        Copy-Item C:\sccache\sccache-v0.10.0-x86_64-pc-windows-msvc\sccache.exe "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin\clang-cpp.exe"
         echo "C:\vs-clang"                                                >> $env:GITHUB_PATH
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}"         >> $env:GITHUB_ENV
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $env:GITHUB_ENV
