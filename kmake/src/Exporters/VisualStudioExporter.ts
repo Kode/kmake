@@ -844,7 +844,7 @@ export class VisualStudioExporter extends Exporter {
 
 			this.p('<WindowsTargetPlatformVersion>' + windowsTargetVersion + '</WindowsTargetPlatformVersion>', indent);
 		}
-		else if (Options.visualStudioVersion === VisualStudioVersion.VS2022 || Options.visualStudioVersion === VisualStudioVersion.VS2019) {
+		else if (Options.visualStudioVersion === VisualStudioVersion.VS2026 || Options.visualStudioVersion === VisualStudioVersion.VS2022 || Options.visualStudioVersion === VisualStudioVersion.VS2019) {
 			this.p('<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>', indent);
 		}
 	}
