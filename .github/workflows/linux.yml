@@ -20,8 +20,8 @@ jobs:
       with:
         packages: >
           build-base
-          python3
-          py3-setuptools
+          python313
+          py313-setuptools
           wget
           linux-headers
           git
