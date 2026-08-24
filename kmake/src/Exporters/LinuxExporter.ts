@@ -32,8 +32,8 @@ export class LinuxExporter extends Exporter {
 			outputExtension = '.so';
 		}
 
-		this.ninja = new NinjaExporter(options, this.getCCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
-		this.make = new MakeExporter(options, this.getCCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
+		this.ninja = new NinjaExporter(options, this.getCCompiler(), this.getCPPCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
+		this.make = new MakeExporter(options, this.getCCompiler(), this.getCPPCompiler(), this.getCPPCompiler(), '', '', linkerFlags, outputExtension);
 		this.clion = new CLionExporter(options);
 		this.compileCommands = new CompilerCommandsExporter(options);
 	}

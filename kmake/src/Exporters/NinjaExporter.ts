@@ -6,15 +6,17 @@ import * as path from 'path';
 export class NinjaExporter extends Exporter {
 	cCompiler: string;
 	cppCompiler: string;
+	linker: string;
 	cFlags: string;
 	cppFlags: string;
 	linkerFlags: string;
 	outputExtension: string;
 
-	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
+	constructor(options: any, cCompiler: string, cppCompiler: string, linker: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
 		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
+		this.linker = linker;
 		this.cFlags = cFlags;
 		this.cppFlags = cppFlags;
 		this.linkerFlags = linkerFlags;
@@ -137,13 +139,13 @@ export class NinjaExporter extends Exporter {
 		this.p('rule cxx\n  deps = gcc\n  depfile = $out.d\n  command = ' + cppline + '-MD -MF $out.d -c $in -o $out\n');
 
 		if (options.dynlib) {
-			this.p('rule link\n  pool = link_pool\n  command = ' + this.cppCompiler + ' -fPIC -shared -o $out ' + optimization + ' $in ' + linkerline);
+			this.p('rule link\n  pool = link_pool\n  command = ' + this.linker + ' -fPIC -shared -o $out ' + optimization + ' $in ' + linkerline);
 		}
 		else if (options.lib) {
 			this.p('rule link\n  pool = link_pool\n  command = ar rcs -o $out $in');
 		}
 		else {
-			this.p('rule link\n  pool = link_pool\n  command = ' + this.cppCompiler + ' -o $out ' + optimization + ' $in ' + linkerline);
+			this.p('rule link\n  pool = link_pool\n  command = ' + this.linker + ' -o $out ' + optimization + ' $in ' + linkerline);
 		}
 
 		for (let fileobject of project.getFiles()) {

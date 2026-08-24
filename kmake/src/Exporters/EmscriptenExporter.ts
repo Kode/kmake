@@ -27,9 +27,10 @@ export class EmscriptenExporter extends Exporter {
 		linkerFlags += ' --preload-file ' + this.debugDirName(project);
 
 		const emcc = (process.platform === 'win32') ? 'emcc.bat' : 'emcc';
+		const emplusplus = (process.platform === 'win32') ? 'em++.bat' : 'em++';
 
-		this.make = new MakeExporter(options, emcc, emcc, '', '', linkerFlags, '.html');
-		this.ninja = new NinjaExporter(options, emcc, emcc, '', '', linkerFlags, '.html');
+		this.make = new MakeExporter(options, emcc, emplusplus, emplusplus, '', '', linkerFlags, '.html');
+		this.ninja = new NinjaExporter(options, emcc, emplusplus, emplusplus, '', '', linkerFlags, '.html');
 	}
 
 	debugDirName(project: Project): string {
