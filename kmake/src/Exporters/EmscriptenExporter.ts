@@ -26,11 +26,8 @@ export class EmscriptenExporter extends Exporter {
 		linkerFlags += ' -sTOTAL_MEMORY=134217728 ';
 		linkerFlags += ' --preload-file ' + this.debugDirName(project);
 
-		const emcc = (process.platform === 'win32') ? 'emcc.bat' : 'emcc';
-		const emplusplus = (process.platform === 'win32') ? 'em++.bat' : 'em++';
-
-		this.make = new MakeExporter(options, emcc, emplusplus, emplusplus, '', '', linkerFlags, '.html');
-		this.ninja = new NinjaExporter(options, emcc, emplusplus, emplusplus, '', '', linkerFlags, '.html');
+		this.make = new MakeExporter(options, 'emcc', 'em++', 'em++', '', '', linkerFlags, '.html');
+		this.ninja = new NinjaExporter(options, 'emcc', 'em++', 'em++', '', '', linkerFlags, '.html');
 	}
 
 	debugDirName(project: Project): string {
