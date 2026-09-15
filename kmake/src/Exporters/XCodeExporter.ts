@@ -704,7 +704,7 @@ export class XCodeExporter extends Exporter {
 			this.p('IPHONEOS_DEPLOYMENT_TARGET = 15.6;', 4);
 		}
 		else {
-			this.p('MACOSX_DEPLOYMENT_TARGET = 11.5;', 4);
+			this.p('MACOSX_DEPLOYMENT_TARGET = 12.0;', 4);
 		}
 		this.p('MTL_ENABLE_DEBUG_INFO = YES;', 4);
 		this.p('ONLY_ACTIVE_ARCH = YES;', 4);
@@ -792,7 +792,7 @@ export class XCodeExporter extends Exporter {
 			this.p('IPHONEOS_DEPLOYMENT_TARGET = 15.6;', 4);
 		}
 		else {
-			this.p('MACOSX_DEPLOYMENT_TARGET = 11.5;', 4);
+			this.p('MACOSX_DEPLOYMENT_TARGET = 12.0;', 4);
 		}
 		this.p('MTL_ENABLE_DEBUG_INFO = NO;', 4);
 		if (platform === Platform.iOS) {
