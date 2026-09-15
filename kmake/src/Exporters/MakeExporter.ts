@@ -6,15 +6,17 @@ import * as path from 'path';
 export class MakeExporter extends Exporter {
 	cCompiler: string;
 	cppCompiler: string;
+	linker: string;
 	cFlags: string;
 	cppFlags: string;
 	linkerFlags: string;
 	outputExtension: string;
 
-	constructor(options: any, cCompiler: string, cppCompiler: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
+	constructor(options: any, cCompiler: string, cppCompiler: string, linker: string, cFlags: string, cppFlags: string, linkerFlags: string, outputExtension: string, libsLine: (p: Project) => string = null) {
 		super(options);
 		this.cCompiler = cCompiler;
 		this.cppCompiler = cppCompiler;
+		this.linker = linker;
 		this.cFlags = cFlags;
 		this.cppFlags = cppFlags;
 		this.linkerFlags = linkerFlags;
@@ -171,7 +173,7 @@ export class MakeExporter extends Exporter {
 			this.p('\t' + 'ar rcs ' + output + ' ' + ofilelist);
 		}
 		else {
-			this.p('\t' + this.cppCompiler + ' ' + output + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
+			this.p('\t' + this.linker + ' ' + output + ' ' + optimization + ' ' + ofilelist + ' $(LIB)');
 		}
 
 		for (let file of project.getFiles()) {

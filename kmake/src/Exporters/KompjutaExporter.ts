@@ -21,8 +21,8 @@ export class KompjutaExporter extends Exporter {
 
 		const outputExtension = '.elf';
 
-		this.ninja = new NinjaExporter(options, 'clang', 'clang++', cFlags, cFlags, linkerFlags, outputExtension);
-		this.make = new MakeExporter(options, 'clang', 'clang++', cFlags, cFlags, linkerFlags, outputExtension);
+		this.ninja = new NinjaExporter(options, 'clang', 'clang++', 'clang++', cFlags, cFlags, linkerFlags, outputExtension);
+		this.make = new MakeExporter(options, 'clang', 'clang++', 'clang++', cFlags, cFlags, linkerFlags, outputExtension);
 		this.clion = new CLionExporter(options);
 		this.compileCommands = new CompilerCommandsExporter(options);
 	}

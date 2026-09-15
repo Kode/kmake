@@ -16,8 +16,8 @@ export class WasmExporter extends Exporter {
 		this.compileCommands = new CompilerCommandsExporter(options);
 		const compiler = 'clang';
 		const compilerFlags = '--target=wasm32 -nostdlib -matomics -mbulk-memory';
-		this.make = new MakeExporter(options, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
-		this.ninja = new NinjaExporter(options, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
+		this.make = new MakeExporter(options, compiler, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
+		this.ninja = new NinjaExporter(options, compiler, compiler, compiler, compilerFlags, compilerFlags, '--target=wasm32 -nostdlib -matomics -mbulk-memory "-Wl,--import-memory,--shared-memory"', '.wasm');
 	}
 
 	async exportSolution(project: Project, from: string, to: string, platform: string, vrApi: any, options: any) {
