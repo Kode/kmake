@@ -1116,7 +1116,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 			let vsvars: string = null;
 			const bits = dothemath ? '64' : '32';
 			const vswhere = path.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer', 'vswhere.exe');
-			switch (options.visualstudio) {
+			switch (Options.visualStudioVersion) {
 				case VisualStudioVersion.VS2010:
 					if (process.env.VS100COMNTOOLS) {
 						vsvars = process.env.VS100COMNTOOLS + '\\vsvars' + bits + '.bat';
