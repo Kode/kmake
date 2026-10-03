@@ -64,13 +64,13 @@ export class VisualStudioExporter extends Exporter {
 	constructor(options: any) {
 		super(options);
 		this.clion = new CLionExporter(options);
-		if (this.overrideVisualStudioVersion() !== null) {
-			Options.visualStudioVersion = this.overrideVisualStudioVersion();
+		if (this.maxVisualStudioVersion() && Options.visualStudioVersion > this.maxVisualStudioVersion()) {
+			Options.visualStudioVersion = this.maxVisualStudioVersion();
 		}
 	}
 
-	overrideVisualStudioVersion(): string {
-		return null;
+	maxVisualStudioVersion(): number {
+		return 0;
 	}
 
 	getDebugDir(from: string, project: Project): string {

@@ -929,6 +929,14 @@ function isPlatform(options: any, platform: string) {
 	return (options.customTarget && options.customTarget.baseTarget === platform) || options.target === platform;
 }
 
+function parseVisualStudioVersion(name: string): number {
+	if (name.toLowerCase().startsWith('vs')) {
+		name = name.substring(2);
+	}
+
+	return parseInt(name);
+}
+
 export async function run(options: any, loglog: any): Promise<string> {
 	log.set(loglog);
 
@@ -991,7 +999,7 @@ export async function run(options: any, loglog: any): Promise<string> {
 	}
 
 	if (options.visualstudio !== undefined) {
-		Options.visualStudioVersion = options.visualstudio;
+		Options.visualStudioVersion = parseVisualStudioVersion(options.visualstudio);
 	}
 
 	if (options.cores !== undefined) {
