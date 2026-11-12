@@ -15,6 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Restore classic sudo for setup-alpine
+      run: sudo update-alternatives --set sudo /usr/bin/sudo.ws
     - name: Setup latest Alpine Linux
       uses: jirutka/setup-alpine@v1
       with:
